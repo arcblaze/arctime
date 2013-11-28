@@ -84,6 +84,12 @@ public class Employee implements Comparable<Employee> {
 	private Set<Employee> supervised = new TreeSet<>();
 
 	/**
+	 * When an employee shows up in the supervised list, this determines whether
+	 * the supervisor is a primary supervisor or not.
+	 */
+	private Boolean primary;
+
+	/**
 	 * Default constructor.
 	 */
 	public Employee() {
@@ -558,6 +564,32 @@ public class Employee implements Comparable<Employee> {
 	@XmlElement
 	public boolean isSupervisor() {
 		return !this.supervised.isEmpty();
+	}
+
+	/**
+	 * @return if the supervisor for this employee is the primary supervisor
+	 */
+	@XmlElement
+	public Boolean isPrimary() {
+		return this.primary;
+	}
+
+	/**
+	 * @param primary
+	 *            the new value indicating whether the supervisor for this
+	 *            employee is a primary supervisor
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided primary value is invalid
+	 */
+	public Employee setPrimary(Boolean primary) {
+		if (primary == null)
+			throw new IllegalArgumentException("Invalid null primary value");
+
+		this.primary = primary;
+		return this;
 	}
 
 	/**

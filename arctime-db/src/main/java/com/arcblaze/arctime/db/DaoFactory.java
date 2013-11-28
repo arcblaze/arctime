@@ -10,8 +10,10 @@ import com.arcblaze.arctime.db.mysql.MySqlEmployeeDao;
  * Used to retrieve DAO instances to work with the configured back-end database.
  */
 public class DaoFactory {
+	/** Holds the type of back-end data store used in the cached DAOs. */
 	private static String cachedDaoType = null;
 
+	/** A cached instance of the employee DAO. */
 	private static EmployeeDao cachedEmployeeDao = null;
 
 	/**
@@ -19,8 +21,12 @@ public class DaoFactory {
 	 */
 	public static EmployeeDao getEmployeeDao() {
 		String type = Property.DB_TYPE.getString();
-		if (cachedEmployeeDao == null
-				|| !StringUtils.equals(cachedDaoType, type)) {
+		if (!StringUtils.equals(cachedDaoType, type)) {
+			clearCachedDaos();
+			cachedDaoType = type;
+		}
+
+		if (cachedEmployeeDao == null) {
 			if ("mysql".equals(type))
 				cachedEmployeeDao = new MySqlEmployeeDao();
 			else
@@ -29,5 +35,9 @@ public class DaoFactory {
 		}
 
 		return cachedEmployeeDao;
+	}
+
+	private static synchronized void clearCachedDaos() {
+		cachedEmployeeDao = null;
 	}
 }

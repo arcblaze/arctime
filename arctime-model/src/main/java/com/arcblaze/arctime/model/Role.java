@@ -22,6 +22,16 @@ public enum Role {
 	 */
 	MANAGER,
 
+	/**
+	 * A supervisor of other users.
+	 */
+	SUPERVISOR,
+
+	/**
+	 * A user with an account.
+	 */
+	USER,
+
 	;
 
 	/**

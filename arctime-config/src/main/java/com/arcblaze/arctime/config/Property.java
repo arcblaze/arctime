@@ -21,7 +21,7 @@ public enum Property {
 	CONFIG_FILE("./conf/arctime.properties") {
 		@Override
 		String getDefaultValue() {
-			String configFile = System.getProperty("config.file");
+			String configFile = System.getProperty("arctime.configurationFile");
 			if (!StringUtils.isBlank(configFile))
 				return configFile;
 			return super.getDefaultValue();
@@ -50,9 +50,51 @@ public enum Property {
 	DB_USERNAME("arctime"),
 
 	/**
-	 * The password of the user to use when authenticating with the database.
+	 * The password of the user to use when authenticating with the database (no
+	 * default).
 	 */
 	DB_PASSWORD,
+
+	/**
+	 * Whether the server should run in development mode or not - when true,
+	 * reloading of JSP pages is supported to make UI testing easier.
+	 */
+	SERVER_DEVELOPMENT_MODE("false"),
+
+	/**
+	 * Whether the server should run in insecure mode (HTTP) or not.
+	 */
+	SERVER_INSECURE_MODE("false"),
+
+	/**
+	 * The insecure (http) port on which the web server will listen.
+	 */
+	SERVER_PORT_INSECURE("80"),
+
+	/**
+	 * The secure (https) port on which the web server will listen.
+	 */
+	SERVER_PORT_SECURE("443"),
+
+	/**
+	 * The server host name published from the web server.
+	 */
+	SERVER_HOSTNAME("arctime.com"),
+
+	/**
+	 * The name of the certificate alias in the key store.
+	 */
+	SERVER_CERTIFICATE_KEY_ALIAS("arctime.com"),
+
+	/**
+	 * The key store file containing the server certificate.
+	 */
+	SERVER_KEYSTORE_FILE("conf/arctime.jks"),
+
+	/**
+	 * The password to use when accessing the key store (no default).
+	 */
+	SERVER_KEYSTORE_PASS,
 
 	;
 
