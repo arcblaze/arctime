@@ -14,23 +14,6 @@ import com.arcblaze.arctime.model.Role;
 public interface EmployeeDao {
 	/**
 	 * @param companyId
-	 *            the unique id of the company for which employee existence will
-	 *            be checked
-	 * @param employee
-	 *            the employee for which existence will be checked
-	 * 
-	 * @return whether the specified employee exists
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided employee is invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	public boolean exists(Integer companyId, Employee employee)
-			throws DatabaseException;
-
-	/**
-	 * @param companyId
 	 *            the unique id of the company for which the employee will be
 	 *            retrieved
 	 * @param login
@@ -100,7 +83,7 @@ public interface EmployeeDao {
 	 *            the unique id of the company for which the employees will be
 	 *            updated
 	 * @param employees
-	 *            the new employees to be added
+	 *            the employees to be updated
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database

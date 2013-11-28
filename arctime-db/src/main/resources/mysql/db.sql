@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS employees (
     CONSTRAINT fk_employees_company_id FOREIGN KEY (`company_id`)
         REFERENCES companies(`id`) ON DELETE CASCADE,
 
-    CONSTRAINT unique_employee_name UNIQUE (`first_name`, `last_name`),
     CONSTRAINT unique_employee_login UNIQUE (`login`),
     CONSTRAINT unique_employee_email UNIQUE (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

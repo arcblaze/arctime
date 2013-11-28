@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,43 +24,9 @@ import com.arcblaze.arctime.model.PersonnelType;
 import com.arcblaze.arctime.model.Role;
 
 /**
- * Manages news items within the back-end database.
+ * Manages employees within the back-end database.
  */
 public class MySqlEmployeeDao implements EmployeeDao {
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean exists(Integer companyId, Employee employee)
-			throws DatabaseException {
-		if (companyId == null)
-			throw new IllegalArgumentException("Invalid null company id");
-		if (employee == null)
-			throw new IllegalArgumentException("Invalid null employee");
-
-		String sql = "SELECT COUNT(*) FROM employees WHERE "
-				+ "company_id = ? AND (id = ? OR login = ?)";
-
-		try (Connection conn = ConnectionManager.getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, companyId);
-			if (employee.getId() == null)
-				ps.setNull(2, Types.INTEGER);
-			else
-				ps.setInt(2, employee.getId());
-			ps.setString(3, employee.getLogin());
-
-			try (ResultSet rs = ps.executeQuery();) {
-				if (rs.next())
-					return rs.getInt(1) > 0;
-			}
-
-			return false;
-		} catch (SQLException sqlException) {
-			throw new DatabaseException(sqlException);
-		}
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -85,6 +51,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				if (rs.next()) {
 					Employee employee = new Employee();
 					employee.setId(rs.getInt("id"));
+					employee.setCompanyId(rs.getInt("company_id"));
 					employee.setLogin(rs.getString("login"));
 					employee.setHashedPass(rs.getString("hashed_pass"));
 					employee.setEmail(rs.getString("email"));
@@ -127,6 +94,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				if (rs.next()) {
 					Employee employee = new Employee();
 					employee.setId(rs.getInt("id"));
+					employee.setCompanyId(rs.getInt("company_id"));
 					employee.setLogin(rs.getString("login"));
 					employee.setHashedPass(rs.getString("hashed_pass"));
 					employee.setEmail(rs.getString("email"));
@@ -171,6 +139,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				while (rs.next()) {
 					Employee employee = new Employee();
 					employee.setId(rs.getInt("id"));
+					employee.setCompanyId(rs.getInt("company_id"));
 					employee.setLogin(rs.getString("login"));
 					employee.setHashedPass(rs.getString("hashed_pass"));
 					employee.setEmail(rs.getString("email"));
@@ -210,10 +179,12 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
+				PreparedStatement ps = conn.prepareStatement(sql,
+						Statement.RETURN_GENERATED_KEYS)) {
 			for (Employee employee : employees) {
 				int index = 1;
-				ps.setInt(index++, companyId);
+				employee.setCompanyId(companyId);
+				ps.setInt(index++, employee.getCompanyId());
 				ps.setString(index++, employee.getLogin());
 				ps.setString(index++, employee.getHashedPass());
 				ps.setString(index++, employee.getEmail());
@@ -224,6 +195,11 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				ps.setString(index++, employee.getPersonnelType().name());
 				ps.setBoolean(index++, employee.isActive());
 				ps.executeUpdate();
+
+				try (ResultSet rs = ps.getGeneratedKeys()) {
+					if (rs.next())
+						employee.setId(rs.getInt(1));
+				}
 			}
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
@@ -385,6 +361,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 			while (rs.next()) {
 				Employee employee = new Employee();
 				employee.setId(rs.getInt("id"));
+				employee.setCompanyId(rs.getInt("company_id"));
 				employee.setLogin(rs.getString("login"));
 				employee.setHashedPass(rs.getString("hashed_pass"));
 				employee.setEmail(rs.getString("email"));
@@ -403,7 +380,6 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				if (supervisor != null)
 					supervisor.addSupervised(employee);
 			}
-
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}

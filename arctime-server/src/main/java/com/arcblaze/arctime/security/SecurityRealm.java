@@ -79,8 +79,10 @@ public class SecurityRealm extends RealmBase {
 				roleNames.add(Role.USER.name());
 				for (Role role : roles)
 					roleNames.add(role.name());
+				employee.setRoles(roles);
+
 				return new GenericPrincipal(employee.getLogin(),
-						employee.getHashedPass(), roleNames);
+						employee.getHashedPass(), roleNames, employee);
 			} catch (DatabaseException databaseException) {
 				databaseException.printStackTrace();
 			}

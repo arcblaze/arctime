@@ -1,5 +1,6 @@
 package com.arcblaze.arctime.model;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
@@ -22,11 +24,16 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 @XmlRootElement(name = "employee")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class Employee implements Comparable<Employee> {
+public class Employee implements Comparable<Employee>, Principal {
 	/**
 	 * The unique id of the employee.
 	 */
 	private Integer id;
+
+	/**
+	 * The unique id of the company in which this employee resides.
+	 */
+	private Integer companyId;
 
 	/**
 	 * The login name for the employee.
@@ -121,6 +128,42 @@ public class Employee implements Comparable<Employee> {
 
 		this.id = id;
 		return this;
+	}
+
+	/**
+	 * @return the unique id of the company in which this employee resides
+	 */
+	@XmlElement
+	public Integer getCompanyId() {
+		return this.companyId;
+	}
+
+	/**
+	 * @param companyId
+	 *            the new unique company id value
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided companyId value is invalid
+	 */
+	public Employee setCompanyId(Integer companyId) {
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+		if (companyId < 0)
+			throw new IllegalArgumentException("Invalid negative company id");
+
+		this.companyId = companyId;
+		return this;
+	}
+
+	/**
+	 * @return the employee login value
+	 */
+	@Override
+	@XmlTransient
+	public String getName() {
+		return getLogin();
 	}
 
 	/**
@@ -599,6 +642,7 @@ public class Employee implements Comparable<Employee> {
 	public String toString() {
 		ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("id", getId());
+		builder.append("companyId", getCompanyId());
 		builder.append("login", getLogin());
 		builder.append("hashedPass", getHashedPass());
 		builder.append("email", getEmail());
@@ -621,6 +665,7 @@ public class Employee implements Comparable<Employee> {
 			Employee other = (Employee) obj;
 			EqualsBuilder builder = new EqualsBuilder();
 			builder.append(getId(), other.getId());
+			builder.append(getCompanyId(), other.getCompanyId());
 			builder.append(getLogin(), other.getLogin());
 			builder.append(getHashedPass(), other.getHashedPass());
 			builder.append(getEmail(), other.getEmail());
@@ -643,6 +688,7 @@ public class Employee implements Comparable<Employee> {
 	public int hashCode() {
 		HashCodeBuilder builder = new HashCodeBuilder();
 		builder.append(getId());
+		builder.append(getCompanyId());
 		builder.append(getLogin());
 		builder.append(getHashedPass());
 		builder.append(getEmail());
@@ -666,6 +712,7 @@ public class Employee implements Comparable<Employee> {
 		builder.append(getFirstName(), other.getFirstName());
 		builder.append(getSuffix(), other.getSuffix());
 		builder.append(getLogin(), other.getLogin());
+		builder.append(getCompanyId(), other.getCompanyId());
 		builder.append(getId(), other.getId());
 		builder.append(getEmail(), other.getEmail());
 		builder.append(getDivision(), other.getDivision());

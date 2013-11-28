@@ -41591,7 +41591,7 @@ INSERT INTO `audit_logs` (`timesheet_id`, `log`, `timestamp`) VALUES
 
 INSERT INTO `holidays` (`id`, `company_id` `description`, `config`) VALUES
 (1, 1, 'New Years', 'January 1st Observance'),
-(3, 1, 'President''s Day', '3rd Monday in February'),
+(3, 1, 'Presidents Day', '3rd Monday in February'),
 (4, 1, 'Memorial Day', 'Last Monday in May'),
 (5, 1, 'Independence Day', 'July 4th Observance'),
 (6, 1, 'Labor Day', '1st Monday in September'),
