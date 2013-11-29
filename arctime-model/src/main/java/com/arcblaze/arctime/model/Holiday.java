@@ -1,5 +1,7 @@
 package com.arcblaze.arctime.model;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,6 +12,10 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.time.DateFormatUtils;
+
+import com.arcblaze.arctime.model.util.HolidayCalculator;
+import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 
 /**
  * Represents a holiday.
@@ -38,10 +44,30 @@ public class Holiday implements Comparable<Holiday> {
 	private String config;
 
 	/**
+	 * The day on which this holiday applies during the current year.
+	 */
+	private Date day;
+
+	/**
 	 * Default constructor.
 	 */
 	public Holiday() {
 		// Nothing to do.
+	}
+
+	/**
+	 * @param year
+	 *            the year for which the holiday date will be calculated, e.g.,
+	 *            2013
+	 * 
+	 * @return the calculated day on which this holiday will land
+	 * 
+	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing the configuration of this
+	 *             holiday
+	 */
+	public Date getDateForYear(int year) throws HolidayConfigurationException {
+		return HolidayCalculator.getDay(getConfig(), year);
 	}
 
 	/**
@@ -139,13 +165,35 @@ public class Holiday implements Comparable<Holiday> {
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided config value is invalid
+	 * @throws HolidayConfigurationException
+	 *             if the provided configuration is not valid
 	 */
-	public Holiday setConfig(String config) {
+	public Holiday setConfig(String config)
+			throws HolidayConfigurationException {
 		if (config == null)
 			throw new IllegalArgumentException("Invalid null config value");
 
+		final String oldConfig = this.config;
 		this.config = config;
+
+		try {
+			this.day = getDateForYear(Integer.parseInt(DateFormatUtils.format(
+					new Date(), "yyyy")));
+		} catch (HolidayConfigurationException badConfig) {
+			this.config = oldConfig;
+			throw badConfig;
+		}
+
 		return this;
+	}
+
+	/**
+	 * @return the {@link Date} during the current year on which this holiday
+	 *         falls
+	 */
+	@XmlElement
+	public Date getDay() {
+		return this.day;
 	}
 
 	/**
@@ -158,6 +206,7 @@ public class Holiday implements Comparable<Holiday> {
 		builder.append("companyId", getCompanyId());
 		builder.append("description", getDescription());
 		builder.append("config", getConfig());
+		builder.append("day", getDay());
 		return builder.toString();
 	}
 
@@ -173,6 +222,7 @@ public class Holiday implements Comparable<Holiday> {
 			builder.append(getCompanyId(), other.getCompanyId());
 			builder.append(getDescription(), other.getDescription());
 			builder.append(getConfig(), other.getConfig());
+			builder.append(getDay(), other.getDay());
 			return builder.isEquals();
 		}
 
@@ -189,6 +239,7 @@ public class Holiday implements Comparable<Holiday> {
 		builder.append(getCompanyId());
 		builder.append(getDescription());
 		builder.append(getConfig());
+		builder.append(getDay());
 		return builder.toHashCode();
 	}
 
@@ -199,6 +250,7 @@ public class Holiday implements Comparable<Holiday> {
 	public int compareTo(Holiday other) {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(getCompanyId(), other.getCompanyId());
+		builder.append(getDay(), other.getDay());
 		builder.append(other.getConfig(), getConfig());
 		builder.append(getDescription(), other.getDescription());
 		builder.append(getId(), other.getId());

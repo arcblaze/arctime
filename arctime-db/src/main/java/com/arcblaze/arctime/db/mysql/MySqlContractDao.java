@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.ContractDao;
@@ -176,15 +178,13 @@ public class MySqlContractDao implements ContractDao {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "DELETE FROM contracts WHERE id = ? AND company_id = ?";
+		String sql = String.format(
+				"DELETE FROM contracts WHERE company_id = %d AND id IN (%s)",
+				companyId, StringUtils.join(ids, ","));
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
-			for (Integer id : ids) {
-				ps.setInt(1, id);
-				ps.setInt(2, companyId);
-				ps.executeUpdate();
-			}
+			ps.executeUpdate();
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}

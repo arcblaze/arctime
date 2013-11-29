@@ -1,5 +1,6 @@
 package com.arcblaze.arctime.model;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,6 +12,10 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
+
+import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 
 /**
  * Represents a pay period.
@@ -43,6 +48,58 @@ public class PayPeriod implements Comparable<PayPeriod> {
 	 */
 	public PayPeriod() {
 		// Nothing to do.
+	}
+
+	/**
+	 * @param time
+	 *            the {@link Date} to check to determine if it falls within this
+	 *            pay period
+	 * 
+	 * @return whether the provided date falls into this pay period
+	 */
+	public boolean contains(Date time) {
+		if (time == null)
+			return false;
+
+		Date b = getBegin();
+		Date e = getEnd();
+
+		if (b == null || e == null)
+			return false;
+
+		Date day = DateUtils.truncate(time, Calendar.DAY_OF_YEAR);
+
+		return day.getTime() >= b.getTime() && day.getTime() <= e.getTime();
+	}
+
+	/**
+	 * @param holiday
+	 *            the {@link Holiday} to check to determine if it falls within
+	 *            this pay period
+	 * 
+	 * @return whether the provided date falls into this pay period
+	 * 
+	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing the holiday configuration
+	 *             information
+	 */
+	public boolean contains(Holiday holiday)
+			throws HolidayConfigurationException {
+		if (holiday == null)
+			return false;
+
+		Date b = getBegin();
+		Date e = getEnd();
+
+		if (b == null || e == null)
+			return false;
+
+		int yb = Integer.parseInt(DateFormatUtils.format(b, "yyyy"));
+		int ye = Integer.parseInt(DateFormatUtils.format(e, "yyyy"));
+
+		return yb == ye ? contains(holiday.getDateForYear(yb))
+				: contains(holiday.getDateForYear(yb))
+						|| contains(holiday.getDateForYear(ye));
 	}
 
 	/**
