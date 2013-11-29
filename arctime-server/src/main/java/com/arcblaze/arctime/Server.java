@@ -23,6 +23,8 @@ import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.commons.lang.StringUtils;
+import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.jasper.servlet.JspServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +48,14 @@ public class Server {
 		Tomcat tomcat = new Tomcat();
 		tomcat.setBaseDir(".");
 		tomcat.getHost().setAppBase(".");
-		tomcat.getConnector().setPort(Property.SERVER_PORT_INSECURE.getInt());
 
 		Service service = tomcat.getService();
+		Connector insecureConnector = getInsecureConnector();
+		service.addConnector(insecureConnector);
 		if (!Property.SERVER_INSECURE_MODE.getBoolean()) {
 			service.addConnector(getSecureConnector());
-			tomcat.getConnector().setRedirectPort(
-					Property.SERVER_PORT_INSECURE.getInt());
+			insecureConnector.setRedirectPort(Property.SERVER_PORT_INSECURE
+					.getInt());
 		}
 
 		SecurityRealm realm = new SecurityRealm("arctime");
@@ -99,10 +102,25 @@ public class Server {
 	}
 
 	/**
+	 * @return a {@link Connector} for insecure HTTP connections with web
+	 *         clients
+	 */
+	protected Connector getInsecureConnector() {
+		Connector httpConnector = new Connector(
+				Http11NioProtocol.class.getName());
+		httpConnector.setPort(Property.SERVER_PORT_INSECURE.getInt());
+		httpConnector.setSecure(false);
+		httpConnector.setScheme("http");
+		addCompressionAttributes(httpConnector);
+		return httpConnector;
+	}
+
+	/**
 	 * @return a {@link Connector} for secure HTTPS connections with web clients
 	 */
 	protected Connector getSecureConnector() {
-		Connector httpsConnector = new Connector();
+		Connector httpsConnector = new Connector(
+				Http11NioProtocol.class.getName());
 		httpsConnector.setPort(Property.SERVER_PORT_SECURE.getInt());
 		httpsConnector.setSecure(true);
 		httpsConnector.setScheme("https");
@@ -115,7 +133,23 @@ public class Server {
 				Property.SERVER_KEYSTORE_PASS.getString());
 		httpsConnector.setAttribute("keystoreFile",
 				Property.SERVER_KEYSTORE_FILE.getString());
+		addCompressionAttributes(httpsConnector);
 		return httpsConnector;
+	}
+
+	/**
+	 * @param connector
+	 *            the {@link Connector} on which the compression attributes will
+	 *            be applied
+	 */
+	protected void addCompressionAttributes(Connector connector) {
+		connector.setAttribute("compression", "on");
+		connector.setAttribute("compressionMinSize", "2048");
+		connector.setAttribute("noCompressionUserAgents", "gozilla, traviata");
+		connector.setAttribute("compressableMimeType", StringUtils.join(Arrays
+				.asList("text/html", "text/plain", "text/javascript",
+						"application/json", "application/xml"), ","));
+		connector.setAttribute("useSendfile", "false");
 	}
 
 	/**
@@ -130,6 +164,7 @@ public class Server {
 		defaultServlet.setServletClass(DefaultServlet.class.getName());
 		defaultServlet.addInitParameter("debug", "0");
 		defaultServlet.addInitParameter("listings", "false");
+		defaultServlet.addInitParameter("sendfileSize", "-1");
 		defaultServlet.setLoadOnStartup(1);
 		return defaultServlet;
 	}
@@ -183,6 +218,10 @@ public class Server {
 		map.put("/rest/supervisor/*", Arrays.asList(ADMIN, SUPERVISOR));
 		map.put("/rest/user/*", Arrays.asList(ADMIN, USER));
 
+		String userConstraint = "NONE";
+		if (!Property.SERVER_DEVELOPMENT_MODE.getBoolean())
+			userConstraint = "CONFIDENTIAL";
+
 		for (Map.Entry<String, List<Role>> entry : map.entrySet()) {
 			SecurityCollection collection = new SecurityCollection();
 			collection.setName(entry.getKey());
@@ -192,7 +231,7 @@ public class Server {
 				constraint.addAuthRole(role.name());
 			constraint.setDisplayName(entry.getKey());
 			constraint.addCollection(collection);
-			constraint.setUserConstraint("NONE");
+			constraint.setUserConstraint(userConstraint);
 			constraints.add(constraint);
 		}
 

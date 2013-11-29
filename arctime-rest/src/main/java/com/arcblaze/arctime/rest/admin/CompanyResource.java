@@ -18,7 +18,7 @@ import com.arcblaze.arctime.model.Enrichment;
 /**
  * The REST end-point for performing admin actions on companies.
  */
-@Path("/company")
+@Path("/admin/company")
 public class CompanyResource {
 	/**
 	 * @param companyId

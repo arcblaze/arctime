@@ -20,7 +20,7 @@ import com.arcblaze.arctime.model.Enrichment;
 /**
  * The REST end-point for performing management actions on companies.
  */
-@Path("/company")
+@Path("/manager/company")
 public class CompanyResource {
 	/** Security information associated with the web request. */
 	@Context
