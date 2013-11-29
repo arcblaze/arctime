@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS contract_assignments (
     `employee_id`    INTEGER      NOT NULL,
     `labor_cat`      VARCHAR(120) NOT NULL,
     `item_name`      VARCHAR(255) NOT NULL,
-    `start`          DATE,
+    `begin`          DATE,
     `end`            DATE,
 
     CONSTRAINT fk_contract_assignments_contract_id FOREIGN KEY (`contract_id`)
@@ -100,13 +100,13 @@ CREATE TABLE IF NOT EXISTS contract_assignments (
 
     INDEX idx_contract_assignments_contract_id USING HASH (`contract_id`),
     INDEX idx_contract_assignments_employee_id USING HASH (`employee_id`),
-    INDEX idx_contract_assignments_start USING HASH (`start`),
+    INDEX idx_contract_assignments_begin USING HASH (`begin`),
     INDEX idx_contract_assignments_end USING HASH (`end`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS pay_periods (
     `company_id`     INTEGER      NOT NULL,
-    `start`          DATE         NOT NULL PRIMARY KEY,
+    `begin`          DATE         NOT NULL PRIMARY KEY,
     `end`            DATE         NOT NULL,
     `type`           VARCHAR(20)  NOT NULL,
 
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS pay_periods (
 
 CREATE TABLE IF NOT EXISTS bills (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `assignment_id`  INTEGER      NOT NULL,
+    `assignment_id`  INTEGER,
     `contract_id`    INTEGER      NOT NULL,
     `employee_id`    INTEGER      NOT NULL,
     `day`            DATE         NOT NULL,
@@ -143,29 +143,33 @@ CREATE TABLE IF NOT EXISTS bills (
 CREATE TABLE IF NOT EXISTS timesheets (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `employee_id`    INTEGER      NOT NULL,
-    `pp_start`       DATE         NOT NULL,
+    `pp_begin`       DATE         NOT NULL,
     `completed`      BOOLEAN      NOT NULL DEFAULT FALSE,
     `approved`       BOOLEAN      NOT NULL DEFAULT FALSE,
     `verified`       BOOLEAN      NOT NULL DEFAULT FALSE,
     `exported`       BOOLEAN      NOT NULL DEFAULT FALSE,
-    `approved_by`    INTEGER,
-    `verified_by`    INTEGER,
+    `approver_id`    INTEGER,
+    `verifier_id`    INTEGER,
+    `exporter_id`    INTEGER,
 
-    CONSTRAINT unique_timesheet UNIQUE (`employee_id`, `pp_start`),
+    CONSTRAINT unique_timesheet UNIQUE (`employee_id`, `pp_begin`),
 
     CONSTRAINT fk_timesheet_employee_id FOREIGN KEY (`employee_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_timesheet_pp_start FOREIGN KEY (`pp_start`)
-        REFERENCES pay_periods(`start`) ON DELETE CASCADE,
-    CONSTRAINT fk_timesheet_approved_by FOREIGN KEY (`approved_by`)
+    CONSTRAINT fk_timesheet_pp_begin FOREIGN KEY (`pp_begin`)
+        REFERENCES pay_periods(`begin`) ON DELETE CASCADE,
+    CONSTRAINT fk_timesheet_approver_id FOREIGN KEY (`approver_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_timesheet_verified_by FOREIGN KEY (`verified_by`)
+    CONSTRAINT fk_timesheet_verifier_id FOREIGN KEY (`verifier_id`)
+        REFERENCES employees(`id`) ON DELETE CASCADE,
+    CONSTRAINT fk_timesheet_exporter_id FOREIGN KEY (`exporter_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
 
     INDEX idx_timesheets_employee_id USING HASH (`employee_id`),
-    INDEX idx_timesheets_approved_by USING HASH (`approved_by`),
-    INDEX idx_timesheets_verified_by USING HASH (`verified_by`),
-    INDEX idx_timesheets_pp_start USING HASH (`pp_start`)
+    INDEX idx_timesheets_approver_id USING HASH (`approver_id`),
+    INDEX idx_timesheets_verifier_id USING HASH (`verifier_id`),
+    INDEX idx_timesheets_exporter_id USING HASH (`exporter_id`),
+    INDEX idx_timesheets_pp_begin USING HASH (`pp_begin`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS audit_logs (

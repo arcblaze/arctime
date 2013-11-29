@@ -96,7 +96,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 					employee.setId(rs.getInt("id"));
 					employee.setCompanyId(rs.getInt("company_id"));
 					employee.setLogin(rs.getString("login"));
-					employee.setHashedPass(rs.getString("hashed_pass"));
+					// hashed_pass is specifically left out
 					employee.setEmail(rs.getString("email"));
 					employee.setFirstName(rs.getString("first_name"));
 					employee.setLastName(rs.getString("last_name"));
@@ -141,7 +141,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 					employee.setId(rs.getInt("id"));
 					employee.setCompanyId(rs.getInt("company_id"));
 					employee.setLogin(rs.getString("login"));
-					employee.setHashedPass(rs.getString("hashed_pass"));
+					// hashed_pass is specifically left out
 					employee.setEmail(rs.getString("email"));
 					employee.setFirstName(rs.getString("first_name"));
 					employee.setLastName(rs.getString("last_name"));
@@ -310,6 +310,8 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				enrichWithRoles(conn, employees);
 			else if (enrichment == Enrichment.SUPERVISED)
 				enrichWithSupervised(conn, companyId, employees);
+			else if (enrichment == Enrichment.SUPERVISERS)
+				enrichWithSupervisers(conn, companyId, employees);
 			else
 				throw new DatabaseException("Invalid enrichment specified: "
 						+ enrichment);
@@ -363,7 +365,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				employee.setId(rs.getInt("id"));
 				employee.setCompanyId(rs.getInt("company_id"));
 				employee.setLogin(rs.getString("login"));
-				employee.setHashedPass(rs.getString("hashed_pass"));
+				// hashed_pass is specifically left out
 				employee.setEmail(rs.getString("email"));
 				employee.setFirstName(rs.getString("first_name"));
 				employee.setLastName(rs.getString("last_name"));
@@ -379,6 +381,48 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				Employee supervisor = employeeMap.get(supervisorId);
 				if (supervisor != null)
 					supervisor.addSupervised(employee);
+			}
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	protected void enrichWithSupervisers(Connection conn, Integer companyId,
+			Set<Employee> employees) throws DatabaseException {
+		Set<Integer> ids = getEmployeeIds(employees);
+		if (ids.isEmpty())
+			return;
+
+		Map<Integer, Employee> employeeMap = getEmployeeMap(employees);
+
+		String sql = String.format("SELECT * FROM employees e "
+				+ "JOIN supervisors s on (e.id = s.supervisor_id) "
+				+ "WHERE e.company_id = %d AND s.employee_id IN (%s)",
+				companyId, StringUtils.join(ids, ","));
+
+		try (PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+			while (rs.next()) {
+				Employee employee = new Employee();
+				employee.setId(rs.getInt("id"));
+				employee.setCompanyId(rs.getInt("company_id"));
+				employee.setLogin(rs.getString("login"));
+				// hashed_pass is specifically left out
+				employee.setEmail(rs.getString("email"));
+				employee.setFirstName(rs.getString("first_name"));
+				employee.setLastName(rs.getString("last_name"));
+				employee.setSuffix(rs.getString("suffix"));
+				employee.setDivision(rs.getString("division"));
+				employee.setPersonnelType(PersonnelType.parse(rs
+						.getString("personnel_type")));
+				employee.setActive(rs.getBoolean("active"));
+				employee.setPrimary(rs.getBoolean("primary"));
+
+				int employeeId = rs.getInt("employee_id");
+
+				Employee supervised = employeeMap.get(employeeId);
+				if (supervised != null)
+					supervised.addSupervisers(employee);
 			}
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);

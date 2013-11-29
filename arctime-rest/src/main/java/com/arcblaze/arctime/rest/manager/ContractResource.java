@@ -13,49 +13,50 @@ import javax.ws.rs.core.SecurityContext;
 
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
+import com.arcblaze.arctime.db.dao.ContractDao;
+import com.arcblaze.arctime.model.Contract;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
 
 /**
- * The REST end-point for managing employees.
+ * The REST end-point for managing contracts.
  */
-@Path("/manager/employee")
-public class EmployeeResource {
+@Path("/manager/contract")
+public class ContractResource {
 	/** Security information associated with the web request. */
 	@Context
 	private SecurityContext security = null;
 
 	/**
-	 * @param employeeId
-	 *            the unique id of the employee to retrieve
+	 * @param contractId
+	 *            the unique id of the contract to retrieve
 	 * @param enrichments
 	 *            indicates the additional data to be included in the returned
-	 *            employee
+	 *            contract
 	 * 
-	 * @return the requested employee (if in the same company as the current
+	 * @return the requested contract (if in the same company as the current
 	 *         user)
 	 * 
 	 * @throws DatabaseException
 	 *             if there is an error communicating with the back-end
 	 */
 	@GET
-	@Path("{employeeId}")
+	@Path("{contractId}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Employee one(@PathParam("employeeId") Integer employeeId,
+	public Contract one(@PathParam("contractId") Integer contractId,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
 		Employee currentUser = (Employee) this.security.getUserPrincipal();
-		EmployeeDao dao = DaoFactory.getEmployeeDao();
-		return dao.get(currentUser.getCompanyId(), employeeId, enrichments);
+		ContractDao dao = DaoFactory.getContractDao();
+		return dao.get(currentUser.getCompanyId(), contractId, enrichments);
 	}
 
 	/**
 	 * @param enrichments
 	 *            indicates the additional data to be included in the returned
-	 *            employees
+	 *            contracts
 	 * 
-	 * @return all of the available employees in the same company as the current
+	 * @return all of the available contracts in the same company as the current
 	 *         user
 	 * 
 	 * @throws DatabaseException
@@ -63,11 +64,11 @@ public class EmployeeResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<Employee> all(
+	public Set<Contract> all(
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
 		Employee currentUser = (Employee) this.security.getUserPrincipal();
-		EmployeeDao dao = DaoFactory.getEmployeeDao();
+		ContractDao dao = DaoFactory.getContractDao();
 		return dao.getAll(currentUser.getCompanyId(), enrichments);
 	}
 }

@@ -4,8 +4,10 @@ import org.apache.commons.lang.StringUtils;
 
 import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.db.dao.CompanyDao;
+import com.arcblaze.arctime.db.dao.ContractDao;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.mysql.MySqlCompanyDao;
+import com.arcblaze.arctime.db.mysql.MySqlContractDao;
 import com.arcblaze.arctime.db.mysql.MySqlEmployeeDao;
 
 /**
@@ -17,6 +19,7 @@ public class DaoFactory {
 
 	private static CompanyDao cachedCompanyDao = null;
 	private static EmployeeDao cachedEmployeeDao = null;
+	private static ContractDao cachedContractDao = null;
 
 	/**
 	 * @return an {@link CompanyDao} based on the currently configured database
@@ -60,8 +63,30 @@ public class DaoFactory {
 		return cachedEmployeeDao;
 	}
 
+	/**
+	 * @return an {@link ContractDao} based on the currently configured database
+	 */
+	public static ContractDao getContractDao() {
+		String type = Property.DB_TYPE.getString();
+		if (!StringUtils.equals(cachedDaoType, type)) {
+			clearCachedDaos();
+			cachedDaoType = type;
+		}
+
+		if (cachedContractDao == null) {
+			if ("mysql".equals(type))
+				cachedContractDao = new MySqlContractDao();
+			else
+				throw new RuntimeException("Invalid database type: " + type);
+			cachedDaoType = type;
+		}
+
+		return cachedContractDao;
+	}
+
 	private static synchronized void clearCachedDaos() {
 		cachedCompanyDao = null;
 		cachedEmployeeDao = null;
+		cachedContractDao = null;
 	}
 }

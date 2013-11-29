@@ -22,7 +22,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * Represents an employee.
  */
-@XmlRootElement(name = "employee")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Employee implements Comparable<Employee>, Principal {
 	/**
@@ -95,6 +95,11 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * the supervisor is a primary supervisor or not.
 	 */
 	private Boolean primary;
+
+	/**
+	 * The employees that are supervisors of this employee.
+	 */
+	private Set<Employee> supervisers = new TreeSet<>();
 
 	/**
 	 * Default constructor.
@@ -543,9 +548,9 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the provided roles value is invalid
+	 *             if the provided supervised employees value is invalid
 	 */
-	public Employee setRoles(Employee... newSupervised) {
+	public Employee setSupervised(Employee... newSupervised) {
 		if (newSupervised == null)
 			throw new IllegalArgumentException("Invalid null supervised");
 
@@ -576,7 +581,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the provided employees value is invalid
+	 *             if the provided supervised employees value is invalid
 	 */
 	public Employee addSupervised(Employee... newSupervised) {
 		if (newSupervised == null)
@@ -632,6 +637,87 @@ public class Employee implements Comparable<Employee>, Principal {
 			throw new IllegalArgumentException("Invalid null primary value");
 
 		this.primary = primary;
+		return this;
+	}
+
+	/**
+	 * @return all of the supervisors for this employee
+	 */
+	@XmlElement
+	public Set<Employee> getSupervisers() {
+		return Collections.unmodifiableSet(this.supervisers);
+	}
+
+	/**
+	 * @return {@code this}
+	 */
+	public Employee clearSupervisers() {
+		this.supervisers.clear();
+		return this;
+	}
+
+	/**
+	 * @param newSupervisers
+	 *            the new supervisors to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided supervisors value is invalid
+	 */
+	public Employee setSupervisers(Employee... newSupervisers) {
+		if (newSupervisers == null)
+			throw new IllegalArgumentException("Invalid null supervisers");
+
+		return this.setSupervisers(Arrays.asList(newSupervisers));
+	}
+
+	/**
+	 * @param newSupervisers
+	 *            the new supervisors to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 */
+	public Employee setSupervisers(Collection<Employee> newSupervisers) {
+		synchronized (this.supervisers) {
+			this.supervisers.clear();
+			if (newSupervisers != null)
+				for (Employee employee : newSupervisers)
+					if (employee != null)
+						this.supervisers.add(employee);
+		}
+		return this;
+	}
+
+	/**
+	 * @param newSupervisers
+	 *            the new supervisors to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided supervisors value is invalid
+	 */
+	public Employee addSupervisers(Employee... newSupervisers) {
+		if (newSupervisers == null)
+			throw new IllegalArgumentException("Invalid null supervisers");
+
+		return this.addSupervisers(Arrays.asList(newSupervisers));
+	}
+
+	/**
+	 * @param newSupervisers
+	 *            the new supervisors to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 */
+	public Employee addSupervisers(Collection<Employee> newSupervisers) {
+		synchronized (this.supervisers) {
+			if (newSupervisers != null)
+				for (Employee employee : newSupervisers)
+					if (employee != null)
+						this.supervisers.add(employee);
+		}
 		return this;
 	}
 

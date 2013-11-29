@@ -16,6 +16,11 @@ public enum Enrichment {
 	 */
 	SUPERVISED,
 
+	/**
+	 * Used to enrich employee data with the employee's supervisors.
+	 */
+	SUPERVISERS,
+
 	;
 
 	/**

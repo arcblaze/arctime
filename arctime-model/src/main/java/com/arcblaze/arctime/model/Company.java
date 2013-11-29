@@ -14,7 +14,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * Represents a company.
  */
-@XmlRootElement(name = "company")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Company implements Comparable<Company> {
 	/**
