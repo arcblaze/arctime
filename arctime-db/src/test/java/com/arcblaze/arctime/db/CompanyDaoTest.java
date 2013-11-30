@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arcblaze.arctime.db.dao.CompanyDao;
+import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Company;
 
 /**
@@ -26,7 +27,7 @@ public class CompanyDaoTest {
 	 */
 	@BeforeClass
 	public static void setup() throws Exception {
-		DatabaseInitialization.initializeDatabase();
+		TestDatabase.initialize();
 	}
 
 	/**

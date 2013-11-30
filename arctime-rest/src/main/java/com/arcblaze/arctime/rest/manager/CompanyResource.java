@@ -18,11 +18,10 @@ import com.arcblaze.arctime.model.Employee;
  */
 @Path("/manager/company")
 public class CompanyResource {
-	/** Security information associated with the web request. */
-	@Context
-	private SecurityContext security = null;
-
 	/**
+	 * @param security
+	 *            the security information associated with the request
+	 * 
 	 * @return the company in which the current user account resides
 	 * 
 	 * @throws DatabaseException
@@ -30,8 +29,9 @@ public class CompanyResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Company mine() throws DatabaseException {
-		Employee currentUser = (Employee) this.security.getUserPrincipal();
+	public Company mine(@Context SecurityContext security)
+			throws DatabaseException {
+		Employee currentUser = (Employee) security.getUserPrincipal();
 		CompanyDao dao = DaoFactory.getCompanyDao();
 		return dao.get(currentUser.getCompanyId());
 	}

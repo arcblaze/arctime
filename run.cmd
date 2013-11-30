@@ -15,12 +15,7 @@ set JAVA_OPTS=%JAVA_OPTS% -Darctime.configurationFile=conf/arctime-config.proper
 set JAVA_OPTS=%JAVA_OPTS% -Dlogback.configurationFile=conf/arctime-logging.xml
 
 rem Build the classpath.
-setlocal ENABLEDELAYEDEXPANSION
-set CLASSPATH=conf;
-set LIBS=arctime-dist\target\lib\*.jar
-for %%i in (%LIBS%) do (
-	set CLASSPATH=!CLASSPATH!;%%i
-)
+set CLASSPATH=arctime-dist\target\lib\*
 
 rem Start the app.
 java %JAVA_OPTS% -classpath "%CLASSPATH%" %CLASS%

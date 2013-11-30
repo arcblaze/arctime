@@ -22,11 +22,9 @@ import com.arcblaze.arctime.model.util.HolidayConfigurationException;
  */
 @Path("/manager/holiday")
 public class HolidayResource {
-	/** Security information associated with the web request. */
-	@Context
-	private SecurityContext security = null;
-
 	/**
+	 * @param security
+	 *            the security information associated with the request
 	 * @param holidayId
 	 *            the unique id of the holiday to retrieve
 	 * 
@@ -42,14 +40,17 @@ public class HolidayResource {
 	@GET
 	@Path("{holidayId}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Holiday one(@PathParam("holidayId") Integer holidayId)
+	public Holiday one(@Context SecurityContext security,
+			@PathParam("holidayId") Integer holidayId)
 			throws DatabaseException, HolidayConfigurationException {
-		Employee currentUser = (Employee) this.security.getUserPrincipal();
+		Employee currentUser = (Employee) security.getUserPrincipal();
 		HolidayDao dao = DaoFactory.getHolidayDao();
 		return dao.get(currentUser.getCompanyId(), holidayId);
 	}
 
 	/**
+	 * @param security
+	 *            the security information associated with the request
 	 * @return all of the available holidays in the same company as the current
 	 *         user
 	 * 
@@ -61,9 +62,9 @@ public class HolidayResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<Holiday> all() throws DatabaseException,
-			HolidayConfigurationException {
-		Employee currentUser = (Employee) this.security.getUserPrincipal();
+	public Set<Holiday> all(@Context SecurityContext security)
+			throws DatabaseException, HolidayConfigurationException {
+		Employee currentUser = (Employee) security.getUserPrincipal();
 		HolidayDao dao = DaoFactory.getHolidayDao();
 		return dao.getAll(currentUser.getCompanyId());
 	}

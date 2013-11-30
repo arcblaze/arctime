@@ -26,13 +26,15 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.lang.StringUtils;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.jasper.servlet.JspServlet;
+import org.glassfish.jersey.servlet.ServletContainer;
+import org.glassfish.jersey.servlet.ServletProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.model.Role;
+import com.arcblaze.arctime.rest.ArctimeApplication;
 import com.arcblaze.arctime.security.SecurityRealm;
-import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 /**
  * Responsible for launching this system.
@@ -198,8 +200,8 @@ public class Server {
 		jerseyServlet.setName("jersey");
 		jerseyServlet.setServletClass(ServletContainer.class.getName());
 		jerseyServlet.addInitParameter(
-				"com.sun.jersey.config.property.packages",
-				"com.arcblaze.arctime.rest");
+				ServletProperties.JAXRS_APPLICATION_CLASS,
+				ArctimeApplication.class.getName());
 		jerseyServlet.setLoadOnStartup(1);
 		return jerseyServlet;
 	}

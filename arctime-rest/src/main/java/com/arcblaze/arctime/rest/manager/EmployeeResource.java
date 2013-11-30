@@ -22,11 +22,9 @@ import com.arcblaze.arctime.model.Enrichment;
  */
 @Path("/manager/employee")
 public class EmployeeResource {
-	/** Security information associated with the web request. */
-	@Context
-	private SecurityContext security = null;
-
 	/**
+	 * @param security
+	 *            the security information associated with the request
 	 * @param employeeId
 	 *            the unique id of the employee to retrieve
 	 * @param enrichments
@@ -42,15 +40,18 @@ public class EmployeeResource {
 	@GET
 	@Path("{employeeId}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Employee one(@PathParam("employeeId") Integer employeeId,
+	public Employee one(@Context SecurityContext security,
+			@PathParam("employeeId") Integer employeeId,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
-		Employee currentUser = (Employee) this.security.getUserPrincipal();
+		Employee currentUser = (Employee) security.getUserPrincipal();
 		EmployeeDao dao = DaoFactory.getEmployeeDao();
 		return dao.get(currentUser.getCompanyId(), employeeId, enrichments);
 	}
 
 	/**
+	 * @param security
+	 *            the security information associated with the request
 	 * @param enrichments
 	 *            indicates the additional data to be included in the returned
 	 *            employees
@@ -63,10 +64,10 @@ public class EmployeeResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<Employee> all(
+	public Set<Employee> all(@Context SecurityContext security,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
-		Employee currentUser = (Employee) this.security.getUserPrincipal();
+		Employee currentUser = (Employee) security.getUserPrincipal();
 		EmployeeDao dao = DaoFactory.getEmployeeDao();
 		return dao.getAll(currentUser.getCompanyId(), enrichments);
 	}

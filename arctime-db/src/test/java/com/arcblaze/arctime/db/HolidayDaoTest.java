@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arcblaze.arctime.db.dao.HolidayDao;
+import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Holiday;
 import com.arcblaze.arctime.model.PayPeriod;
@@ -33,7 +34,7 @@ public class HolidayDaoTest {
 	 */
 	@BeforeClass
 	public static void setup() throws Exception {
-		DatabaseInitialization.initializeDatabase();
+		TestDatabase.initialize();
 	}
 
 	/**

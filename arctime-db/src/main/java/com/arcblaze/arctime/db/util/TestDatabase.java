@@ -1,20 +1,22 @@
-package com.arcblaze.arctime.db;
+package com.arcblaze.arctime.db.util;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.arcblaze.arctime.config.Property;
+import com.arcblaze.arctime.db.ConnectionManager;
 
 /**
- * Perform database integration testing.
+ * Used to initialize a simple in-memory database for testing purposes.
  */
-public class DatabaseInitialization {
+public class TestDatabase {
 	/**
 	 * Loads the table schema into the testing database for testing.
 	 * 
@@ -26,8 +28,8 @@ public class DatabaseInitialization {
 	 * @throws SQLException
 	 *             if there is a problem building the schema
 	 */
-	protected static void initializeDatabase() throws SQLException,
-			FileNotFoundException, IOException {
+	public static void initialize() throws SQLException, FileNotFoundException,
+			IOException {
 		System.setProperty("arctime.configurationFile",
 				"../conf/arctime-config.properties");
 
@@ -37,6 +39,12 @@ public class DatabaseInitialization {
 		Property.DB_PASSWORD.set("");
 
 		File schema = new File("src/main/resources/hsqldb/db.sql");
+		if (!schema.exists()) {
+			URL resource = TestDatabase.class.getClassLoader().getResource(
+					"hsqldb/db.sql");
+			if (resource != null)
+				schema = new File(resource.getFile());
+		}
 
 		StringBuilder sql = new StringBuilder();
 		try (FileReader fr = new FileReader(schema);

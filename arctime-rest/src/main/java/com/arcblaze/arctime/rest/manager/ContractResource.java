@@ -23,11 +23,9 @@ import com.arcblaze.arctime.model.Enrichment;
  */
 @Path("/manager/contract")
 public class ContractResource {
-	/** Security information associated with the web request. */
-	@Context
-	private SecurityContext security = null;
-
 	/**
+	 * @param security
+	 *            the security information associated with the request
 	 * @param contractId
 	 *            the unique id of the contract to retrieve
 	 * @param enrichments
@@ -43,15 +41,18 @@ public class ContractResource {
 	@GET
 	@Path("{contractId}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Contract one(@PathParam("contractId") Integer contractId,
+	public Contract one(@Context SecurityContext security,
+			@PathParam("contractId") Integer contractId,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
-		Employee currentUser = (Employee) this.security.getUserPrincipal();
+		Employee currentUser = (Employee) security.getUserPrincipal();
 		ContractDao dao = DaoFactory.getContractDao();
 		return dao.get(currentUser.getCompanyId(), contractId, enrichments);
 	}
 
 	/**
+	 * @param security
+	 *            the security information associated with the request
 	 * @param enrichments
 	 *            indicates the additional data to be included in the returned
 	 *            contracts
@@ -64,10 +65,10 @@ public class ContractResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<Contract> all(
+	public Set<Contract> all(@Context SecurityContext security,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
-		Employee currentUser = (Employee) this.security.getUserPrincipal();
+		Employee currentUser = (Employee) security.getUserPrincipal();
 		ContractDao dao = DaoFactory.getContractDao();
 		return dao.getAll(currentUser.getCompanyId(), enrichments);
 	}
