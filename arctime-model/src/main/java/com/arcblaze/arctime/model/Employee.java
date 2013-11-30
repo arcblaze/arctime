@@ -78,7 +78,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	/**
 	 * Whether this employee is an active account or not.
 	 */
-	private Boolean active;
+	private Boolean active = true;
 
 	/**
 	 * The roles assigned to the account.
@@ -753,7 +753,7 @@ public class Employee implements Comparable<Employee>, Principal {
 			builder.append(getId(), other.getId());
 			builder.append(getCompanyId(), other.getCompanyId());
 			builder.append(getLogin(), other.getLogin());
-			builder.append(getHashedPass(), other.getHashedPass());
+			// HashedPass is specifically left out.
 			builder.append(getEmail(), other.getEmail());
 			builder.append(getFirstName(), other.getFirstName());
 			builder.append(getLastName(), other.getLastName());
@@ -776,7 +776,7 @@ public class Employee implements Comparable<Employee>, Principal {
 		builder.append(getId());
 		builder.append(getCompanyId());
 		builder.append(getLogin());
-		builder.append(getHashedPass());
+		// HashedPass is specifically left out.
 		builder.append(getEmail());
 		builder.append(getFirstName());
 		builder.append(getLastName());
@@ -803,7 +803,7 @@ public class Employee implements Comparable<Employee>, Principal {
 		builder.append(getEmail(), other.getEmail());
 		builder.append(getDivision(), other.getDivision());
 		builder.append(getPersonnelType(), other.getPersonnelType());
-		builder.append(getHashedPass(), other.getHashedPass());
+		// HashedPass is specifically left out.
 		return builder.toComparison();
 	}
 }

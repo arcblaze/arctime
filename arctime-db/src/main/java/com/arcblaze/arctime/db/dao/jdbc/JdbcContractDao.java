@@ -1,4 +1,4 @@
-package com.arcblaze.arctime.db.mysql;
+package com.arcblaze.arctime.db.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +20,7 @@ import com.arcblaze.arctime.model.Enrichment;
 /**
  * Manages contracts within the back-end database.
  */
-public class MySqlContractDao implements ContractDao {
+public class JdbcContractDao implements ContractDao {
 	/**
 	 * {@inheritDoc}
 	 */
@@ -106,7 +106,7 @@ public class MySqlContractDao implements ContractDao {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "INSERT IGNORE INTO contracts (company_id, description, "
+		String sql = "INSERT INTO contracts (company_id, description, "
 				+ "contract_num, job_code, admin, active) VALUES "
 				+ "(?, ?, ?, ?, ?, ?)";
 

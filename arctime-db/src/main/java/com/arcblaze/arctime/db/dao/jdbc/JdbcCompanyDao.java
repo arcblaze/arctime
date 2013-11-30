@@ -1,4 +1,4 @@
-package com.arcblaze.arctime.db.mysql;
+package com.arcblaze.arctime.db.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,18 +15,16 @@ import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.CompanyDao;
 import com.arcblaze.arctime.model.Company;
-import com.arcblaze.arctime.model.Enrichment;
 
 /**
  * Manages companies within the back-end database.
  */
-public class MySqlCompanyDao implements CompanyDao {
+public class JdbcCompanyDao implements CompanyDao {
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Company get(Integer id, Set<Enrichment> enrichments)
-			throws DatabaseException {
+	public Company get(Integer id) throws DatabaseException {
 		if (id == null)
 			throw new IllegalArgumentException("Invalid null id");
 
@@ -57,8 +55,7 @@ public class MySqlCompanyDao implements CompanyDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Company> getAll(Set<Enrichment> enrichments)
-			throws DatabaseException {
+	public Set<Company> getAll() throws DatabaseException {
 		String sql = "SELECT * FROM companies";
 
 		Set<Company> companies = new TreeSet<>();
@@ -87,8 +84,7 @@ public class MySqlCompanyDao implements CompanyDao {
 		if (companies == null || companies.isEmpty())
 			return;
 
-		String sql = "INSERT IGNORE INTO companies (name, active) VALUES "
-				+ "(?, ?)";
+		String sql = "INSERT INTO companies (name, active) VALUES (?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql,

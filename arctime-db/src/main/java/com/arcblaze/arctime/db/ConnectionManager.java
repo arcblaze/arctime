@@ -46,8 +46,10 @@ public class ConnectionManager {
 		String user = Property.DB_USERNAME.getString();
 		String pass = Property.DB_PASSWORD.getString();
 
-		int newConfigurationHash = driver.hashCode() * url.hashCode()
-				* user.hashCode() * pass.hashCode();
+		int newConfigurationHash = driver == null ? 1 : driver.hashCode();
+		newConfigurationHash *= url == null ? 1 : url.hashCode();
+		newConfigurationHash *= user == null ? 1 : user.hashCode();
+		newConfigurationHash *= pass == null ? 1 : pass.hashCode();
 
 		if (dataSource == null || configurationHash != newConfigurationHash) {
 			if (dataSource != null)
@@ -60,5 +62,13 @@ public class ConnectionManager {
 			dataSource.setPassword(pass);
 			dataSource.setDefaultAutoCommit(true);
 		}
+	}
+
+	/**
+	 * Reset the internal data source to be reloaded when the next connection is
+	 * needed.
+	 */
+	static synchronized void reset() {
+		dataSource = null;
 	}
 }

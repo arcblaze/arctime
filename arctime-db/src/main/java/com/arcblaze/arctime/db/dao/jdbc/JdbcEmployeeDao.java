@@ -1,4 +1,4 @@
-package com.arcblaze.arctime.db.mysql;
+package com.arcblaze.arctime.db.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,7 +26,7 @@ import com.arcblaze.arctime.model.Role;
 /**
  * Manages employees within the back-end database.
  */
-public class MySqlEmployeeDao implements EmployeeDao {
+public class JdbcEmployeeDao implements EmployeeDao {
 	/**
 	 * {@inheritDoc}
 	 */
@@ -173,9 +173,9 @@ public class MySqlEmployeeDao implements EmployeeDao {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "INSERT IGNORE INTO employees (company_id, login, "
-				+ "hashed_pass, email, first_name, last_name, suffix, "
-				+ "division, personnel_type, active) VALUES "
+		String sql = "INSERT INTO employees (company_id, login, hashed_pass, "
+				+ "email, first_name, last_name, suffix, division, "
+				+ "personnel_type, active) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
@@ -372,7 +372,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				employee.setPersonnelType(PersonnelType.parse(rs
 						.getString("personnel_type")));
 				employee.setActive(rs.getBoolean("active"));
-				employee.setPrimary(rs.getBoolean("primary"));
+				employee.setPrimary(rs.getBoolean("is_primary"));
 
 				int supervisorId = rs.getInt("supervisor_id");
 
@@ -414,7 +414,7 @@ public class MySqlEmployeeDao implements EmployeeDao {
 				employee.setPersonnelType(PersonnelType.parse(rs
 						.getString("personnel_type")));
 				employee.setActive(rs.getBoolean("active"));
-				employee.setPrimary(rs.getBoolean("primary"));
+				employee.setPrimary(rs.getBoolean("is_primary"));
 
 				int employeeId = rs.getInt("employee_id");
 

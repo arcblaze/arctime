@@ -17,14 +17,15 @@ CREATE TABLE IF NOT EXISTS companies (
     `active`         BOOLEAN      NOT NULL DEFAULT TRUE,
 
     CONSTRAINT unique_company_name UNIQUE (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS employees (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `company_id`     INTEGER      NOT NULL,
     `login`          VARCHAR(32)  NOT NULL,
     `hashed_pass`    VARCHAR(128) NOT NULL,
-    `email`          VARCHAR(255) NOT NULL,
+	-- Treat emails as case-insensitive.
+    `email`          VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
     `first_name`     VARCHAR(50)  NOT NULL,
     `last_name`      VARCHAR(50)  NOT NULL,
     `suffix`         VARCHAR(32),
@@ -37,7 +38,7 @@ CREATE TABLE IF NOT EXISTS employees (
 
     CONSTRAINT unique_employee_login UNIQUE (`login`),
     CONSTRAINT unique_employee_email UNIQUE (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS roles (
     `name`           VARCHAR(30)  NOT NULL,
@@ -50,12 +51,12 @@ CREATE TABLE IF NOT EXISTS roles (
 
     INDEX idx_roles_name USING HASH (`name`),
     INDEX idx_roles_employee_id USING HASH (`employee_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS supervisors (
     `employee_id`    INTEGER      NOT NULL,
     `supervisor_id`  INTEGER      NOT NULL,
-    `primary`        BOOLEAN      NOT NULL DEFAULT FALSE,
+    `is_primary`     BOOLEAN      NOT NULL DEFAULT FALSE,
 
     CONSTRAINT fk_supervisors_employee_id FOREIGN KEY (`employee_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
@@ -64,7 +65,7 @@ CREATE TABLE IF NOT EXISTS supervisors (
 
     INDEX idx_supervisors_employee_id USING HASH (`employee_id`),
     INDEX idx_supervisors_supervisor_id USING HASH (`supervisor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS contracts (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -82,7 +83,7 @@ CREATE TABLE IF NOT EXISTS contracts (
 
     INDEX idx_contracts_contract_num USING HASH (`contract_num`),
     INDEX idx_contracts_job_code USING HASH (`job_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS contract_assignments (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -102,7 +103,7 @@ CREATE TABLE IF NOT EXISTS contract_assignments (
     INDEX idx_contract_assignments_employee_id USING HASH (`employee_id`),
     INDEX idx_contract_assignments_begin USING HASH (`begin`),
     INDEX idx_contract_assignments_end USING HASH (`end`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS pay_periods (
     `company_id`     INTEGER      NOT NULL,
@@ -113,8 +114,9 @@ CREATE TABLE IF NOT EXISTS pay_periods (
     CONSTRAINT fk_pay_periods_company_id FOREIGN KEY (`company_id`)
         REFERENCES companies(`id`) ON DELETE CASCADE,
 
+    INDEX idx_pay_periods_begin USING HASH (`begin`),
     INDEX idx_pay_periods_end USING HASH (`end`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS bills (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -138,7 +140,7 @@ CREATE TABLE IF NOT EXISTS bills (
     INDEX idx_bills_contract_id USING HASH (`contract_id`),
     INDEX idx_bills_employee_id USING HASH (`employee_id`),
     INDEX idx_bills_day USING HASH (`day`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS timesheets (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -170,7 +172,7 @@ CREATE TABLE IF NOT EXISTS timesheets (
     INDEX idx_timesheets_verifier_id USING HASH (`verifier_id`),
     INDEX idx_timesheets_exporter_id USING HASH (`exporter_id`),
     INDEX idx_timesheets_pp_begin USING HASH (`pp_begin`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS audit_logs (
     `timesheet_id`   INTEGER      NOT NULL,
@@ -181,7 +183,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
         REFERENCES timesheets(`id`) ON DELETE CASCADE,
 
     INDEX idx_audit_logs_timesheet_id USING HASH (`timesheet_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS holidays (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -194,5 +196,5 @@ CREATE TABLE IF NOT EXISTS holidays (
 
     CONSTRAINT fk_holidays_company_id FOREIGN KEY (`company_id`)
         REFERENCES companies(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

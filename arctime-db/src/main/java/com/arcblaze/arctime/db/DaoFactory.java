@@ -1,23 +1,21 @@
 package com.arcblaze.arctime.db;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.db.dao.CompanyDao;
 import com.arcblaze.arctime.db.dao.ContractDao;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.dao.HolidayDao;
-import com.arcblaze.arctime.db.mysql.MySqlCompanyDao;
-import com.arcblaze.arctime.db.mysql.MySqlContractDao;
-import com.arcblaze.arctime.db.mysql.MySqlEmployeeDao;
-import com.arcblaze.arctime.db.mysql.MySqlHolidayDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcCompanyDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcContractDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcEmployeeDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
 
 /**
  * Used to retrieve DAO instances to work with the configured back-end database.
  */
 public class DaoFactory {
 	/** Holds the type of back-end data store used in the cached DAOs. */
-	private static String cachedDaoType = null;
+	private static DatabaseType cachedDatabaseType = null;
 
 	private static CompanyDao cachedCompanyDao = null;
 	private static EmployeeDao cachedEmployeeDao = null;
@@ -28,18 +26,18 @@ public class DaoFactory {
 	 * @return an {@link CompanyDao} based on the currently configured database
 	 */
 	public static CompanyDao getCompanyDao() {
-		String type = Property.DB_TYPE.getString();
-		if (!StringUtils.equals(cachedDaoType, type)) {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
 			clearCachedDaos();
-			cachedDaoType = type;
+			cachedDatabaseType = type;
 		}
 
 		if (cachedCompanyDao == null) {
-			if ("mysql".equals(type))
-				cachedCompanyDao = new MySqlCompanyDao();
+			if (DatabaseType.JDBC.equals(type))
+				cachedCompanyDao = new JdbcCompanyDao();
 			else
 				throw new RuntimeException("Invalid database type: " + type);
-			cachedDaoType = type;
+			cachedDatabaseType = type;
 		}
 
 		return cachedCompanyDao;
@@ -49,18 +47,18 @@ public class DaoFactory {
 	 * @return an {@link EmployeeDao} based on the currently configured database
 	 */
 	public static EmployeeDao getEmployeeDao() {
-		String type = Property.DB_TYPE.getString();
-		if (!StringUtils.equals(cachedDaoType, type)) {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
 			clearCachedDaos();
-			cachedDaoType = type;
+			cachedDatabaseType = type;
 		}
 
 		if (cachedEmployeeDao == null) {
-			if ("mysql".equals(type))
-				cachedEmployeeDao = new MySqlEmployeeDao();
+			if (DatabaseType.JDBC.equals(type))
+				cachedEmployeeDao = new JdbcEmployeeDao();
 			else
 				throw new RuntimeException("Invalid database type: " + type);
-			cachedDaoType = type;
+			cachedDatabaseType = type;
 		}
 
 		return cachedEmployeeDao;
@@ -70,18 +68,18 @@ public class DaoFactory {
 	 * @return an {@link ContractDao} based on the currently configured database
 	 */
 	public static ContractDao getContractDao() {
-		String type = Property.DB_TYPE.getString();
-		if (!StringUtils.equals(cachedDaoType, type)) {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
 			clearCachedDaos();
-			cachedDaoType = type;
+			cachedDatabaseType = type;
 		}
 
 		if (cachedContractDao == null) {
-			if ("mysql".equals(type))
-				cachedContractDao = new MySqlContractDao();
+			if (DatabaseType.JDBC.equals(type))
+				cachedContractDao = new JdbcContractDao();
 			else
 				throw new RuntimeException("Invalid database type: " + type);
-			cachedDaoType = type;
+			cachedDatabaseType = type;
 		}
 
 		return cachedContractDao;
@@ -91,18 +89,18 @@ public class DaoFactory {
 	 * @return an {@link HolidayDao} based on the currently configured database
 	 */
 	public static HolidayDao getHolidayDao() {
-		String type = Property.DB_TYPE.getString();
-		if (!StringUtils.equals(cachedDaoType, type)) {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
 			clearCachedDaos();
-			cachedDaoType = type;
+			cachedDatabaseType = type;
 		}
 
 		if (cachedHolidayDao == null) {
-			if ("mysql".equals(type))
-				cachedHolidayDao = new MySqlHolidayDao();
+			if (DatabaseType.JDBC.equals(type))
+				cachedHolidayDao = new JdbcHolidayDao();
 			else
 				throw new RuntimeException("Invalid database type: " + type);
-			cachedDaoType = type;
+			cachedDatabaseType = type;
 		}
 
 		return cachedHolidayDao;
@@ -113,5 +111,13 @@ public class DaoFactory {
 		cachedEmployeeDao = null;
 		cachedContractDao = null;
 		cachedHolidayDao = null;
+	}
+
+	/**
+	 * Reset the internal DAOs and connections to be recreated when next needed.
+	 */
+	public static synchronized void reset() {
+		clearCachedDaos();
+		ConnectionManager.reset();
 	}
 }

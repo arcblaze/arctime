@@ -67,7 +67,7 @@ public class PayPeriod implements Comparable<PayPeriod> {
 		if (b == null || e == null)
 			return false;
 
-		Date day = DateUtils.truncate(time, Calendar.DAY_OF_YEAR);
+		Date day = DateUtils.truncate(time, Calendar.DATE);
 
 		return day.getTime() >= b.getTime() && day.getTime() <= e.getTime();
 	}

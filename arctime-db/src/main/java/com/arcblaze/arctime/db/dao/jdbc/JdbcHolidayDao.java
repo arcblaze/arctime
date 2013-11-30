@@ -1,4 +1,4 @@
-package com.arcblaze.arctime.db.mysql;
+package com.arcblaze.arctime.db.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +21,7 @@ import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 /**
  * Manages holidays within the back-end database.
  */
-public class MySqlHolidayDao implements HolidayDao {
+public class JdbcHolidayDao implements HolidayDao {
 	/**
 	 * {@inheritDoc}
 	 */
@@ -123,7 +123,7 @@ public class MySqlHolidayDao implements HolidayDao {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "INSERT IGNORE INTO holidays (company_id, description, "
+		String sql = "INSERT INTO holidays (company_id, description, "
 				+ "config) VALUES (?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
@@ -158,7 +158,7 @@ public class MySqlHolidayDao implements HolidayDao {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "UPDATE holidays SET name = ?, active = ? "
+		String sql = "UPDATE holidays SET description = ?, config = ? "
 				+ "WHERE id = ? AND company_id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();

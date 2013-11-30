@@ -31,7 +31,7 @@ public enum Property {
 	/**
 	 * The type of back-end database being used.
 	 */
-	DB_TYPE("mysql"),
+	DB_TYPE("jdbc"),
 
 	/**
 	 * The driver class name to use when creating JDBC connections to the
@@ -124,6 +124,17 @@ public enum Property {
 	 */
 	private Property(String defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+	/**
+	 * @param value
+	 *            the new value to use for this configuration property
+	 */
+	public void set(String value) {
+		if (value == null)
+			config.clearProperty(getKey());
+		else
+			config.setProperty(getKey(), value);
 	}
 
 	/**

@@ -30,7 +30,7 @@ public class Company implements Comparable<Company> {
 	/**
 	 * Whether this company is active or not.
 	 */
-	private Boolean active;
+	private Boolean active = true;
 
 	/**
 	 * Default constructor.

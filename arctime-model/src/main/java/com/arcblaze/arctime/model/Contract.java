@@ -54,7 +54,7 @@ public class Contract implements Comparable<Contract> {
 	 * Whether this contract is active and available for employees to charge
 	 * against.
 	 */
-	private Boolean active;
+	private Boolean active = true;
 
 	/**
 	 * Default constructor.
