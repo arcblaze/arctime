@@ -54,15 +54,19 @@ CREATE TABLE IF NOT EXISTS roles (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS supervisors (
+    `company_id`     INTEGER      NOT NULL,
     `employee_id`    INTEGER      NOT NULL,
     `supervisor_id`  INTEGER      NOT NULL,
     `is_primary`     BOOLEAN      NOT NULL DEFAULT FALSE,
 
+    CONSTRAINT fk_supervisors_company_id FOREIGN KEY (company_id)
+        REFERENCES companies(id) ON DELETE CASCADE,
     CONSTRAINT fk_supervisors_employee_id FOREIGN KEY (`employee_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
     CONSTRAINT fk_supervisors_supervisor_id FOREIGN KEY (`supervisor_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
 
+    INDEX idx_supervisors_company_id USING HASH (`company_id`),
     INDEX idx_supervisors_employee_id USING HASH (`employee_id`),
     INDEX idx_supervisors_supervisor_id USING HASH (`supervisor_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
