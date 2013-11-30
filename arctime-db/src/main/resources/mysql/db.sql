@@ -4,8 +4,8 @@ DROP TABLE IF EXISTS audit_logs;
 DROP TABLE IF EXISTS timesheets;
 DROP TABLE IF EXISTS bills;
 DROP TABLE IF EXISTS pay_periods;
-DROP TABLE IF EXISTS contract_assignments;
-DROP TABLE IF EXISTS contracts;
+DROP TABLE IF EXISTS assignments;
+DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS supervisors;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS employees;
@@ -71,42 +71,40 @@ CREATE TABLE IF NOT EXISTS supervisors (
     INDEX idx_supervisors_supervisor_id USING HASH (`supervisor_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS contracts (
+CREATE TABLE IF NOT EXISTS tasks (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `company_id`     INTEGER      NOT NULL,
     `description`    VARCHAR(255) NOT NULL,
-    `contract_num`   VARCHAR(50)  NOT NULL,
     `job_code`       VARCHAR(255) NOT NULL,
     `admin`          BOOLEAN      NOT NULL DEFAULT FALSE,
     `active`         BOOLEAN      NOT NULL DEFAULT TRUE,
 
-    CONSTRAINT unique_contract UNIQUE (`contract_num`, `job_code`),
+    CONSTRAINT unique_task UNIQUE (`job_code`),
 
-    CONSTRAINT fk_contracts_company_id FOREIGN KEY (`company_id`)
+    CONSTRAINT fk_tasks_company_id FOREIGN KEY (`company_id`)
         REFERENCES companies(`id`) ON DELETE CASCADE,
 
-    INDEX idx_contracts_contract_num USING HASH (`contract_num`),
-    INDEX idx_contracts_job_code USING HASH (`job_code`)
+    INDEX idx_tasks_job_code USING HASH (`job_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS contract_assignments (
+CREATE TABLE IF NOT EXISTS assignments (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `contract_id`    INTEGER      NOT NULL,
+    `task_id`        INTEGER      NOT NULL,
     `employee_id`    INTEGER      NOT NULL,
     `labor_cat`      VARCHAR(120) NOT NULL,
     `item_name`      VARCHAR(255) NOT NULL,
     `begin`          DATE,
     `end`            DATE,
 
-    CONSTRAINT fk_contract_assignments_contract_id FOREIGN KEY (`contract_id`)
-        REFERENCES contracts(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_contract_assignments_employee_id FOREIGN KEY (`employee_id`)
+    CONSTRAINT fk_assignments_task_id FOREIGN KEY (`task_id`)
+        REFERENCES tasks(`id`) ON DELETE CASCADE,
+    CONSTRAINT fk_assignments_employee_id FOREIGN KEY (`employee_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
 
-    INDEX idx_contract_assignments_contract_id USING HASH (`contract_id`),
-    INDEX idx_contract_assignments_employee_id USING HASH (`employee_id`),
-    INDEX idx_contract_assignments_begin USING HASH (`begin`),
-    INDEX idx_contract_assignments_end USING HASH (`end`)
+    INDEX idx_assignments_task_id USING HASH (`task_id`),
+    INDEX idx_assignments_employee_id USING HASH (`employee_id`),
+    INDEX idx_assignments_begin USING HASH (`begin`),
+    INDEX idx_assignments_end USING HASH (`end`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS pay_periods (
@@ -125,23 +123,23 @@ CREATE TABLE IF NOT EXISTS pay_periods (
 CREATE TABLE IF NOT EXISTS bills (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `assignment_id`  INTEGER,
-    `contract_id`    INTEGER      NOT NULL,
+    `task_id`        INTEGER      NOT NULL,
     `employee_id`    INTEGER      NOT NULL,
     `day`            DATE         NOT NULL,
     `hours`          FLOAT        NOT NULL,
     `timestamp`      TIMESTAMP    NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT unique_bill UNIQUE (`assignment_id`, `contract_id`, `employee_id`, `day`),
+    CONSTRAINT unique_bill UNIQUE (`assignment_id`, `task_id`, `employee_id`, `day`),
 
     CONSTRAINT fk_bill_assignment_id FOREIGN KEY (`assignment_id`)
-        REFERENCES contract_assignments(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_bill_contract_id FOREIGN KEY (`contract_id`)
-        REFERENCES contracts(`id`) ON DELETE CASCADE,
+        REFERENCES assignments(`id`) ON DELETE CASCADE,
+    CONSTRAINT fk_bill_task_id FOREIGN KEY (`task_id`)
+        REFERENCES tasks(`id`) ON DELETE CASCADE,
     CONSTRAINT fk_bill_employee_id FOREIGN KEY (`employee_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
 
     INDEX idx_bills_assignment_id USING HASH (`assignment_id`),
-    INDEX idx_bills_contract_id USING HASH (`contract_id`),
+    INDEX idx_bills_task_id USING HASH (`task_id`),
     INDEX idx_bills_employee_id USING HASH (`employee_id`),
     INDEX idx_bills_day USING HASH (`day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

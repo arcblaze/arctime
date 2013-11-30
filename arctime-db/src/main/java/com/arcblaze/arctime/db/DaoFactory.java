@@ -2,11 +2,11 @@ package com.arcblaze.arctime.db;
 
 import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.db.dao.CompanyDao;
-import com.arcblaze.arctime.db.dao.ContractDao;
+import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.dao.HolidayDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcCompanyDao;
-import com.arcblaze.arctime.db.dao.jdbc.JdbcContractDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcEmployeeDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
 
@@ -19,7 +19,7 @@ public class DaoFactory {
 
 	private static CompanyDao cachedCompanyDao = null;
 	private static EmployeeDao cachedEmployeeDao = null;
-	private static ContractDao cachedContractDao = null;
+	private static TaskDao cachedTaskDao = null;
 	private static HolidayDao cachedHolidayDao = null;
 
 	/**
@@ -65,24 +65,24 @@ public class DaoFactory {
 	}
 
 	/**
-	 * @return an {@link ContractDao} based on the currently configured database
+	 * @return an {@link TaskDao} based on the currently configured database
 	 */
-	public static ContractDao getContractDao() {
+	public static TaskDao getTaskDao() {
 		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
 		if (type != cachedDatabaseType) {
 			clearCachedDaos();
 			cachedDatabaseType = type;
 		}
 
-		if (cachedContractDao == null) {
+		if (cachedTaskDao == null) {
 			if (DatabaseType.JDBC.equals(type))
-				cachedContractDao = new JdbcContractDao();
+				cachedTaskDao = new JdbcTaskDao();
 			else
 				throw new RuntimeException("Invalid database type: " + type);
 			cachedDatabaseType = type;
 		}
 
-		return cachedContractDao;
+		return cachedTaskDao;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class DaoFactory {
 	private static synchronized void clearCachedDaos() {
 		cachedCompanyDao = null;
 		cachedEmployeeDao = null;
-		cachedContractDao = null;
+		cachedTaskDao = null;
 		cachedHolidayDao = null;
 	}
 

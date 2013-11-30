@@ -39,6 +39,8 @@ public interface HolidayDao {
 	 * 
 	 * @return all available holidays, possibly empty but never {@code null}
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 * @throws HolidayConfigurationException
@@ -59,6 +61,8 @@ public interface HolidayDao {
 	 * @return all available holidays that fall within the provided
 	 *         {@link PayPeriod}, possibly empty but never {@code null}
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 * @throws HolidayConfigurationException
@@ -76,6 +80,8 @@ public interface HolidayDao {
 	 * @param holidays
 	 *            the new holidays to be added
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
@@ -89,6 +95,8 @@ public interface HolidayDao {
 	 * @param holidays
 	 *            the holidays to be updated
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
@@ -102,6 +110,8 @@ public interface HolidayDao {
 	 * @param holidayIds
 	 *            the unique ids of the holidays to be deleted
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */

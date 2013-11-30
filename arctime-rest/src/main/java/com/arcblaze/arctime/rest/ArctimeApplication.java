@@ -19,6 +19,24 @@ public class ArctimeApplication extends Application {
 	private final static Logger log = LoggerFactory
 			.getLogger(ArctimeApplication.class);
 
+	private final Set<Class<?>> classes;
+
+	/**
+	 * Default constructor.
+	 */
+	public ArctimeApplication() {
+		SortedSet<String> classNames = getClassNames();
+		this.classes = new HashSet<>(super.getClasses());
+		try {
+			for (String className : classNames) {
+				log.info("Found resource: {}", className);
+				this.classes.add(Class.forName(className));
+			}
+		} catch (ClassNotFoundException badClass) {
+			log.error("Failed to add jersey resource class", badClass);
+		}
+	}
+
 	protected SortedSet<String> getClassNames() {
 		PackageNamesScanner scanner = new PackageNamesScanner(
 				new String[] { ArctimeApplication.class.getPackage().getName() },
@@ -34,17 +52,6 @@ public class ArctimeApplication extends Application {
 
 	@Override
 	public Set<Class<?>> getClasses() {
-		SortedSet<String> classNames = getClassNames();
-
-		Set<Class<?>> classes = new HashSet<>(super.getClasses());
-		try {
-			for (String className : classNames) {
-				log.info("Found resource: {}", className);
-				classes.add(Class.forName(className));
-			}
-		} catch (ClassNotFoundException badClass) {
-			log.error("Failed to add jersey resource class", badClass);
-		}
-		return classes;
+		return this.classes;
 	}
 }

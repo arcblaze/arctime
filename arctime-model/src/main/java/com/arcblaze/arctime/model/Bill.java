@@ -13,7 +13,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Represents a bill of hours by an employee to a contract assignment.
+ * Represents a bill of hours by an employee to a task assignment.
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -24,17 +24,17 @@ public class Bill implements Comparable<Bill> {
 	private Integer id;
 
 	/**
-	 * The unique id of the contract assignment for which this bill applies.
+	 * The unique id of the task assignment for which this bill applies.
 	 */
 	private Integer assignmentId;
 
 	/**
-	 * The unique id of the contract to which the employee is billing hours.
+	 * The unique id of the task to which the employee is billing hours.
 	 */
-	private Integer contractId;
+	private Integer taskId;
 
 	/**
-	 * The unique id of the employee assigned to the contract.
+	 * The unique id of the employee assigned to the task.
 	 */
 	private Integer employeeId;
 
@@ -44,7 +44,7 @@ public class Bill implements Comparable<Bill> {
 	private Date day;
 
 	/**
-	 * The number of hours being applied to the contract assignment.
+	 * The number of hours being applied to the task assignment.
 	 */
 	private Float hours;
 
@@ -88,8 +88,7 @@ public class Bill implements Comparable<Bill> {
 	}
 
 	/**
-	 * @return the unique id of the contract assignment for which this bill
-	 *         applies
+	 * @return the unique id of the task assignment for which this bill applies
 	 */
 	@XmlElement
 	public Integer getAssignmentId() {
@@ -98,8 +97,8 @@ public class Bill implements Comparable<Bill> {
 
 	/**
 	 * @param assignmentId
-	 *            the new unique id of the contract assignment for which this
-	 *            bill applies
+	 *            the new unique id of the task assignment for which this bill
+	 *            applies
 	 * 
 	 * @return {@code this}
 	 * 
@@ -117,29 +116,29 @@ public class Bill implements Comparable<Bill> {
 	}
 
 	/**
-	 * @return the unique id of the contract for which this bill applies
+	 * @return the unique id of the task for which this bill applies
 	 */
 	@XmlElement
-	public Integer getContractId() {
-		return this.contractId;
+	public Integer getTaskId() {
+		return this.taskId;
 	}
 
 	/**
-	 * @param contractId
-	 *            the new unique id of the contract for which this bill applies
+	 * @param taskId
+	 *            the new unique id of the task for which this bill applies
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id value is invalid
 	 */
-	public Bill setContractId(Integer contractId) {
-		if (contractId == null)
-			throw new IllegalArgumentException("Invalid null contract id");
-		if (contractId < 0)
-			throw new IllegalArgumentException("Invalid negative contract id");
+	public Bill setTaskId(Integer taskId) {
+		if (taskId == null)
+			throw new IllegalArgumentException("Invalid null task id");
+		if (taskId < 0)
+			throw new IllegalArgumentException("Invalid negative task id");
 
-		this.contractId = contractId;
+		this.taskId = taskId;
 		return this;
 	}
 
@@ -196,7 +195,7 @@ public class Bill implements Comparable<Bill> {
 	}
 
 	/**
-	 * @return the hours being billed to the contract assignment
+	 * @return the hours being billed to the task assignment
 	 */
 	@XmlElement
 	public Float getHours() {
@@ -205,8 +204,8 @@ public class Bill implements Comparable<Bill> {
 
 	/**
 	 * @param hours
-	 *            the new value specifying the hours being billed to the
-	 *            contract assignment
+	 *            the new value specifying the hours being billed to the task
+	 *            assignment
 	 * 
 	 * @return {@code this}
 	 * 
@@ -255,7 +254,7 @@ public class Bill implements Comparable<Bill> {
 		ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("id", getId());
 		builder.append("assignmentId", getAssignmentId());
-		builder.append("contractId", getContractId());
+		builder.append("taskId", getTaskId());
 		builder.append("employeeId", getEmployeeId());
 		builder.append("day", getDay());
 		builder.append("hours", getHours());
@@ -273,7 +272,7 @@ public class Bill implements Comparable<Bill> {
 			EqualsBuilder builder = new EqualsBuilder();
 			builder.append(getId(), other.getId());
 			builder.append(getAssignmentId(), other.getAssignmentId());
-			builder.append(getContractId(), other.getContractId());
+			builder.append(getTaskId(), other.getTaskId());
 			builder.append(getEmployeeId(), other.getEmployeeId());
 			builder.append(getDay(), other.getDay());
 			builder.append(getHours(), other.getHours());
@@ -292,7 +291,7 @@ public class Bill implements Comparable<Bill> {
 		HashCodeBuilder builder = new HashCodeBuilder();
 		builder.append(getId());
 		builder.append(getAssignmentId());
-		builder.append(getContractId());
+		builder.append(getTaskId());
 		builder.append(getEmployeeId());
 		builder.append(getDay());
 		builder.append(getHours());
@@ -308,7 +307,7 @@ public class Bill implements Comparable<Bill> {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(other.getAssignmentId(), getAssignmentId());
 		builder.append(getEmployeeId(), other.getEmployeeId());
-		builder.append(getContractId(), other.getContractId());
+		builder.append(getTaskId(), other.getTaskId());
 		builder.append(getDay(), other.getDay());
 		builder.append(other.getTimestamp(), getTimestamp());
 		builder.append(getHours(), other.getHours());

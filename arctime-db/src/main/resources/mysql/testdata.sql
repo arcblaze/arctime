@@ -170,29 +170,29 @@ INSERT INTO `supervisors` (`company_id`, `employee_id`, `supervisor_id`, `primar
 (1, 9, 4, 1);
 
 
-INSERT INTO `contracts` (`id`, `company_id`, `description`, `contract_num`, `job_code`, `admin`, `active`) VALUES
-(1, 1, 'Paid Time Off', 'PTO', 'Milestone:PTO', 1, 1),
-(2, 1, 'Leave Without Pay', 'LWP', 'Milestone:LWOP', 1, 1),
-(3, 1, 'Holiday', 'HOL', 'Milestone:HOL', 1, 1),
-(4, 1, 'Overhead', 'OH', 'Milestone:OH', 1, 1),
-(5, 1, 'G&A', 'GA', 'Milestone:G&A', 1, 1),
-(6, 1, 'Bid and Proposal', 'BP', 'Milestone:BP', 1, 1),
-(7, 1, 'Jury Duty', 'JURY', 'Milestone:JURY', 1, 1),
-(9, 1, 'The SI - ESE&A', 'H98230-09-C-1180', 'The SI:ESE&A', 0, 1),
-(10, 1, 'ClearEdge - AAARP', '3013-002-11', 'ClearEdge IT:AAARP', 0, 1),
-(11, 1, 'Lockheed Martin - ONDEMAND', 'H98230-09-G-0001', 'Lockheed Martin:ONDEMAND', 0, 1),
-(12, 1, 'Bereavement', 'BER', 'Milestone:BER', 1, 1),
-(13, 1, 'Lockheed Martin - AMPERE', 'H98230-10-C-1360', 'Lockheed Martin:AMPERE', 0, 1),
-(14, 1, 'TUNABLE', '2000-10038', 'KEYW/Poole:TUNABLE', 0, 1),
-(16, 1, 'Raytheon - SCREAMINGEAGLE', 'Unknown', 'Raytheon:SCREAMINGEAGLE', 0, 1),
-(17, 1, 'Mantech - AMBIANCE', 'Unknown', 'Mantech:AMBIANCE', 0, 1),
-(18, 1, '4BU99006-DISA T&E MSS-ES IOP TE&C', 'SUB1224940-4BU99006', 'Alion:DISA T&E MSS - D05', 0, 1),
-(19, 1, '34044006-DISA T&E MSS-TCO/JTCW IOP', 'SUB1224940-34044006', 'Alion:DISA T&E MSS - D10', 0, 1),
-(20, 1, '35016029-DISA T&E MSS-GCCSJ OT', 'SUB1224940-35016029', 'Alion:DISA T&E MSS - D08', 0, 1),
-(21, 1, '32074007-DISA T&E MSS-RAIDRS MSS', 'SUB1224940-32074007', 'Alion:DISA T&E MSS - DO16', 0, 1);
+INSERT INTO `tasks` (`id`, `company_id`, `description`, `job_code`, `admin`, `active`) VALUES
+(1, 1, 'Paid Time Off', 'Milestone:PTO', 1, 1),
+(2, 1, 'Leave Without Pay', 'Milestone:LWOP', 1, 1),
+(3, 1, 'Holiday', 'Milestone:HOL', 1, 1),
+(4, 1, 'Overhead', 'Milestone:OH', 1, 1),
+(5, 1, 'G&A', 'Milestone:G&A', 1, 1),
+(6, 1, 'Bid and Proposal', 'Milestone:BP', 1, 1),
+(7, 1, 'Jury Duty', 'Milestone:JURY', 1, 1),
+(9, 1, 'The SI - ESE&A', 'The SI:ESE&A', 0, 1),
+(10, 1, 'ClearEdge - AAARP', 'ClearEdge IT:AAARP', 0, 1),
+(11, 1, 'Lockheed Martin - ONDEMAND', 'Lockheed Martin:ONDEMAND', 0, 1),
+(12, 1, 'Bereavement', 'Milestone:BER', 1, 1),
+(13, 1, 'Lockheed Martin - AMPERE', 'Lockheed Martin:AMPERE', 0, 1),
+(14, 1, 'TUNABLE', 'KEYW/Poole:TUNABLE', 0, 1),
+(15, 1, 'Raytheon - SCREAMINGEAGLE', 'Raytheon:SCREAMINGEAGLE', 0, 1),
+(16, 1, 'Mantech - AMBIANCE', 'Mantech:AMBIANCE', 0, 1),
+(17, 1, '4BU99006-DISA T&E MSS-ES IOP TE&C', 'Alion:DISA T&E MSS - D05', 0, 1),
+(18, 1, '34044006-DISA T&E MSS-TCO/JTCW IOP', 'Alion:DISA T&E MSS - D10', 0, 1),
+(19, 1, '35016029-DISA T&E MSS-GCCSJ OT', 'Alion:DISA T&E MSS - D08', 0, 1),
+(20, 1, '32074007-DISA T&E MSS-RAIDRS MSS', 'Alion:DISA T&E MSS - DO16', 0, 1);
 
 
-INSERT INTO `contract_assignments` (`id`, `contract_id`, `employee_id`, `labor_cat`, `item_name`, `begin`, `end`) VALUES
+INSERT INTO `assignments` (`id`, `task_id`, `employee_id`, `labor_cat`, `item_name`, `begin`, `end`) VALUES
 (1, 9, 4, 'Sr. SE Staff', 'Dave Krause:Dave - ESE&A 2011', '2010-12-01', '2011-11-30'),
 (2, 10, 1, 'SWE3', 'Mike Day:Mike - AAARP', '2011-01-01', '2011-12-31'),
 (3, 10, 5, 'SWE3', 'Carl Anderson:Carl - AAARP', '2011-03-28', '2012-07-13'),
@@ -238,7 +238,7 @@ INSERT INTO `contract_assignments` (`id`, `contract_id`, `employee_id`, `labor_c
 (50, 17, 28, 'TE3', 'John Springer:John - AMBIANCE', '2013-09-09', '2013-12-31'),
 (51, 20, 24, 'Intermediate-Systems Analyst', 'Valli Troester:Valli - DO8 2013', '2013-09-11', '2014-02-28'),
 (52, 13, 29, 'Senior Cloud Software Engineer', 'Tim Reardon:Tim - AMPERE', '2013-09-30', '2014-09-30'),
-(54, 21, 24, 'Intermediate-Systems Analyst', 'Valli Troester:Valli - DO?? 2013', '2013-09-18', '2014-09-05'),
+(54, 17, 24, 'Intermediate-Systems Analyst', 'Valli Troester:Valli - DO?? 2013', '2013-09-18', '2014-09-05'),
 (55, 20, 23, 'Intermediate-Systems Analyst', 'Frank Diaz:Frank - DO08 2013 SA', '2013-09-18', '2014-01-31'),
 (56, 20, 30, 'Principal-Intelligence Systems Analyst', 'Charlie Comolli:Charlie - DO08 2013', '2013-10-28', '2014-02-14'),
 (57, 16, 10, 'Senior Test Engineer', 'Rebecca Wiser: Rebecca - SCREAMINGEAGLE 2013', '2013-10-01', '2013-12-31');
@@ -330,7 +330,7 @@ INSERT INTO `pay_periods` (`company_id`, `begin`, `end`, `type`) VALUES
 (1, '2013-12-01', '2013-12-15', 'SEMI_MONTHLY');
 
 
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (1, NULL, 3, 2, '2010-09-06', 8, '2010-09-08 12:11:44'),
 (39, NULL, 9, 2, '2010-09-07', 11, '2010-09-09 12:26:43'),
 (3, NULL, 4, 3, '2010-07-19', 8, '2010-09-08 20:43:39'),
@@ -1220,7 +1220,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (897, 10, 9, 7, '2011-07-06', 8.5, '2011-07-07 23:39:00'),
 (898, 10, 9, 7, '2011-07-07', 9.5, '2011-07-07 23:39:00'),
 (899, NULL, 1, 4, '2011-07-07', 8, '2011-07-08 01:13:08');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (900, 11, 11, 4, '2011-07-08', 8, '2011-07-08 01:13:08'),
 (901, 5, 9, 6, '2011-07-08', 9, '2011-07-08 13:08:36'),
 (902, 3, 10, 5, '2011-07-08', 7, '2011-07-08 18:53:42'),
@@ -2100,7 +2100,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (1783, 26, 9, 8, '2011-12-06', 8, '2011-12-07 05:45:16'),
 (1784, 4, 9, 6, '2011-12-07', 8, '2011-12-07 13:08:19'),
 (1785, 3, 10, 5, '2011-12-07', 8.25, '2011-12-07 20:47:13');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (1786, NULL, 4, 3, '2011-12-07', 8, '2011-12-07 21:09:26'),
 (1787, 2, 10, 1, '2011-12-07', 2, '2011-12-07 21:28:49'),
 (1788, 12, 11, 1, '2011-12-07', 9, '2011-12-07 21:25:09'),
@@ -2973,7 +2973,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (2660, 4, 9, 6, '2012-03-23', 8, '2012-03-23 15:42:42'),
 (2661, 3, 10, 5, '2012-03-23', 5, '2012-03-23 16:14:54'),
 (2662, 26, 9, 8, '2012-03-23', 8.5, '2012-03-23 20:40:39');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (2663, 27, 9, 2, '2012-03-23', 5, '2012-03-23 23:39:06'),
 (2664, NULL, 5, 2, '2012-03-23', 3, '2012-03-23 23:39:06'),
 (2665, NULL, 4, 3, '2012-03-23', 8, '2012-03-25 01:58:24'),
@@ -3847,7 +3847,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (3534, NULL, 3, 2, '2012-07-04', 8, '2012-06-29 21:27:31'),
 (3535, 26, 9, 8, '2012-06-29', 8, '2012-06-29 22:03:34'),
 (3536, 4, 9, 6, '2012-07-02', 8, '2012-07-02 11:46:15');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (3537, NULL, 4, 3, '2012-07-02', 8, '2012-07-02 19:43:00'),
 (3538, 27, 9, 2, '2012-07-02', 11, '2012-07-02 20:16:11'),
 (3539, 3, 10, 5, '2012-07-02', 8.25, '2012-07-02 20:40:36'),
@@ -4715,7 +4715,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (4403, NULL, 1, 7, '2012-09-12', 8, '2012-09-14 01:38:47'),
 (4404, NULL, 1, 7, '2012-09-13', 8, '2012-09-14 01:38:47'),
 (4405, 28, 9, 7, '2012-09-14', 8, '2012-09-14 01:38:47');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (4406, 4, 9, 6, '2012-09-13', 0, '2012-09-14 12:38:59'),
 (4407, 4, 9, 6, '2012-09-14', 8, '2012-09-14 12:38:59'),
 (4408, NULL, 6, 6, '2012-09-13', 3, '2012-09-14 12:41:58'),
@@ -5583,7 +5583,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (5274, 27, 9, 2, '2012-11-19', 9, '2012-11-20 00:57:33'),
 (5275, NULL, 5, 2, '2012-11-19', 3, '2012-11-20 00:57:33'),
 (5276, 18, 14, 15, '2012-11-19', 8, '2012-11-20 02:02:43');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (5277, 14, 14, 10, '2012-11-19', 8.5, '2012-11-20 11:36:53'),
 (5278, 6, 9, 11, '2012-11-16', 7, '2012-11-20 14:14:39'),
 (5279, 6, 9, 11, '2012-11-19', 6.5, '2012-11-20 14:14:39'),
@@ -6447,7 +6447,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (6144, NULL, 3, 5, '2013-01-21', 8, '2013-01-21 17:52:50'),
 (6145, NULL, 5, 2, '2013-01-19', 4, '2013-01-21 20:26:43'),
 (6146, NULL, 5, 2, '2013-01-20', 2, '2013-01-21 20:26:43');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (6147, 25, 9, 2, '2013-01-21', 8, '2013-01-21 20:26:43'),
 (6148, NULL, 5, 2, '2013-01-21', 3, '2013-01-21 20:26:43'),
 (6149, 22, 9, 8, '2013-01-21', 0, '2013-01-21 21:36:15'),
@@ -7310,7 +7310,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (7011, NULL, 4, 23, '2013-03-19', 2, '2013-03-20 01:41:08'),
 (7012, 25, 9, 2, '2013-03-19', 11, '2013-03-20 01:52:19'),
 (7013, NULL, 5, 2, '2013-03-19', 3, '2013-03-20 01:52:19');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (7014, 20, 14, 16, '2013-03-19', 8, '2013-03-20 03:02:24'),
 (7015, 24, 9, 11, '2013-03-19', 7.5, '2013-03-20 13:28:36'),
 (7016, 21, 9, 6, '2013-03-19', 5, '2013-03-20 15:24:22'),
@@ -8163,7 +8163,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (7879, NULL, 4, 24, '2013-05-06', 4, '2013-05-06 20:50:34'),
 (7880, 15, 13, 5, '2013-05-06', 9, '2013-05-06 21:42:28'),
 (7881, 20, 14, 16, '2013-05-06', 5, '2013-05-06 21:59:19');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (7883, NULL, 4, 13, '2013-05-06', 2, '2013-05-06 22:58:20'),
 (7885, NULL, 5, 26, '2013-05-06', 4, '2013-05-06 23:04:32'),
 (7886, 18, 14, 15, '2013-05-06', 9, '2013-05-07 00:08:46'),
@@ -8968,7 +8968,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (8750, 33, 16, 12, '2013-06-13', 12, '2013-06-13 22:11:58'),
 (8751, 22, 9, 8, '2013-06-13', 9, '2013-06-14 00:08:19'),
 (8752, 22, 9, 8, '2013-06-14', 0, '2013-06-14 00:08:19');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (8753, 18, 14, 15, '2013-06-13', 8, '2013-06-14 01:55:19'),
 (8754, 7, 13, 1, '2013-06-14', 7, '2013-06-14 10:26:12'),
 (8755, NULL, 5, 1, '2013-06-14', 1, '2013-06-14 10:26:12'),
@@ -9776,7 +9776,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (9617, NULL, 4, 2, '2013-07-23', 8, '2013-07-23 18:39:40'),
 (9618, 47, 14, 27, '2013-07-23', 8.5, '2013-07-23 19:48:37'),
 (9619, NULL, 4, 3, '2013-07-23', 8, '2013-07-23 20:15:16');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (9621, NULL, 2, 10, '2013-07-16', 8, '2013-07-23 20:32:10'),
 (9622, NULL, 2, 10, '2013-07-17', 8, '2013-07-23 20:32:10'),
 (9623, NULL, 2, 10, '2013-07-18', 8, '2013-07-23 20:32:10'),
@@ -10573,7 +10573,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (10469, 7, 13, 1, '2013-08-29', 8, '2013-08-29 20:19:45'),
 (10470, NULL, 5, 1, '2013-08-30', 2, '2013-08-29 20:20:02'),
 (10471, NULL, 4, 3, '2013-08-29', 8, '2013-08-29 20:35:21');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (10472, 15, 13, 5, '2013-08-29', 9, '2013-08-29 20:52:10'),
 (10473, 25, 9, 2, '2013-08-29', 9, '2013-08-29 21:00:49'),
 (10474, NULL, 5, 2, '2013-08-29', 3, '2013-08-29 21:00:49'),
@@ -11367,7 +11367,7 @@ INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`,
 (11325, 44, 19, 24, '2013-10-04', 3, '2013-10-04 21:20:19'),
 (11326, 51, 20, 24, '2013-10-04', 1, '2013-10-04 21:20:19'),
 (11327, NULL, 4, 24, '2013-10-04', 4, '2013-10-04 21:20:19');
-INSERT INTO `bills` (`id`, `assignment_id`, `contract_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
+INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `employee_id`, `day`, `hours`, `timestamp`) VALUES
 (11328, 18, 14, 15, '2013-10-04', 7, '2013-10-04 21:57:50'),
 (11329, 22, 9, 8, '2013-10-04', 8, '2013-10-05 00:18:01'),
 (11330, 36, 14, 18, '2013-10-04', 7, '2013-10-05 23:13:30'),
