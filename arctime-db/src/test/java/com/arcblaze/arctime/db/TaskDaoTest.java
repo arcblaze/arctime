@@ -128,8 +128,6 @@ public class TaskDaoTest {
 		Set<Task> assignedTasks = dao.getForEmployee(company.getId(),
 				employee.getId(), null, true);
 		assertNotNull(assignedTasks);
-		for (Task t : assignedTasks)
-			System.out.println(t.toString());
 		assertEquals(2, assignedTasks.size());
 		assertTrue(assignedTasks.contains(task));
 		assertTrue(assignedTasks.contains(adminTask));
