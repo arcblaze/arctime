@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 CREATE TABLE IF NOT EXISTS assignments (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `company_id`     INTEGER      NOT NULL,
     `task_id`        INTEGER      NOT NULL,
     `employee_id`    INTEGER      NOT NULL,
     `labor_cat`      VARCHAR(120) NOT NULL,
@@ -96,6 +97,8 @@ CREATE TABLE IF NOT EXISTS assignments (
     `begin`          DATE,
     `end`            DATE,
 
+    CONSTRAINT fk_assignments_company_id FOREIGN KEY (`company_id`)
+        REFERENCES companies(`id`) ON DELETE CASCADE,
     CONSTRAINT fk_assignments_task_id FOREIGN KEY (`task_id`)
         REFERENCES tasks(`id`) ON DELETE CASCADE,
     CONSTRAINT fk_assignments_employee_id FOREIGN KEY (`employee_id`)

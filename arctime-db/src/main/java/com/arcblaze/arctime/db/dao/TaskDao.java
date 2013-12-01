@@ -50,7 +50,8 @@ public interface TaskDao {
 	 * @param payPeriod
 	 *            the pay period for which to retrieve tasks
 	 * 
-	 * @return all available tasks, possibly empty but never {@code null}
+	 * @return all available tasks for the employee during the provided pay
+	 *         period, possibly empty but never {@code null}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids or pay period are invalid
@@ -72,7 +73,8 @@ public interface TaskDao {
 	 * @param includeAdmin
 	 *            whether administrative tasks should be included
 	 * 
-	 * @return all available tasks, possibly empty but never {@code null}
+	 * @return all available tasks for the employee on the given day, possibly
+	 *         empty but never {@code null}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids or pay period are invalid

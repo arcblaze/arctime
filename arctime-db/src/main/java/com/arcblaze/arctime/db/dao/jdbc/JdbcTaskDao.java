@@ -107,10 +107,10 @@ public class JdbcTaskDao implements TaskDao {
 		if (employeeId == null)
 			throw new IllegalArgumentException("Invalid null employee id");
 
-		String sql = "SELECT c.id AS task_id, description, "
+		String sql = "SELECT c.company_id, c.id AS task_id, description, "
 				+ "job_code, admin, active, a.id AS assignment_id, "
 				+ "employee_id, labor_cat, item_name, begin, end "
-				+ "FROM tasks c JOIN assignments a ON "
+				+ "FROM tasks c LEFT JOIN assignments a ON "
 				+ "(a.task_id = c.id) WHERE c.company_id = ? AND "
 				+ "(a.employee_id = ? OR c.admin = true)";
 
@@ -152,8 +152,10 @@ public class JdbcTaskDao implements TaskDao {
 					assignment.setCompanyId(rs.getInt("company_id"));
 					assignment.setTaskId(taskId);
 					assignment.setEmployeeId(rs.getInt("employee_id"));
-					assignment.setLaborCat(rs.getString("labor_cat"));
-					assignment.setItemName(rs.getString("item_name"));
+					if (!task.isAdministrative()) {
+						assignment.setLaborCat(rs.getString("labor_cat"));
+						assignment.setItemName(rs.getString("item_name"));
+					}
 
 					Date begin = rs.getDate("begin");
 					Date end = rs.getDate("end");
@@ -184,10 +186,10 @@ public class JdbcTaskDao implements TaskDao {
 		if (payPeriod == null)
 			throw new IllegalArgumentException("Invalid null pay period");
 
-		String sql = "SELECT c.id AS task_id, description, "
+		String sql = "SELECT c.company_id, c.id AS task_id, description, "
 				+ "job_code, admin, active, a.id AS assignment_id, "
 				+ "employee_id, labor_cat, item_name, begin, end "
-				+ "FROM tasks c JOIN assignments a ON "
+				+ "FROM tasks c LEFT JOIN assignments a ON "
 				+ "(a.task_id = c.id) WHERE c.company_id = ? AND "
 				+ "(a.employee_id = ? OR c.admin = true) AND "
 				+ "(begin IS NULL OR begin <= ?) AND "
@@ -252,7 +254,7 @@ public class JdbcTaskDao implements TaskDao {
 			throw new IllegalArgumentException("Invalid null company id");
 
 		String sql = "INSERT INTO tasks (company_id, description, "
-				+ "job_code, admin, active) VALUES " + "(?, ?, ?, ?, ?)";
+				+ "job_code, admin, active) VALUES (?, ?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql,

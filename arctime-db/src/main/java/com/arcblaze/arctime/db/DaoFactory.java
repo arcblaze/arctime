@@ -1,14 +1,16 @@
 package com.arcblaze.arctime.db;
 
 import com.arcblaze.arctime.config.Property;
+import com.arcblaze.arctime.db.dao.AssignmentDao;
 import com.arcblaze.arctime.db.dao.CompanyDao;
-import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.dao.HolidayDao;
+import com.arcblaze.arctime.db.dao.TaskDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcAssignmentDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcCompanyDao;
-import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcEmployeeDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
 
 /**
  * Used to retrieve DAO instances to work with the configured back-end database.
@@ -20,6 +22,7 @@ public class DaoFactory {
 	private static CompanyDao cachedCompanyDao = null;
 	private static EmployeeDao cachedEmployeeDao = null;
 	private static TaskDao cachedTaskDao = null;
+	private static AssignmentDao cachedAssignmentDao = null;
 	private static HolidayDao cachedHolidayDao = null;
 
 	/**
@@ -86,6 +89,28 @@ public class DaoFactory {
 	}
 
 	/**
+	 * @return an {@link AssignmentDao} based on the currently configured
+	 *         database
+	 */
+	public static AssignmentDao getAssignmentDao() {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
+			clearCachedDaos();
+			cachedDatabaseType = type;
+		}
+
+		if (cachedAssignmentDao == null) {
+			if (DatabaseType.JDBC.equals(type))
+				cachedAssignmentDao = new JdbcAssignmentDao();
+			else
+				throw new RuntimeException("Invalid database type: " + type);
+			cachedDatabaseType = type;
+		}
+
+		return cachedAssignmentDao;
+	}
+
+	/**
 	 * @return an {@link HolidayDao} based on the currently configured database
 	 */
 	public static HolidayDao getHolidayDao() {
@@ -110,6 +135,7 @@ public class DaoFactory {
 		cachedCompanyDao = null;
 		cachedEmployeeDao = null;
 		cachedTaskDao = null;
+		cachedAssignmentDao = null;
 		cachedHolidayDao = null;
 	}
 
