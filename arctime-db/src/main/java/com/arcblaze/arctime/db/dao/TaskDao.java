@@ -44,11 +44,11 @@ public interface TaskDao {
 	/**
 	 * @param companyId
 	 *            the unique id of the company for which tasks will be retrieved
+	 * @param payPeriod
+	 *            the pay period for which to retrieve tasks
 	 * @param employeeId
 	 *            the unique id of the employee for which tasks will be
 	 *            retrieved
-	 * @param payPeriod
-	 *            the pay period for which to retrieve tasks
 	 * 
 	 * @return all available tasks for the employee during the provided pay
 	 *         period, possibly empty but never {@code null}
@@ -58,8 +58,8 @@ public interface TaskDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Set<Task> getForPayPeriod(Integer companyId, Integer employeeId,
-			PayPeriod payPeriod) throws DatabaseException;
+	public Set<Task> getForPayPeriod(Integer companyId, PayPeriod payPeriod,
+			Integer employeeId) throws DatabaseException;
 
 	/**
 	 * @param companyId

@@ -44,8 +44,10 @@ public class ArctimeApplication extends Application {
 		SortedSet<String> classNames = new TreeSet<>();
 		while (scanner.hasNext()) {
 			String file = scanner.next();
-			classNames.add(StringUtils.substringBeforeLast(file, ".").replace(
-					'/', '.'));
+			String className = StringUtils.substringBeforeLast(file, ".")
+					.replace('/', '.');
+			if (StringUtils.endsWith(className, "Resource"))
+				classNames.add(className);
 		}
 		return classNames;
 	}

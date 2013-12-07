@@ -24,6 +24,23 @@ import com.arcblaze.arctime.model.PayPeriod;
  * Manages assignments within the back-end database.
  */
 public class JdbcAssignmentDao implements AssignmentDao {
+	protected Assignment fromResultSet(ResultSet rs) throws SQLException {
+		Assignment assignment = new Assignment();
+		assignment.setId(rs.getInt("id"));
+		assignment.setCompanyId(rs.getInt("company_id"));
+		assignment.setTaskId(rs.getInt("task_id"));
+		assignment.setEmployeeId(rs.getInt("employee_id"));
+		assignment.setLaborCat(rs.getString("labor_cat"));
+		assignment.setItemName(rs.getString("item_name"));
+		Date begin = rs.getDate("begin");
+		if (begin != null)
+			assignment.setBegin(begin);
+		Date end = rs.getDate("end");
+		if (end != null)
+			assignment.setEnd(end);
+		return assignment;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -43,22 +60,8 @@ public class JdbcAssignmentDao implements AssignmentDao {
 			ps.setInt(2, assignmentId);
 
 			try (ResultSet rs = ps.executeQuery();) {
-				if (rs.next()) {
-					Assignment assignment = new Assignment();
-					assignment.setId(rs.getInt("id"));
-					assignment.setCompanyId(rs.getInt("company_id"));
-					assignment.setTaskId(rs.getInt("task_id"));
-					assignment.setEmployeeId(rs.getInt("employee_id"));
-					assignment.setLaborCat(rs.getString("labor_cat"));
-					assignment.setItemName(rs.getString("item_name"));
-					Date begin = rs.getDate("begin");
-					if (begin != null)
-						assignment.setBegin(begin);
-					Date end = rs.getDate("end");
-					if (end != null)
-						assignment.setEnd(end);
-					return assignment;
-				}
+				if (rs.next())
+					return fromResultSet(rs);
 			}
 
 			return null;
@@ -97,23 +100,8 @@ public class JdbcAssignmentDao implements AssignmentDao {
 			}
 
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					Assignment assignment = new Assignment();
-					assignment.setId(rs.getInt("id"));
-					assignment.setCompanyId(rs.getInt("company_id"));
-					assignment.setTaskId(rs.getInt("task_id"));
-					assignment.setEmployeeId(rs.getInt("employee_id"));
-					assignment.setLaborCat(rs.getString("labor_cat"));
-					assignment.setItemName(rs.getString("item_name"));
-
-					Date begin = rs.getDate("begin");
-					Date end = rs.getDate("end");
-					if (begin != null)
-						assignment.setBegin(begin);
-					if (end != null)
-						assignment.setEnd(end);
-					assignments.add(assignment);
-				}
+				while (rs.next())
+					assignments.add(fromResultSet(rs));
 			}
 
 			return assignments;
@@ -123,11 +111,13 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Used for timesheet enrichment.
 	 */
-	@Override
-	public Set<Assignment> getForPayPeriod(Integer companyId,
-			Integer employeeId, PayPeriod payPeriod) throws DatabaseException {
+	protected Set<Assignment> getForPayPeriod(Connection conn,
+			Integer companyId, Integer employeeId, PayPeriod payPeriod)
+			throws DatabaseException {
+		if (conn == null)
+			throw new IllegalArgumentException("Invalid null connection");
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 		if (employeeId == null)
@@ -140,31 +130,15 @@ public class JdbcAssignmentDao implements AssignmentDao {
 				+ "(end IS NULL OR end >= ?)";
 
 		Set<Assignment> assignments = new TreeSet<>();
-		try (Connection conn = ConnectionManager.getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
 			ps.setInt(2, employeeId);
 			ps.setTimestamp(3, new Timestamp(payPeriod.getEnd().getTime()));
 			ps.setTimestamp(4, new Timestamp(payPeriod.getBegin().getTime()));
 
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					Assignment assignment = new Assignment();
-					assignment.setId(rs.getInt("id"));
-					assignment.setCompanyId(rs.getInt("company_id"));
-					assignment.setTaskId(rs.getInt("task_id"));
-					assignment.setEmployeeId(rs.getInt("employee_id"));
-					assignment.setLaborCat(rs.getString("labor_cat"));
-					assignment.setItemName(rs.getString("item_name"));
-
-					Date begin = rs.getDate("begin");
-					Date end = rs.getDate("end");
-					if (begin != null)
-						assignment.setBegin(begin);
-					if (end != null)
-						assignment.setEnd(end);
-					assignments.add(assignment);
-				}
+				while (rs.next())
+					assignments.add(fromResultSet(rs));
 			}
 
 			return assignments;

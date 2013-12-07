@@ -20,6 +20,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class AuditLog implements Comparable<AuditLog> {
 	/**
+	 * The unique id of the company to which this audit log applies.
+	 */
+	private Integer companyId;
+
+	/**
 	 * The unique id of the timesheet to which this audit log applies.
 	 */
 	private Integer timesheetId;
@@ -39,6 +44,34 @@ public class AuditLog implements Comparable<AuditLog> {
 	 */
 	public AuditLog() {
 		// Nothing to do.
+	}
+
+	/**
+	 * @return the unique id of the company for which this audit log applies
+	 */
+	@XmlElement
+	public Integer getCompanyId() {
+		return this.companyId;
+	}
+
+	/**
+	 * @param companyId
+	 *            the new unique id of the company for which this audit log
+	 *            applies
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id value is invalid
+	 */
+	public AuditLog setCompanyId(Integer companyId) {
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+		if (companyId < 0)
+			throw new IllegalArgumentException("Invalid negative company id");
+
+		this.companyId = companyId;
+		return this;
 	}
 
 	/**
@@ -126,6 +159,7 @@ public class AuditLog implements Comparable<AuditLog> {
 	@Override
 	public String toString() {
 		ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append("companyId", getCompanyId());
 		builder.append("timesheetId", getTimesheetId());
 		builder.append("log", getLog());
 		builder.append("timestamp", getTimestamp());
@@ -140,6 +174,7 @@ public class AuditLog implements Comparable<AuditLog> {
 		if (obj instanceof AuditLog) {
 			AuditLog other = (AuditLog) obj;
 			EqualsBuilder builder = new EqualsBuilder();
+			builder.append(getCompanyId(), other.getCompanyId());
 			builder.append(getTimesheetId(), other.getTimesheetId());
 			builder.append(getLog(), other.getLog());
 			builder.append(getTimestamp(), other.getTimestamp());
@@ -155,6 +190,7 @@ public class AuditLog implements Comparable<AuditLog> {
 	@Override
 	public int hashCode() {
 		HashCodeBuilder builder = new HashCodeBuilder();
+		builder.append(getCompanyId());
 		builder.append(getTimesheetId());
 		builder.append(getLog());
 		builder.append(getTimestamp());
@@ -167,6 +203,7 @@ public class AuditLog implements Comparable<AuditLog> {
 	@Override
 	public int compareTo(AuditLog other) {
 		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(other.getCompanyId(), getCompanyId());
 		builder.append(other.getTimesheetId(), getTimesheetId());
 		builder.append(getTimestamp(), other.getTimestamp());
 		builder.append(getLog(), other.getLog());

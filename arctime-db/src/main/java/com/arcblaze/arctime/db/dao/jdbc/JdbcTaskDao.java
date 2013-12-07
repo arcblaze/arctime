@@ -7,10 +7,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,14 +19,24 @@ import org.apache.commons.lang.StringUtils;
 import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.TaskDao;
-import com.arcblaze.arctime.model.Assignment;
-import com.arcblaze.arctime.model.Task;
 import com.arcblaze.arctime.model.PayPeriod;
+import com.arcblaze.arctime.model.Task;
 
 /**
  * Manages tasks within the back-end database.
  */
 public class JdbcTaskDao implements TaskDao {
+	protected Task fromResultSet(ResultSet rs) throws SQLException {
+		Task task = new Task();
+		task.setId(rs.getInt("id"));
+		task.setCompanyId(rs.getInt("company_id"));
+		task.setDescription(rs.getString("description"));
+		task.setJobCode(rs.getString("job_code"));
+		task.setAdministrative(rs.getBoolean("admin"));
+		task.setActive(rs.getBoolean("active"));
+		return task;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -44,16 +55,8 @@ public class JdbcTaskDao implements TaskDao {
 			ps.setInt(2, taskId);
 
 			try (ResultSet rs = ps.executeQuery();) {
-				if (rs.next()) {
-					Task task = new Task();
-					task.setId(rs.getInt("id"));
-					task.setCompanyId(rs.getInt("company_id"));
-					task.setDescription(rs.getString("description"));
-					task.setJobCode(rs.getString("job_code"));
-					task.setAdministrative(rs.getBoolean("admin"));
-					task.setActive(rs.getBoolean("active"));
-					return task;
-				}
+				if (rs.next())
+					return fromResultSet(rs);
 			}
 
 			return null;
@@ -78,19 +81,99 @@ public class JdbcTaskDao implements TaskDao {
 			ps.setInt(1, companyId);
 
 			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					tasks.add(fromResultSet(rs));
+			}
+
+			return tasks;
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Task> getForPayPeriod(Integer companyId, PayPeriod payPeriod,
+			Integer employeeId) throws DatabaseException {
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+		if (employeeId == null)
+			throw new IllegalArgumentException("Invalid null employee id");
+		if (payPeriod == null)
+			throw new IllegalArgumentException("Invalid null pay period");
+
+		String sql = "SELECT t.company_id, t.id, description, job_code, admin, "
+				+ "active FROM tasks t LEFT JOIN assignments a ON "
+				+ "(a.task_id = t.id) WHERE t.company_id = ? AND "
+				+ "(a.employee_id = ? OR t.admin = true) AND "
+				+ "(begin IS NULL OR begin <= ?) AND "
+				+ "(end IS NULL OR end >= ?)";
+
+		Set<Task> tasks = new TreeSet<>();
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
+			ps.setInt(2, employeeId);
+			ps.setDate(3, new java.sql.Date(payPeriod.getEnd().getTime()));
+			ps.setDate(4, new java.sql.Date(payPeriod.getBegin().getTime()));
+
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					tasks.add(fromResultSet(rs));
+			}
+
+			return tasks;
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * Used to enrich timesheets with task information.
+	 */
+	protected Map<Integer, Set<Task>> getForPayPeriod(Connection conn,
+			Integer companyId, PayPeriod payPeriod, Set<Integer> employeeIds)
+			throws DatabaseException {
+		if (employeeIds == null || employeeIds.isEmpty())
+			return Collections.emptyMap();
+		if (conn == null)
+			throw new IllegalArgumentException("Invalid null connection");
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+		if (payPeriod == null)
+			throw new IllegalArgumentException("Invalid null pay period");
+
+		String sql = String.format("SELECT a.employee_id, t.company_id, t.id, "
+				+ "description, job_code, admin, active FROM tasks t "
+				+ "LEFT JOIN assignments a ON (a.task_id = t.id) "
+				+ "WHERE t.company_id = ? AND (a.employee_id IN (%s) OR "
+				+ "t.admin = true) AND (begin IS NULL OR begin <= ?) AND "
+				+ "(end IS NULL OR end >= ?)",
+				StringUtils.join(employeeIds, ","));
+
+		Map<Integer, Set<Task>> taskMap = new TreeMap<>();
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
+			ps.setDate(2, new java.sql.Date(payPeriod.getEnd().getTime()));
+			ps.setDate(3, new java.sql.Date(payPeriod.getBegin().getTime()));
+
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Task task = new Task();
-					task.setId(rs.getInt("id"));
-					task.setCompanyId(rs.getInt("company_id"));
-					task.setDescription(rs.getString("description"));
-					task.setJobCode(rs.getString("job_code"));
-					task.setAdministrative(rs.getBoolean("admin"));
-					task.setActive(rs.getBoolean("active"));
+					Task task = fromResultSet(rs);
+					int employeeId = rs.getInt("employee_id");
+
+					Set<Task> tasks = taskMap.get(employeeId);
+					if (tasks == null) {
+						tasks = new TreeSet<>();
+						taskMap.put(employeeId, tasks);
+					}
 					tasks.add(task);
 				}
 			}
 
-			return tasks;
+			return taskMap;
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
@@ -107,12 +190,10 @@ public class JdbcTaskDao implements TaskDao {
 		if (employeeId == null)
 			throw new IllegalArgumentException("Invalid null employee id");
 
-		String sql = "SELECT c.company_id, c.id AS task_id, description, "
-				+ "job_code, admin, active, a.id AS assignment_id, "
-				+ "employee_id, labor_cat, item_name, begin, end "
-				+ "FROM tasks c LEFT JOIN assignments a ON "
-				+ "(a.task_id = c.id) WHERE c.company_id = ? AND "
-				+ "(a.employee_id = ? OR c.admin = true)";
+		String sql = "SELECT t.company_id, t.id, description, job_code, admin, "
+				+ "active FROM tasks t LEFT JOIN assignments a ON "
+				+ "(a.task_id = t.id) WHERE t.company_id = ? AND "
+				+ "(a.employee_id = ? OR t.admin = true)";
 
 		if (day != null) {
 			sql += " AND (begin IS NULL OR begin <= ?)";
@@ -120,9 +201,9 @@ public class JdbcTaskDao implements TaskDao {
 		}
 
 		if (!includeAdmin)
-			sql += " AND c.admin = false";
+			sql += " AND t.admin = false";
 
-		Map<Integer, Task> tasks = new HashMap<>();
+		Set<Task> tasks = new TreeSet<>();
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
@@ -133,110 +214,11 @@ public class JdbcTaskDao implements TaskDao {
 			}
 
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					int taskId = rs.getInt("task_id");
-					Task task = tasks.get(taskId);
-					if (task == null) {
-						task = new Task();
-						task.setId(taskId);
-						task.setCompanyId(rs.getInt("company_id"));
-						task.setDescription(rs.getString("description"));
-						task.setJobCode(rs.getString("job_code"));
-						task.setAdministrative(rs.getBoolean("admin"));
-						task.setActive(rs.getBoolean("active"));
-						tasks.put(taskId, task);
-					}
-
-					Assignment assignment = new Assignment();
-					assignment.setId(rs.getInt("assignment_id"));
-					assignment.setCompanyId(rs.getInt("company_id"));
-					assignment.setTaskId(taskId);
-					assignment.setEmployeeId(rs.getInt("employee_id"));
-					if (!task.isAdministrative()) {
-						assignment.setLaborCat(rs.getString("labor_cat"));
-						assignment.setItemName(rs.getString("item_name"));
-					}
-
-					Date begin = rs.getDate("begin");
-					Date end = rs.getDate("end");
-					if (begin != null)
-						assignment.setBegin(begin);
-					if (end != null)
-						assignment.setEnd(end);
-					task.addAssignments(assignment);
-				}
+				while (rs.next())
+					tasks.add(fromResultSet(rs));
 			}
 
-			return new TreeSet<>(tasks.values());
-		} catch (SQLException sqlException) {
-			throw new DatabaseException(sqlException);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Set<Task> getForPayPeriod(Integer companyId, Integer employeeId,
-			PayPeriod payPeriod) throws DatabaseException {
-		if (companyId == null)
-			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
-		if (payPeriod == null)
-			throw new IllegalArgumentException("Invalid null pay period");
-
-		String sql = "SELECT c.company_id, c.id AS task_id, description, "
-				+ "job_code, admin, active, a.id AS assignment_id, "
-				+ "employee_id, labor_cat, item_name, begin, end "
-				+ "FROM tasks c LEFT JOIN assignments a ON "
-				+ "(a.task_id = c.id) WHERE c.company_id = ? AND "
-				+ "(a.employee_id = ? OR c.admin = true) AND "
-				+ "(begin IS NULL OR begin <= ?) AND "
-				+ "(end IS NULL OR end >= ?)";
-
-		Map<Integer, Task> tasks = new HashMap<>();
-		try (Connection conn = ConnectionManager.getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
-			ps.setTimestamp(3, new Timestamp(payPeriod.getEnd().getTime()));
-			ps.setTimestamp(4, new Timestamp(payPeriod.getBegin().getTime()));
-
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next()) {
-					int taskId = rs.getInt("task_id");
-					Task task = tasks.get(taskId);
-					if (task == null) {
-						task = new Task();
-						task.setId(taskId);
-						task.setCompanyId(rs.getInt("company_id"));
-						task.setDescription(rs.getString("description"));
-						task.setJobCode(rs.getString("job_code"));
-						task.setAdministrative(rs.getBoolean("admin"));
-						task.setActive(rs.getBoolean("active"));
-						tasks.put(taskId, task);
-					}
-
-					Assignment assignment = new Assignment();
-					assignment.setId(rs.getInt("assignment_id"));
-					assignment.setCompanyId(rs.getInt("company_id"));
-					assignment.setTaskId(taskId);
-					assignment.setEmployeeId(rs.getInt("employee_id"));
-					assignment.setLaborCat(rs.getString("labor_cat"));
-					assignment.setItemName(rs.getString("item_name"));
-
-					Date begin = rs.getDate("begin");
-					Date end = rs.getDate("end");
-					if (begin != null)
-						assignment.setBegin(begin);
-					if (end != null)
-						assignment.setEnd(end);
-					task.addAssignments(assignment);
-				}
-			}
-
-			return new TreeSet<>(tasks.values());
+			return tasks;
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}

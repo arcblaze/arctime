@@ -1,6 +1,11 @@
 package com.arcblaze.arctime.model;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -58,6 +63,11 @@ public class Assignment implements Comparable<Assignment> {
 	 * The last day in the assignment.
 	 */
 	private Date end;
+
+	/**
+	 * The bills applied to this assignment during a pay period.
+	 */
+	private Set<Bill> bills = new TreeSet<>();
 
 	/**
 	 * Default constructor.
@@ -274,6 +284,87 @@ public class Assignment implements Comparable<Assignment> {
 			throw new IllegalArgumentException("Invalid null end value");
 
 		this.end = end;
+		return this;
+	}
+
+	/**
+	 * @return all of the bills authorized for this account
+	 */
+	@XmlElement
+	public Set<Bill> getBills() {
+		return Collections.unmodifiableSet(this.bills);
+	}
+
+	/**
+	 * @return {@code this}
+	 */
+	public Assignment clearBills() {
+		this.bills.clear();
+		return this;
+	}
+
+	/**
+	 * @param newBills
+	 *            the new bill values to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided bills value is invalid
+	 */
+	public Assignment setBills(Bill... newBills) {
+		if (newBills == null)
+			throw new IllegalArgumentException("Invalid null bills");
+
+		return this.setBills(Arrays.asList(newBills));
+	}
+
+	/**
+	 * @param newBills
+	 *            the new bill values to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 */
+	public Assignment setBills(Collection<Bill> newBills) {
+		synchronized (this.bills) {
+			this.bills.clear();
+			if (newBills != null)
+				for (Bill bill : newBills)
+					if (bill != null)
+						this.bills.add(bill);
+		}
+		return this;
+	}
+
+	/**
+	 * @param newBills
+	 *            the new bill values to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided bills value is invalid
+	 */
+	public Assignment addBills(Bill... newBills) {
+		if (newBills == null)
+			throw new IllegalArgumentException("Invalid null bills");
+
+		return this.addBills(Arrays.asList(newBills));
+	}
+
+	/**
+	 * @param newBills
+	 *            the new bill values to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 */
+	public Assignment addBills(Collection<Bill> newBills) {
+		synchronized (this.bills) {
+			if (newBills != null)
+				for (Bill bill : newBills)
+					if (bill != null)
+						this.bills.add(bill);
+		}
 		return this;
 	}
 

@@ -9,7 +9,7 @@ public enum Enrichment {
 	/**
 	 * Used to enrich employee data with the employee's roles.
 	 */
-	ROLE,
+	ROLES,
 
 	/**
 	 * Used to enrich employee data with the employees being supervised.
@@ -20,6 +20,28 @@ public enum Enrichment {
 	 * Used to enrich employee data with the employee's supervisors.
 	 */
 	SUPERVISERS,
+
+	/**
+	 * Used to enrich timesheet data with the employee that owns each timesheet.
+	 */
+	EMPLOYEES,
+
+	/**
+	 * Used to enrich timesheet data with the pay period in which the timesheet
+	 * falls.
+	 */
+	PAY_PERIODS,
+
+	/**
+	 * Used to enrich timesheet data with audit log information.
+	 */
+	AUDIT_LOGS,
+
+	/**
+	 * Used to enrich timesheet data with the tasks for which the employee is
+	 * assigned during the pay period.
+	 */
+	TASKS,
 
 	;
 

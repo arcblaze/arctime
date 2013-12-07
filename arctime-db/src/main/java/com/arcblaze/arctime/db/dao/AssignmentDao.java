@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.model.Assignment;
-import com.arcblaze.arctime.model.PayPeriod;
 
 /**
  * Performs operations on assignments in the system.
@@ -28,27 +27,6 @@ public interface AssignmentDao {
 	 */
 	public Assignment get(Integer companyId, Integer assignmentId)
 			throws DatabaseException;
-
-	/**
-	 * @param companyId
-	 *            the unique id of the company for which assignments will be
-	 *            retrieved
-	 * @param employeeId
-	 *            the unique id of the employee for which assignments will be
-	 *            retrieved
-	 * @param payPeriod
-	 *            the pay period for which to retrieve assignments
-	 * 
-	 * @return all available assignments for the employee during the provided
-	 *         pay period, possibly empty but never {@code null}
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided ids or pay period are invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	public Set<Assignment> getForPayPeriod(Integer companyId,
-			Integer employeeId, PayPeriod payPeriod) throws DatabaseException;
 
 	/**
 	 * @param companyId

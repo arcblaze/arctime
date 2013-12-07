@@ -6,7 +6,6 @@ import java.util.Set;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
-import com.arcblaze.arctime.model.Role;
 
 /**
  * Performs operations on employees in the system.
@@ -110,49 +109,6 @@ public interface EmployeeDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public void delete(Integer companyId, Collection<Integer> employeeIds)
-			throws DatabaseException;
-
-	/**
-	 * @param employeeId
-	 *            the unique id of the employee for which roles will be
-	 *            identified
-	 * 
-	 * @return the identified roles for the provided employee, possibly empty
-	 *         but never {@code null}
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided id is invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	public Set<Role> getRoles(Integer employeeId) throws DatabaseException;
-
-	/**
-	 * @param employeeId
-	 *            the unique id of the employee for which roles will be added
-	 * @param roles
-	 *            the new roles to be given to the specified employee
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided id is invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	public void addRoles(Integer employeeId, Collection<Role> roles)
-			throws DatabaseException;
-
-	/**
-	 * @param employeeId
-	 *            the unique id of the employee for which roles will be removed
-	 * @param roles
-	 *            the roles to be removed from the specified employee
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided id is invalid
-	 * @throws DatabaseException
-	 *             if there is a problem communicating with the database
-	 */
-	public void deleteRoles(Integer employeeId, Collection<Role> roles)
 			throws DatabaseException;
 
 	/**

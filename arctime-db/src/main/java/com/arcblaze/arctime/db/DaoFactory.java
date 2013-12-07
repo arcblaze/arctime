@@ -2,14 +2,20 @@ package com.arcblaze.arctime.db;
 
 import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.db.dao.AssignmentDao;
+import com.arcblaze.arctime.db.dao.AuditLogDao;
+import com.arcblaze.arctime.db.dao.BillDao;
 import com.arcblaze.arctime.db.dao.CompanyDao;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.dao.HolidayDao;
+import com.arcblaze.arctime.db.dao.RoleDao;
 import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcAssignmentDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcAuditLogDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcBillDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcCompanyDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcEmployeeDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcRoleDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
 
 /**
@@ -21,9 +27,12 @@ public class DaoFactory {
 
 	private static CompanyDao cachedCompanyDao = null;
 	private static EmployeeDao cachedEmployeeDao = null;
+	private static RoleDao cachedRoleDao = null;
 	private static TaskDao cachedTaskDao = null;
 	private static AssignmentDao cachedAssignmentDao = null;
 	private static HolidayDao cachedHolidayDao = null;
+	private static BillDao cachedBillDao = null;
+	private static AuditLogDao cachedAuditLogDao = null;
 
 	/**
 	 * @return an {@link CompanyDao} based on the currently configured database
@@ -65,6 +74,27 @@ public class DaoFactory {
 		}
 
 		return cachedEmployeeDao;
+	}
+
+	/**
+	 * @return an {@link RoleDao} based on the currently configured database
+	 */
+	public static RoleDao getRoleDao() {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
+			clearCachedDaos();
+			cachedDatabaseType = type;
+		}
+
+		if (cachedRoleDao == null) {
+			if (DatabaseType.JDBC.equals(type))
+				cachedRoleDao = new JdbcRoleDao();
+			else
+				throw new RuntimeException("Invalid database type: " + type);
+			cachedDatabaseType = type;
+		}
+
+		return cachedRoleDao;
 	}
 
 	/**
@@ -131,12 +161,57 @@ public class DaoFactory {
 		return cachedHolidayDao;
 	}
 
+	/**
+	 * @return an {@link BillDao} based on the currently configured database
+	 */
+	public static BillDao getBillDao() {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
+			clearCachedDaos();
+			cachedDatabaseType = type;
+		}
+
+		if (cachedBillDao == null) {
+			if (DatabaseType.JDBC.equals(type))
+				cachedBillDao = new JdbcBillDao();
+			else
+				throw new RuntimeException("Invalid database type: " + type);
+			cachedDatabaseType = type;
+		}
+
+		return cachedBillDao;
+	}
+
+	/**
+	 * @return an {@link AuditLogDao} based on the currently configured database
+	 */
+	public static AuditLogDao getAuditLogDao() {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
+			clearCachedDaos();
+			cachedDatabaseType = type;
+		}
+
+		if (cachedAuditLogDao == null) {
+			if (DatabaseType.JDBC.equals(type))
+				cachedAuditLogDao = new JdbcAuditLogDao();
+			else
+				throw new RuntimeException("Invalid database type: " + type);
+			cachedDatabaseType = type;
+		}
+
+		return cachedAuditLogDao;
+	}
+
 	private static synchronized void clearCachedDaos() {
 		cachedCompanyDao = null;
 		cachedEmployeeDao = null;
+		cachedRoleDao = null;
 		cachedTaskDao = null;
 		cachedAssignmentDao = null;
 		cachedHolidayDao = null;
+		cachedBillDao = null;
+		cachedAuditLogDao = null;
 	}
 
 	/**

@@ -20,7 +20,6 @@ import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Assignment;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Employee;
-import com.arcblaze.arctime.model.PayPeriod;
 import com.arcblaze.arctime.model.PersonnelType;
 import com.arcblaze.arctime.model.Task;
 
@@ -116,32 +115,6 @@ public class AssignmentDaoTest {
 
 		assignments = dao.getForEmployee(company.getId(), employee.getId(),
 				DateUtils.addDays(new Date(), 15));
-		assertNotNull(assignments);
-		assertEquals(0, assignments.size());
-
-		PayPeriod earlier = new PayPeriod().setBegin(
-				DateUtils.addDays(new Date(), -30)).setEnd(
-				DateUtils.addDays(new Date(), -15));
-		PayPeriod perfect = new PayPeriod().setBegin(
-				DateUtils.addDays(new Date(), -10)).setEnd(
-				DateUtils.addDays(new Date(), 10));
-		PayPeriod later = new PayPeriod().setBegin(
-				DateUtils.addDays(new Date(), 15)).setEnd(
-				DateUtils.addDays(new Date(), 30));
-
-		assignments = dao.getForPayPeriod(company.getId(), employee.getId(),
-				perfect);
-		assertNotNull(assignments);
-		assertEquals(1, assignments.size());
-		assertTrue(assignments.contains(assignment));
-
-		assignments = dao.getForPayPeriod(company.getId(), employee.getId(),
-				earlier);
-		assertNotNull(assignments);
-		assertEquals(0, assignments.size());
-
-		assignments = dao.getForPayPeriod(company.getId(), employee.getId(),
-				later);
 		assertNotNull(assignments);
 		assertEquals(0, assignments.size());
 

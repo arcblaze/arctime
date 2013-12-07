@@ -13,6 +13,7 @@ import org.apache.catalina.realm.RealmBase;
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
+import com.arcblaze.arctime.db.dao.RoleDao;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Role;
 
@@ -72,9 +73,9 @@ public class SecurityRealm extends RealmBase {
 	protected Principal getPrincipal(String username) {
 		Employee employee = this.userMap.get(username);
 		if (employee != null) {
-			EmployeeDao dao = DaoFactory.getEmployeeDao();
+			RoleDao dao = DaoFactory.getRoleDao();
 			try {
-				Set<Role> roles = dao.getRoles(employee.getId());
+				Set<Role> roles = dao.get(employee.getId());
 				List<String> roleNames = new ArrayList<>(roles.size() + 1);
 				roleNames.add(Role.USER.name());
 				for (Role role : roles)

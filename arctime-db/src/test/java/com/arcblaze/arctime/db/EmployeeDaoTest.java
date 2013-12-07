@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arcblaze.arctime.db.dao.EmployeeDao;
+import com.arcblaze.arctime.db.dao.RoleDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Employee;
@@ -50,14 +51,15 @@ public class EmployeeDaoTest {
 	 */
 	@Test
 	public void dbIntegrationTests() throws DatabaseException {
-		Set<Enrichment> enrichments = new HashSet<>(Arrays.asList(
-				Enrichment.ROLE, Enrichment.SUPERVISERS, Enrichment.SUPERVISED));
+		Set<Enrichment> enrichments = new HashSet<>(
+				Arrays.asList(Enrichment.ROLES, Enrichment.SUPERVISERS,
+						Enrichment.SUPERVISED));
 
 		Company company = new Company().setName("Company").setActive(true);
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		EmployeeDao dao = DaoFactory.getEmployeeDao();
-		Set<Employee> employees = dao.getAll(company.getId(), null);
+		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
+		Set<Employee> employees = employeeDao.getAll(company.getId(), null);
 		assertNotNull(employees);
 		assertEquals(0, employees.size());
 
@@ -71,12 +73,13 @@ public class EmployeeDaoTest {
 		employee.setDivision("division");
 		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 
-		dao.add(company.getId(), Collections.singleton(employee));
+		employeeDao.add(company.getId(), Collections.singleton(employee));
 		assertNotNull(employee.getId());
 		assertEquals(company.getId(), employee.getCompanyId());
 
+		RoleDao roleDao = DaoFactory.getRoleDao();
 		employee.addRoles(Role.MANAGER, Role.PAYROLL);
-		dao.addRoles(employee.getId(), employee.getRoles());
+		roleDao.add(employee.getId(), employee.getRoles());
 
 		Employee supervisor = new Employee();
 		supervisor.setLogin("supervisor");
@@ -87,8 +90,8 @@ public class EmployeeDaoTest {
 		supervisor.setSuffix("suffix");
 		supervisor.setDivision("division");
 		supervisor.setPersonnelType(PersonnelType.EMPLOYEE);
-		dao.add(company.getId(), Collections.singleton(supervisor));
-		dao.addSupervisors(company.getId(), employee.getId(),
+		employeeDao.add(company.getId(), Collections.singleton(supervisor));
+		employeeDao.addSupervisors(company.getId(), employee.getId(),
 				Collections.singleton(supervisor.getId()), true);
 
 		try {
@@ -101,7 +104,7 @@ public class EmployeeDaoTest {
 			employee2.setSuffix("suffix");
 			employee2.setDivision("division");
 			employee2.setPersonnelType(PersonnelType.EMPLOYEE);
-			dao.add(company.getId(), Collections.singleton(employee2));
+			employeeDao.add(company.getId(), Collections.singleton(employee2));
 			throw new RuntimeException("No unique constraint was thrown");
 		} catch (DatabaseException uniqueConstraint) {
 			// Expected
@@ -117,19 +120,19 @@ public class EmployeeDaoTest {
 			employee2.setSuffix("suffix");
 			employee2.setDivision("division");
 			employee2.setPersonnelType(PersonnelType.EMPLOYEE);
-			dao.add(company.getId(), Collections.singleton(employee2));
+			employeeDao.add(company.getId(), Collections.singleton(employee2));
 			throw new RuntimeException("No unique constraint was thrown");
 		} catch (DatabaseException uniqueConstraint) {
 			// Expected
 		}
 
-		employees = dao.getAll(company.getId(), null);
+		employees = employeeDao.getAll(company.getId(), null);
 		assertNotNull(employees);
 		assertEquals(2, employees.size());
 		assertTrue(employees.contains(employee));
 		assertTrue(employees.contains(supervisor));
 
-		employees = dao.getAll(company.getId(), enrichments);
+		employees = employeeDao.getAll(company.getId(), enrichments);
 		assertNotNull(employees);
 		assertEquals(2, employees.size());
 		assertTrue(employees.contains(employee));
@@ -155,50 +158,54 @@ public class EmployeeDaoTest {
 		assertEquals(employee, getAllSupervisor.getSupervised().iterator()
 				.next());
 
-		Employee getEmployee = dao.get(company.getId(), employee.getId(), null);
+		Employee getEmployee = employeeDao.get(company.getId(),
+				employee.getId(), null);
 		assertEquals(employee, getEmployee);
 		assertEquals(0, getEmployee.getRoles().size());
 
-		getEmployee = dao.get(company.getId(), employee.getId(), enrichments);
+		getEmployee = employeeDao.get(company.getId(), employee.getId(),
+				enrichments);
 		assertEquals(employee, getEmployee);
 		assertEquals(2, getEmployee.getRoles().size());
 		assertTrue(getEmployee.isManager());
 		assertTrue(getEmployee.isPayroll());
 
-		Employee loginEmployee = dao.getLogin(company.getId(),
+		Employee loginEmployee = employeeDao.getLogin(company.getId(),
 				employee.getLogin());
 		assertEquals(employee, loginEmployee);
 		assertEquals(0, loginEmployee.getRoles().size());
 
-		loginEmployee = dao.getLogin(company.getId(), employee.getEmail());
+		loginEmployee = employeeDao.getLogin(company.getId(),
+				employee.getEmail());
 		assertEquals(employee, loginEmployee);
 		assertEquals(0, loginEmployee.getRoles().size());
 
-		loginEmployee = dao.getLogin(company.getId(), employee.getEmail()
-				.toUpperCase());
+		loginEmployee = employeeDao.getLogin(company.getId(), employee
+				.getEmail().toUpperCase());
 		assertEquals(employee, loginEmployee);
 		assertEquals(0, loginEmployee.getRoles().size());
 
 		employee.setEmail("New Email");
-		dao.update(company.getId(), Collections.singleton(employee));
-		getEmployee = dao.get(company.getId(), employee.getId(), null);
+		employeeDao.update(company.getId(), Collections.singleton(employee));
+		getEmployee = employeeDao.get(company.getId(), employee.getId(), null);
 		assertEquals(employee, getEmployee);
 		assertEquals(0, getEmployee.getRoles().size());
 
-		dao.deleteRoles(employee.getId(), employee.getRoles());
-		dao.deleteSupervisors(company.getId(), employee.getId(),
+		roleDao.delete(employee.getId(), employee.getRoles());
+		employeeDao.deleteSupervisors(company.getId(), employee.getId(),
 				Collections.singleton(supervisor.getId()));
-		getEmployee = dao.get(company.getId(), employee.getId(), enrichments);
+		getEmployee = employeeDao.get(company.getId(), employee.getId(),
+				enrichments);
 		assertEquals(employee, getEmployee);
 		assertEquals(0, getEmployee.getRoles().size());
 		assertEquals(0, getEmployee.getSupervisors().size());
 
-		dao.delete(company.getId(),
+		employeeDao.delete(company.getId(),
 				Arrays.asList(employee.getId(), supervisor.getId()));
-		getEmployee = dao.get(company.getId(), employee.getId(), null);
+		getEmployee = employeeDao.get(company.getId(), employee.getId(), null);
 		assertNull(getEmployee);
 
-		employees = dao.getAll(company.getId(), null);
+		employees = employeeDao.getAll(company.getId(), null);
 		assertNotNull(employees);
 		assertEquals(0, employees.size());
 	}

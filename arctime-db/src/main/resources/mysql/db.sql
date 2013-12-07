@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS roles (
     
     CONSTRAINT unique_role UNIQUE (`name`, `employee_id`),
 
-    CONSTRAINT fk_role_employee_id FOREIGN KEY (`employee_id`)
+    CONSTRAINT fk_roles_employee_id FOREIGN KEY (`employee_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
 
     INDEX idx_roles_name USING HASH (`name`),
@@ -134,11 +134,11 @@ CREATE TABLE IF NOT EXISTS bills (
 
     CONSTRAINT unique_bill UNIQUE (`assignment_id`, `task_id`, `employee_id`, `day`),
 
-    CONSTRAINT fk_bill_assignment_id FOREIGN KEY (`assignment_id`)
+    CONSTRAINT fk_bills_assignment_id FOREIGN KEY (`assignment_id`)
         REFERENCES assignments(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_bill_task_id FOREIGN KEY (`task_id`)
+    CONSTRAINT fk_bills_task_id FOREIGN KEY (`task_id`)
         REFERENCES tasks(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_bill_employee_id FOREIGN KEY (`employee_id`)
+    CONSTRAINT fk_bills_employee_id FOREIGN KEY (`employee_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
 
     INDEX idx_bills_assignment_id USING HASH (`assignment_id`),
@@ -149,6 +149,7 @@ CREATE TABLE IF NOT EXISTS bills (
 
 CREATE TABLE IF NOT EXISTS timesheets (
     `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `company_id`     INTEGER      NOT NULL,
     `employee_id`    INTEGER      NOT NULL,
     `pp_begin`       DATE         NOT NULL,
     `completed`      BOOLEAN      NOT NULL DEFAULT FALSE,
@@ -161,17 +162,20 @@ CREATE TABLE IF NOT EXISTS timesheets (
 
     CONSTRAINT unique_timesheet UNIQUE (`employee_id`, `pp_begin`),
 
-    CONSTRAINT fk_timesheet_employee_id FOREIGN KEY (`employee_id`)
+    CONSTRAINT fk_timesheets_company_id FOREIGN KEY (`company_id`)
+        REFERENCES companies(`id`) ON DELETE CASCADE,
+    CONSTRAINT fk_timesheets_employee_id FOREIGN KEY (`employee_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_timesheet_pp_begin FOREIGN KEY (`pp_begin`)
+    CONSTRAINT fk_timesheets_pp_begin FOREIGN KEY (`pp_begin`)
         REFERENCES pay_periods(`begin`) ON DELETE CASCADE,
-    CONSTRAINT fk_timesheet_approver_id FOREIGN KEY (`approver_id`)
+    CONSTRAINT fk_timesheets_approver_id FOREIGN KEY (`approver_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_timesheet_verifier_id FOREIGN KEY (`verifier_id`)
+    CONSTRAINT fk_timesheets_verifier_id FOREIGN KEY (`verifier_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
-    CONSTRAINT fk_timesheet_exporter_id FOREIGN KEY (`exporter_id`)
+    CONSTRAINT fk_timesheets_exporter_id FOREIGN KEY (`exporter_id`)
         REFERENCES employees(`id`) ON DELETE CASCADE,
 
+    INDEX idx_timesheets_company_id USING HASH (`company_id`),
     INDEX idx_timesheets_employee_id USING HASH (`employee_id`),
     INDEX idx_timesheets_approver_id USING HASH (`approver_id`),
     INDEX idx_timesheets_verifier_id USING HASH (`verifier_id`),
@@ -180,11 +184,14 @@ CREATE TABLE IF NOT EXISTS timesheets (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS audit_logs (
+    `company_id`     INTEGER      NOT NULL,
     `timesheet_id`   INTEGER      NOT NULL,
     `log`            LONGTEXT     NOT NULL,
     `timestamp`      TIMESTAMP    NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT fk_audit_log_timesheet_id FOREIGN KEY (`timesheet_id`)
+    CONSTRAINT fk_audit_logs_company_id FOREIGN KEY (`company_id`)
+        REFERENCES companies(`id`) ON DELETE CASCADE,
+    CONSTRAINT fk_audit_logs_timesheet_id FOREIGN KEY (`timesheet_id`)
         REFERENCES timesheets(`id`) ON DELETE CASCADE,
 
     INDEX idx_audit_logs_timesheet_id USING HASH (`timesheet_id`)
