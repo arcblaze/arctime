@@ -18,6 +18,8 @@ import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.authenticator.FormAuthenticator;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
@@ -35,6 +37,13 @@ import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.model.Role;
 import com.arcblaze.arctime.rest.ArctimeApplication;
 import com.arcblaze.arctime.security.SecurityRealm;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.servlet.InstrumentedFilter;
+import com.codahale.metrics.servlets.HealthCheckServlet;
+import com.codahale.metrics.servlets.MetricsServlet;
+import com.codahale.metrics.servlets.PingServlet;
+import com.codahale.metrics.servlets.ThreadDumpServlet;
 
 /**
  * Responsible for launching this system.
@@ -42,6 +51,12 @@ import com.arcblaze.arctime.security.SecurityRealm;
 public class Server {
 	/** This will be used to log messages. */
 	private final static Logger log = LoggerFactory.getLogger(Server.class);
+
+	/** Used to manage application metrics. */
+	private final MetricRegistry metricRegistry = new MetricRegistry();
+
+	/** Used to manage application health and status. */
+	private final HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
 
 	/**
 	 * Default constructor starts the embedded Tomcat server.
@@ -78,9 +93,36 @@ public class Server {
 		context.addChild(jspServlet);
 		context.addServletMapping("*.jsp", jspServlet.getName());
 
+		Wrapper metricsServlet = getMetricsServletWrapper(context);
+		context.addChild(metricsServlet);
+		context.addServletMapping("/rest/admin/metrics",
+				metricsServlet.getName());
+
+		Wrapper healthServlet = getHealthServletWrapper(context);
+		context.addChild(healthServlet);
+		context.addServletMapping("/rest/admin/health", healthServlet.getName());
+
+		Wrapper threadDumpServlet = getThreadDumpServletWrapper(context);
+		context.addChild(threadDumpServlet);
+		context.addServletMapping("/rest/admin/threads",
+				threadDumpServlet.getName());
+
+		Wrapper pingServlet = getPingServletWrapper(context);
+		context.addChild(pingServlet);
+		context.addServletMapping("/ping", pingServlet.getName());
+
 		Wrapper jerseyServlet = getJerseyServletWrapper(context);
 		context.addChild(jerseyServlet);
 		context.addServletMapping("/rest/*", jerseyServlet.getName());
+
+		FilterDef metricsFilter = new FilterDef();
+		metricsFilter.setFilterName("metricsFilter");
+		metricsFilter.setFilterClass(InstrumentedFilter.class.getName());
+		context.addFilterDef(metricsFilter);
+		FilterMap metricsFilterMap = new FilterMap();
+		metricsFilterMap.setFilterName(metricsFilter.getFilterName());
+		metricsFilterMap.addURLPattern("/*");
+		context.addFilterMap(metricsFilterMap);
 
 		for (Role role : Role.values())
 			context.addSecurityRole(role.name());
@@ -94,6 +136,14 @@ public class Server {
 		loginConfig.setErrorPage("/error.jsp");
 		context.setLoginConfig(loginConfig);
 		context.getPipeline().addValve(new FormAuthenticator());
+
+		context.getServletContext().setAttribute(
+				InstrumentedFilter.REGISTRY_ATTRIBUTE, this.metricRegistry);
+		context.getServletContext().setAttribute(
+				MetricsServlet.METRICS_REGISTRY, this.metricRegistry);
+		context.getServletContext().setAttribute(
+				HealthCheckServlet.HEALTH_CHECK_REGISTRY,
+				this.healthCheckRegistry);
 
 		try {
 			tomcat.start();
@@ -175,7 +225,7 @@ public class Server {
 	 * @param context
 	 *            the context to use when creating the servlet wrapper
 	 * 
-	 * @return the default servlet wrapper to be included in the app
+	 * @return the JSP servlet wrapper to be included in the app
 	 */
 	protected Wrapper getJspServletWrapper(Context context) {
 		Wrapper defaultServlet = context.createWrapper();
@@ -193,7 +243,7 @@ public class Server {
 	 * @param context
 	 *            the context to use when creating the servlet wrapper
 	 * 
-	 * @return the default servlet wrapper to be included in the app
+	 * @return the jersey servlet wrapper to be included in the app
 	 */
 	protected Wrapper getJerseyServletWrapper(Context context) {
 		Wrapper jerseyServlet = context.createWrapper();
@@ -204,6 +254,62 @@ public class Server {
 				ArctimeApplication.class.getName());
 		jerseyServlet.setLoadOnStartup(1);
 		return jerseyServlet;
+	}
+
+	/**
+	 * @param context
+	 *            the context to use when creating the servlet wrapper
+	 * 
+	 * @return the metrics servlet wrapper to be included in the app
+	 */
+	protected Wrapper getMetricsServletWrapper(Context context) {
+		Wrapper metricsServlet = context.createWrapper();
+		metricsServlet.setName("metrics");
+		metricsServlet.setServletClass(MetricsServlet.class.getName());
+		metricsServlet.setLoadOnStartup(2);
+		return metricsServlet;
+	}
+
+	/**
+	 * @param context
+	 *            the context to use when creating the servlet wrapper
+	 * 
+	 * @return the health check servlet wrapper to be included in the app
+	 */
+	protected Wrapper getHealthServletWrapper(Context context) {
+		Wrapper metricsServlet = context.createWrapper();
+		metricsServlet.setName("health");
+		metricsServlet.setServletClass(HealthCheckServlet.class.getName());
+		metricsServlet.setLoadOnStartup(2);
+		return metricsServlet;
+	}
+
+	/**
+	 * @param context
+	 *            the context to use when creating the servlet wrapper
+	 * 
+	 * @return the ping servlet wrapper to be included in the app
+	 */
+	protected Wrapper getPingServletWrapper(Context context) {
+		Wrapper metricsServlet = context.createWrapper();
+		metricsServlet.setName("ping");
+		metricsServlet.setServletClass(PingServlet.class.getName());
+		metricsServlet.setLoadOnStartup(2);
+		return metricsServlet;
+	}
+
+	/**
+	 * @param context
+	 *            the context to use when creating the servlet wrapper
+	 * 
+	 * @return the thread dump servlet wrapper to be included in the app
+	 */
+	protected Wrapper getThreadDumpServletWrapper(Context context) {
+		Wrapper metricsServlet = context.createWrapper();
+		metricsServlet.setName("threads");
+		metricsServlet.setServletClass(ThreadDumpServlet.class.getName());
+		metricsServlet.setLoadOnStartup(2);
+		return metricsServlet;
 	}
 
 	/**

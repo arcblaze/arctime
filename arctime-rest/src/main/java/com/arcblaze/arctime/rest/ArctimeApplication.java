@@ -46,7 +46,8 @@ public class ArctimeApplication extends Application {
 			String file = scanner.next();
 			String className = StringUtils.substringBeforeLast(file, ".")
 					.replace('/', '.');
-			if (StringUtils.endsWith(className, "Resource"))
+			if (StringUtils.endsWith(className, "Resource")
+					&& !StringUtils.endsWith(className, ".BaseResource"))
 				classNames.add(className);
 		}
 		return classNames;

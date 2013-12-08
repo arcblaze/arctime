@@ -2,6 +2,7 @@ package com.arcblaze.arctime.rest.manager;
 
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -15,12 +16,17 @@ import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Task;
+import com.arcblaze.arctime.rest.BaseResource;
+import com.codahale.metrics.Timer;
 
 /**
  * The REST end-point for managing tasks.
  */
 @Path("/manager/task")
-public class TaskResource {
+public class TaskResource extends BaseResource {
+	@Context
+	private ServletContext servletContext;
+
 	/**
 	 * @param security
 	 *            the security information associated with the request
@@ -37,9 +43,12 @@ public class TaskResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Task one(@Context SecurityContext security,
 			@PathParam("taskId") Integer taskId) throws DatabaseException {
-		Employee currentUser = (Employee) security.getUserPrincipal();
-		TaskDao dao = DaoFactory.getTaskDao();
-		return dao.get(currentUser.getCompanyId(), taskId);
+		try (Timer.Context timer = getTimer(this.servletContext,
+				"/manager/task/{taskId}")) {
+			Employee currentUser = (Employee) security.getUserPrincipal();
+			TaskDao dao = DaoFactory.getTaskDao();
+			return dao.get(currentUser.getCompanyId(), taskId);
+		}
 	}
 
 	/**
@@ -56,8 +65,11 @@ public class TaskResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Set<Task> all(@Context SecurityContext security)
 			throws DatabaseException {
-		Employee currentUser = (Employee) security.getUserPrincipal();
-		TaskDao dao = DaoFactory.getTaskDao();
-		return dao.getAll(currentUser.getCompanyId());
+		try (Timer.Context timer = getTimer(this.servletContext,
+				"/manager/task")) {
+			Employee currentUser = (Employee) security.getUserPrincipal();
+			TaskDao dao = DaoFactory.getTaskDao();
+			return dao.getAll(currentUser.getCompanyId());
+		}
 	}
 }

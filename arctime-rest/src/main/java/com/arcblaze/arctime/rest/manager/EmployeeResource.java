@@ -2,6 +2,7 @@ package com.arcblaze.arctime.rest.manager;
 
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -16,12 +17,17 @@ import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
+import com.arcblaze.arctime.rest.BaseResource;
+import com.codahale.metrics.Timer;
 
 /**
  * The REST end-point for managing employees.
  */
 @Path("/manager/employee")
-public class EmployeeResource {
+public class EmployeeResource extends BaseResource {
+	@Context
+	private ServletContext servletContext;
+
 	/**
 	 * @param security
 	 *            the security information associated with the request
@@ -44,9 +50,12 @@ public class EmployeeResource {
 			@PathParam("employeeId") Integer employeeId,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
-		Employee currentUser = (Employee) security.getUserPrincipal();
-		EmployeeDao dao = DaoFactory.getEmployeeDao();
-		return dao.get(currentUser.getCompanyId(), employeeId, enrichments);
+		try (Timer.Context timer = getTimer(this.servletContext,
+				"/manager/employee/{employeeId}")) {
+			Employee currentUser = (Employee) security.getUserPrincipal();
+			EmployeeDao dao = DaoFactory.getEmployeeDao();
+			return dao.get(currentUser.getCompanyId(), employeeId, enrichments);
+		}
 	}
 
 	/**
@@ -67,8 +76,11 @@ public class EmployeeResource {
 	public Set<Employee> all(@Context SecurityContext security,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
-		Employee currentUser = (Employee) security.getUserPrincipal();
-		EmployeeDao dao = DaoFactory.getEmployeeDao();
-		return dao.getAll(currentUser.getCompanyId(), enrichments);
+		try (Timer.Context timer = getTimer(this.servletContext,
+				"/manager/employee")) {
+			Employee currentUser = (Employee) security.getUserPrincipal();
+			EmployeeDao dao = DaoFactory.getEmployeeDao();
+			return dao.getAll(currentUser.getCompanyId(), enrichments);
+		}
 	}
 }

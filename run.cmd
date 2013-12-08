@@ -9,6 +9,7 @@ rem This is the class that will be launched.
 set CLASS=com.arcblaze.arctime.Server
 
 rem Set Java configuration options.
+set JAVA_OPTS=
 set JAVA_OPTS=%JAVA_OPTS% -ea
 set JAVA_OPTS=%JAVA_OPTS% -Xmx256m
 set JAVA_OPTS=%JAVA_OPTS% -Darctime.configurationFile=conf/arctime-config.properties

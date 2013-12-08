@@ -2,6 +2,7 @@ package com.arcblaze.arctime.rest.manager;
 
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -16,12 +17,17 @@ import com.arcblaze.arctime.db.dao.HolidayDao;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Holiday;
 import com.arcblaze.arctime.model.util.HolidayConfigurationException;
+import com.arcblaze.arctime.rest.BaseResource;
+import com.codahale.metrics.Timer;
 
 /**
  * The REST end-point for managing company holidays.
  */
 @Path("/manager/holiday")
-public class HolidayResource {
+public class HolidayResource extends BaseResource {
+	@Context
+	private ServletContext servletContext;
+
 	/**
 	 * @param security
 	 *            the security information associated with the request
@@ -43,9 +49,12 @@ public class HolidayResource {
 	public Holiday one(@Context SecurityContext security,
 			@PathParam("holidayId") Integer holidayId)
 			throws DatabaseException, HolidayConfigurationException {
-		Employee currentUser = (Employee) security.getUserPrincipal();
-		HolidayDao dao = DaoFactory.getHolidayDao();
-		return dao.get(currentUser.getCompanyId(), holidayId);
+		try (Timer.Context timer = getTimer(this.servletContext,
+				"/manager/holiday/{holidayId}")) {
+			Employee currentUser = (Employee) security.getUserPrincipal();
+			HolidayDao dao = DaoFactory.getHolidayDao();
+			return dao.get(currentUser.getCompanyId(), holidayId);
+		}
 	}
 
 	/**
@@ -64,8 +73,11 @@ public class HolidayResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Set<Holiday> all(@Context SecurityContext security)
 			throws DatabaseException, HolidayConfigurationException {
-		Employee currentUser = (Employee) security.getUserPrincipal();
-		HolidayDao dao = DaoFactory.getHolidayDao();
-		return dao.getAll(currentUser.getCompanyId());
+		try (Timer.Context timer = getTimer(this.servletContext,
+				"/manager/holiday")) {
+			Employee currentUser = (Employee) security.getUserPrincipal();
+			HolidayDao dao = DaoFactory.getHolidayDao();
+			return dao.getAll(currentUser.getCompanyId());
+		}
 	}
 }
