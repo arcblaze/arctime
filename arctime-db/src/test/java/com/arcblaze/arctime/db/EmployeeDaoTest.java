@@ -170,18 +170,15 @@ public class EmployeeDaoTest {
 		assertTrue(getEmployee.isManager());
 		assertTrue(getEmployee.isPayroll());
 
-		Employee loginEmployee = employeeDao.getLogin(company.getId(),
-				employee.getLogin());
+		Employee loginEmployee = employeeDao.getLogin(employee.getLogin());
 		assertEquals(employee, loginEmployee);
 		assertEquals(0, loginEmployee.getRoles().size());
 
-		loginEmployee = employeeDao.getLogin(company.getId(),
-				employee.getEmail());
+		loginEmployee = employeeDao.getLogin(employee.getEmail());
 		assertEquals(employee, loginEmployee);
 		assertEquals(0, loginEmployee.getRoles().size());
 
-		loginEmployee = employeeDao.getLogin(company.getId(), employee
-				.getEmail().toUpperCase());
+		loginEmployee = employeeDao.getLogin(employee.getEmail().toUpperCase());
 		assertEquals(employee, loginEmployee);
 		assertEquals(0, loginEmployee.getRoles().size());
 

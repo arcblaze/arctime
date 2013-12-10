@@ -12,9 +12,6 @@ import com.arcblaze.arctime.model.Enrichment;
  */
 public interface EmployeeDao {
 	/**
-	 * @param companyId
-	 *            the unique id of the company for which the employee will be
-	 *            retrieved
 	 * @param login
 	 *            the login value provided by the user
 	 * 
@@ -25,8 +22,7 @@ public interface EmployeeDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Employee getLogin(Integer companyId, String login)
-			throws DatabaseException;
+	public Employee getLogin(String login) throws DatabaseException;
 
 	/**
 	 * @param companyId

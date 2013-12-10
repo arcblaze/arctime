@@ -52,21 +52,17 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Employee getLogin(Integer companyId, String login)
-			throws DatabaseException {
-		if (companyId == null)
-			throw new IllegalArgumentException("Invalid null company id");
+	public Employee getLogin(String login) throws DatabaseException {
 		if (StringUtils.isBlank(login))
 			throw new IllegalArgumentException("Invalid blank login");
 
-		String sql = "SELECT * FROM employees WHERE company_id = ? AND "
-				+ "(login = ? OR LOWER(email) = LOWER(?)) AND active = true";
+		String sql = "SELECT * FROM employees WHERE active = true AND "
+				+ "(login = ? OR LOWER(email) = LOWER(?))";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, companyId);
+			ps.setString(1, login);
 			ps.setString(2, login);
-			ps.setString(3, login);
 
 			try (ResultSet rs = ps.executeQuery();) {
 				if (rs.next())

@@ -54,7 +54,7 @@ public class SecurityRealm extends RealmBase {
 	protected String getPassword(String username) {
 		EmployeeDao dao = DaoFactory.getEmployeeDao();
 		try {
-			Employee employee = dao.getLogin(1, username);
+			Employee employee = dao.getLogin(username);
 			if (employee == null)
 				return null;
 
