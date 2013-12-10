@@ -1,0 +1,12 @@
+
+<div id="header-container">
+  <div id="header">
+    Header Content
+	<%= request.getRemoteUser() %>
+	<% if (request.getRemoteUser() != null) { %>
+		<a href="/logout.jsp">Logout</a>
+	<% } %>
+  </div>
+</div>
+
+<div id="container">

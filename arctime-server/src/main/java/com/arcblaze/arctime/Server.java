@@ -132,8 +132,8 @@ public class Server {
 		LoginConfig loginConfig = new LoginConfig();
 		loginConfig.setAuthMethod("FORM");
 		loginConfig.setRealmName("arctime");
-		loginConfig.setLoginPage("/login.jsp");
-		loginConfig.setErrorPage("/error.jsp");
+		loginConfig.setLoginPage("/WEB-INF/login.jsp");
+		loginConfig.setErrorPage("/WEB-INF/error.jsp");
 		context.setLoginConfig(loginConfig);
 		context.getPipeline().addValve(new FormAuthenticator());
 
@@ -144,6 +144,9 @@ public class Server {
 		context.getServletContext().setAttribute(
 				HealthCheckServlet.HEALTH_CHECK_REGISTRY,
 				this.healthCheckRegistry);
+
+		context.addMimeMapping("css", "text/css");
+		context.addMimeMapping("js", "application/javascript");
 
 		try {
 			tomcat.start();
@@ -199,8 +202,9 @@ public class Server {
 		connector.setAttribute("compressionMinSize", "2048");
 		connector.setAttribute("noCompressionUserAgents", "gozilla, traviata");
 		connector.setAttribute("compressableMimeType", StringUtils.join(Arrays
-				.asList("text/html", "text/plain", "text/javascript",
-						"application/json", "application/xml"), ","));
+				.asList("text/html", "text/plain", "text/css",
+						"text/javascript", "application/json",
+						"application/xml"), ","));
 		connector.setAttribute("useSendfile", "false");
 	}
 
@@ -325,6 +329,12 @@ public class Server {
 		map.put("/rest/payroll/*", Arrays.asList(ADMIN, PAYROLL));
 		map.put("/rest/supervisor/*", Arrays.asList(ADMIN, SUPERVISOR));
 		map.put("/rest/user/*", Arrays.asList(ADMIN, USER));
+
+		map.put("/admin/*", Arrays.asList(ADMIN));
+		map.put("/manager/*", Arrays.asList(ADMIN, MANAGER));
+		map.put("/payroll/*", Arrays.asList(ADMIN, PAYROLL));
+		map.put("/supervisor/*", Arrays.asList(ADMIN, SUPERVISOR));
+		map.put("/user/*", Arrays.asList(ADMIN, USER));
 
 		String userConstraint = "NONE";
 		if (!Property.SERVER_DEVELOPMENT_MODE.getBoolean())

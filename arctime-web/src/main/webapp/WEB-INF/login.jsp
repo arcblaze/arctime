@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%@ include file="/ssi/meta.jspf" %>
+  </head>
+  <body>
+    <%@ include file="/ssi/header.jspf" %>
+    <%@ include file="/ssi/scripts.jspf" %>
+
+
+    <center>
+      <table id="login-table">
+        <tr>
+          <td valign="top">
+            <!-- TODO: Display failed login error here. -->
+    
+            <div id="login-form"></div>
+          </td>
+        </tr>
+      </table>
+    </center>
+    
+    <script src="/js/src/action/login/DoLogin.js"></script>
+    <script src="/js/src/action/login/ForgotPassword.js"></script>
+    <script src="/js/src/util/io/ServerIO.js"></script>
+    <script src="/js/src/ui/panel/login/LoginPanel.js"></script>
+    <script>
+      Ext.onReady(function() {
+          // Create the login panel.
+          var loginPanel = new ui.panel.login.LoginPanel();
+          loginPanel.render('login-form');
+          loginPanel.setInitialFocus();
+      });
+    </script>
+
+    <%@ include file="/ssi/footer.jspf" %>
+  </body>
+</html>
