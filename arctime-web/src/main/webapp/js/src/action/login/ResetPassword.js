@@ -1,11 +1,11 @@
 
 Ext.namespace("action.login");
 
-action.login.ForgotPassword = function() {
+action.login.ResetPassword = function() {
 	return new Ext.Action({
-		id:      'action.login.forgotpassword',
-		text:    'Forgot Password',
-		iconCls: 'icon-forgot-password',
+		id:      'action.login.resetpassword',
+		text:    'Reset Password',
+		iconCls: 'icon-reset-password',
 		handler: function() {
 			// Get the panel containing the form data.
 			var formPanel = Ext.getCmp('ui.panel.login.loginpanel');
@@ -29,7 +29,7 @@ action.login.ForgotPassword = function() {
 			// Submit the form.
 			io.doAjaxRequest({
 				// Set the URL.
-				url: '/rest/login/forgot',
+				url: '/rest/login/reset',
 
 				// Specify the form parameters.
 				params: formPanel.getForm().getValues()

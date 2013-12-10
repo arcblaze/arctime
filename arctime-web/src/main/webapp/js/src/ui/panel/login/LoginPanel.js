@@ -161,7 +161,7 @@ ui.panel.login.LoginPanel = Ext.extend(Ext.form.FormPanel, {
 			],
 			buttons: [
 				new Ext.Button(new action.login.DoLogin()),
-				new Ext.Button(new action.login.ForgotPassword())
+				new Ext.Button(new action.login.ResetPassword())
 			]
 		});
 

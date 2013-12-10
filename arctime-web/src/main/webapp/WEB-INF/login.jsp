@@ -21,7 +21,7 @@
     </center>
     
     <script src="/js/src/action/login/DoLogin.js"></script>
-    <script src="/js/src/action/login/ForgotPassword.js"></script>
+    <script src="/js/src/action/login/ResetPassword.js"></script>
     <script src="/js/src/util/io/ServerIO.js"></script>
     <script src="/js/src/ui/panel/login/LoginPanel.js"></script>
     <script>

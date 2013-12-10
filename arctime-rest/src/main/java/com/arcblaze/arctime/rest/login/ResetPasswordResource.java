@@ -28,10 +28,10 @@ import com.codahale.metrics.Timer;
 /**
  * The REST end-point for performing password resets for a user.
  */
-@Path("/login/forgot")
-public class ForgotPasswordResource extends BaseResource {
+@Path("/login/reset")
+public class ResetPasswordResource extends BaseResource {
 	private final static Logger log = LoggerFactory
-			.getLogger(ForgotPasswordResource.class);
+			.getLogger(ResetPasswordResource.class);
 
 	@Context
 	private ServletContext servletContext;
@@ -46,7 +46,8 @@ public class ForgotPasswordResource extends BaseResource {
 				+ "to the email address associated with your account. "
 				+ "Please check your email for your updated login info. "
 				+ "If you have any problems, please contact the web site "
-				+ "administrator (" + Property.SYSTEM_ADMIN_EMAIL + ")";
+				+ "administrator (" + Property.SYSTEM_ADMIN_EMAIL.getString()
+				+ ")";
 	}
 
 	/**
@@ -89,22 +90,12 @@ public class ForgotPasswordResource extends BaseResource {
 	 * @return a randomly generated password
 	 */
 	protected String generatePassword() {
-		final String vowels = "aeuAEU";
-		final String numbers = "23456789";
-		final String consonants = "bdghjmnpqrstvzBDGHJLMNPQRSTVWXZ";
+		final String chars = "aeuAEU23456789bdghjmnpqrstvzBDGHJLMNPQRSTVWXZ";
 
 		Random random = new Random();
 		StringBuilder password = new StringBuilder();
-		for (int i = 0; i < 14; i++) {
-			int r = random.nextInt(3);
-			if (r == 0)
-				password.append(consonants.charAt(random.nextInt(consonants
-						.length())));
-			else if (r == 1)
-				password.append(numbers.charAt(random.nextInt(numbers.length())));
-			else
-				password.append(vowels.charAt(random.nextInt(vowels.length())));
-		}
+		for (int i = 0; i < 14; i++)
+			password.append(chars.charAt(random.nextInt(chars.length())));
 		return password.toString();
 	}
 }

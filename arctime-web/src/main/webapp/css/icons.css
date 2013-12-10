@@ -31,8 +31,8 @@
 .icon-login {
 	background-image:		url(/img/login.png) !important;
 }
-.icon-forgot-password {
-	background-image:		url(/img/forgotpw.png) !important;
+.icon-reset-password {
+	background-image:		url(/img/resetpw.png) !important;
 }
 
 .icon-timesheet-save {
