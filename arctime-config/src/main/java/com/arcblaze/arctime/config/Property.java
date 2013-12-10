@@ -96,6 +96,11 @@ public enum Property {
 	 */
 	SERVER_KEYSTORE_PASS,
 
+	/**
+	 * The system administration email address to use for correspondence.
+	 */
+	SYSTEM_ADMIN_EMAIL("admin@arcblaze.com"),
+
 	;
 
 	/** This will be used to log messages. */

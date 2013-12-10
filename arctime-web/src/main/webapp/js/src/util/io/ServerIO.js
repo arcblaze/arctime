@@ -17,19 +17,15 @@ util.io.ServerIO = Ext.extend(Ext.util.Observable, {
 						// Parse the JSON response.
 						var data = eval('(' + response.responseText + ')');
 
-						// Make sure the server returned success.
-						if (data.success) {
-							// Alert of the success.
-							if (config.message)
-								Ext.Msg.alert('Success', data.msg);
+						// Alert of the success.
+						if (config.message && data.msg) {
+							var title = data.title ? data.title : 'Success';
+							Ext.Msg.alert(title, data.msg);
+						}
 
-							// Call the configuration function if it is
-							// specified.
-							if (c.mysuccess)
-								c.mysuccess(data);
-						} else
-							// Warn when the Ajax request failed on the server.
-							Ext.Msg.alert('Failed', data.msg);
+						// Call the configured function if it is specified.
+						if (c.mysuccess)
+							c.mysuccess(data);
 					} else
 						// Alert if the status was invalid.
 						Ext.Msg.alert('Response Status Error', response.status);
@@ -41,9 +37,11 @@ util.io.ServerIO = Ext.extend(Ext.util.Observable, {
 
 			// Add a default failure function.
 			failure: function(response) {
-				// Display the error message.
-				Ext.Msg.alert('Failed', 'Error ' + response.status + ': '
-						+ response.statusText);
+				// Display the error message from the server.
+				var msg = 'Error ' + response.status + ', ' + response.statusText;
+				if (response.responseText)
+					msg = response.responseText;
+				Ext.Msg.alert('Failed', msg);
 			},
 
 			// By default, we display a success message.

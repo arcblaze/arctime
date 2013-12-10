@@ -29,7 +29,7 @@ action.login.ForgotPassword = function() {
 			// Submit the form.
 			io.doAjaxRequest({
 				// Set the URL.
-				url: '/login/forgot',
+				url: '/rest/login/forgot',
 
 				// Specify the form parameters.
 				params: formPanel.getForm().getValues()
