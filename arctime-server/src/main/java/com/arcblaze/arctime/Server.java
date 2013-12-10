@@ -69,6 +69,7 @@ public class Server {
 		Service service = tomcat.getService();
 		Connector insecureConnector = getInsecureConnector();
 		service.addConnector(insecureConnector);
+		tomcat.setConnector(insecureConnector);
 		if (!Property.SERVER_INSECURE_MODE.getBoolean()) {
 			service.addConnector(getSecureConnector());
 			insecureConnector.setRedirectPort(Property.SERVER_PORT_INSECURE
