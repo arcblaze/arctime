@@ -15,6 +15,7 @@ import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.dao.RoleDao;
 import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.model.Password;
 import com.arcblaze.arctime.model.Role;
 
 /**
@@ -36,7 +37,7 @@ public class SecurityRealm extends RealmBase {
 	 */
 	public SecurityRealm(String realmName) {
 		this.realmName = realmName;
-		setDigest("SHA-512");
+		setDigest(Password.HASH_ALGORITHM);
 	}
 
 	/**
@@ -89,5 +90,13 @@ public class SecurityRealm extends RealmBase {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String digest(String credentials) {
+		return Password.hash(credentials);
 	}
 }
