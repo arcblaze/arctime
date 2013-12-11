@@ -2,6 +2,7 @@ package com.arcblaze.arctime.rest.login;
 
 import java.util.Random;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -20,6 +21,7 @@ import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
+import com.arcblaze.arctime.mail.SendResetPasswordEmail;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Password;
 import com.arcblaze.arctime.rest.BaseResource;
@@ -46,7 +48,7 @@ public class ResetPasswordResource extends BaseResource {
 				+ "to the email address associated with your account. "
 				+ "Please check your email for your updated login info. "
 				+ "If you have any problems, please contact the web site "
-				+ "administrator (" + Property.SYSTEM_ADMIN_EMAIL.getString()
+				+ "administrator (" + Property.EMAIL_SYSTEM_ADMIN.getString()
 				+ ")";
 	}
 
@@ -60,8 +62,7 @@ public class ResetPasswordResource extends BaseResource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public PasswordReset reset(@FormParam("j_username") String login) {
 		log.debug("Password reset request");
-		try (Timer.Context timer = getTimer(this.servletContext,
-				"/login/reset")) {
+		try (Timer.Context timer = getTimer(this.servletContext, "/login/reset")) {
 
 			if (StringUtils.isBlank(login))
 				throw badRequest("The j_username parameter must be specified.");
@@ -80,6 +81,14 @@ public class ResetPasswordResource extends BaseResource {
 
 			dao.setPassword(employee.getId(), hashedPass);
 			log.debug("  Password updated successfully");
+
+			try {
+				SendResetPasswordEmail.send(employee, newPassword);
+			} catch (MessagingException mailException) {
+				log.debug("  Failed to send email, setting password back");
+				dao.setPassword(employee.getId(), employee.getHashedPass());
+				throw mailError(mailException);
+			}
 
 			return new PasswordReset();
 		} catch (DatabaseException dbException) {

@@ -1,5 +1,6 @@
 package com.arcblaze.arctime.rest;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
@@ -52,11 +53,26 @@ public class BaseResource {
 	 * @param exception
 	 *            the database exception
 	 * 
-	 * @return a {@link BadRequestException} with a suitable status code and
-	 *         error message
+	 * @return a {@link InternalServerErrorException} with a suitable status
+	 *         code and error message
 	 */
 	protected InternalServerErrorException dbError(DatabaseException exception) {
 		log.error("Database error", exception);
+		return new InternalServerErrorException(Response
+				.status(Status.INTERNAL_SERVER_ERROR)
+				.entity(exception.getMessage()).build());
+	}
+
+	/**
+	 * @param exception
+	 *            the database exception
+	 * 
+	 * @return a {@link InternalServerErrorException} with a suitable status
+	 *         code and error message
+	 */
+	protected InternalServerErrorException mailError(
+			MessagingException exception) {
+		log.error("Mail error", exception);
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
 				.entity(exception.getMessage()).build());

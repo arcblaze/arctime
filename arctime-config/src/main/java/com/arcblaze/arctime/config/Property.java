@@ -99,7 +99,40 @@ public enum Property {
 	/**
 	 * The system administration email address to use for correspondence.
 	 */
-	SYSTEM_ADMIN_EMAIL("admin@arcblaze.com"),
+	EMAIL_SYSTEM_ADMIN("mday@arcblaze.com"),
+
+	/**
+	 * The server host to use when sending emails.
+	 */
+	EMAIL_SERVER("smtp.zoho.com"),
+
+	/**
+	 * The port to use when connecting to the mail server.
+	 */
+	EMAIL_SERVER_PORT("465"),
+
+	/**
+	 * Whether the email-sending capability should attempt to authenticate
+	 * during connection.
+	 */
+	EMAIL_AUTHENTICATE_FIRST("true"),
+
+	/**
+	 * The user account to use when performing mail server authentication.
+	 */
+	EMAIL_AUTHENTICATE_USER("mailer@arcblaze.com"),
+
+	/**
+	 * The password to use when performing mail server authentication (no
+	 * default).
+	 */
+	EMAIL_AUTHENTICATE_PASSWORD(),
+
+	/**
+	 * Whether the connection to the mail server should use an encrypted
+	 * connection.
+	 */
+	EMAIL_USE_SSL("true"),
 
 	;
 
