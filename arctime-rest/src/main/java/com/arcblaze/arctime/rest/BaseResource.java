@@ -2,10 +2,15 @@ package com.arcblaze.arctime.rest;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.arcblaze.arctime.db.DatabaseException;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.servlets.MetricsServlet;
@@ -14,6 +19,9 @@ import com.codahale.metrics.servlets.MetricsServlet;
  * The base class for all resources.
  */
 public class BaseResource {
+	private final static Logger log = LoggerFactory
+			.getLogger(BaseResource.class);
+
 	/**
 	 * @param message
 	 *            the message to include in the exception
@@ -22,6 +30,7 @@ public class BaseResource {
 	 *         message
 	 */
 	protected NotFoundException notFound(String message) {
+		log.error(message);
 		return new NotFoundException(Response.status(Status.NOT_FOUND)
 				.entity(message).build());
 	}
@@ -34,8 +43,23 @@ public class BaseResource {
 	 *         error message
 	 */
 	protected BadRequestException badRequest(String message) {
+		log.error(message);
 		return new BadRequestException(Response.status(Status.BAD_REQUEST)
 				.entity(message).build());
+	}
+
+	/**
+	 * @param exception
+	 *            the database exception
+	 * 
+	 * @return a {@link BadRequestException} with a suitable status code and
+	 *         error message
+	 */
+	protected InternalServerErrorException dbError(DatabaseException exception) {
+		log.error("Database error", exception);
+		return new InternalServerErrorException(Response
+				.status(Status.INTERNAL_SERVER_ERROR)
+				.entity(exception.getMessage()).build());
 	}
 
 	/**
@@ -60,6 +84,7 @@ public class BaseResource {
 	 * @return an instance of the requested timer
 	 */
 	protected Timer.Context getTimer(ServletContext context, String name) {
+		log.info(name);
 		MetricRegistry metricRegistry = getMetricRegistry(context);
 		return metricRegistry.timer(name).time();
 	}

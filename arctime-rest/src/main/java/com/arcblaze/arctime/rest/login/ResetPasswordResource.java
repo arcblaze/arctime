@@ -55,17 +55,13 @@ public class ResetPasswordResource extends BaseResource {
 	 *            the user login to use when resetting the password
 	 * 
 	 * @return the password reset response
-	 * 
-	 * @throws DatabaseException
-	 *             if there is an error communicating with the back-end
 	 */
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public PasswordReset reset(@FormParam("j_username") String login)
-			throws DatabaseException {
+	public PasswordReset reset(@FormParam("j_username") String login) {
 		log.debug("Password reset request");
 		try (Timer.Context timer = getTimer(this.servletContext,
-				"/login/forgot")) {
+				"/login/reset")) {
 
 			if (StringUtils.isBlank(login))
 				throw badRequest("The j_username parameter must be specified.");
@@ -82,7 +78,12 @@ public class ResetPasswordResource extends BaseResource {
 			log.debug("  New password will be: {}", newPassword);
 			log.debug("  Hashed password will be: {}", hashedPass);
 
+			dao.setPassword(employee.getId(), hashedPass);
+			log.debug("  Password updated successfully");
+
 			return new PasswordReset();
+		} catch (DatabaseException dbException) {
+			throw dbError(dbException);
 		}
 	}
 

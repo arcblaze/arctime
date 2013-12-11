@@ -261,6 +261,29 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void setPassword(Integer employeeId, String hashedPass)
+			throws DatabaseException {
+		if (employeeId == null)
+			throw new IllegalArgumentException("Invalid null employee id");
+		if (StringUtils.isBlank(hashedPass))
+			throw new IllegalArgumentException("Invalid blank password");
+
+		String sql = "UPDATE employees SET hashed_pass = ? WHERE id = ?";
+
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, hashedPass);
+			ps.setInt(2, employeeId);
+			ps.executeUpdate();
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void delete(Integer companyId, Collection<Integer> ids)
 			throws DatabaseException {
 		if (ids == null || ids.isEmpty())

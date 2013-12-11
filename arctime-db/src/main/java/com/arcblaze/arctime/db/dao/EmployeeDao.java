@@ -78,6 +78,10 @@ public interface EmployeeDao {
 			throws DatabaseException;
 
 	/**
+	 * Save property updates within the provided employees to the database. Note
+	 * that this does not save any password changes, the
+	 * {@link #setPassword(Integer, String)} method is used for that.
+	 * 
 	 * @param companyId
 	 *            the unique id of the company for which the employees will be
 	 *            updated
@@ -90,6 +94,23 @@ public interface EmployeeDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public void update(Integer companyId, Collection<Employee> employees)
+			throws DatabaseException;
+
+	/**
+	 * Save property updates within the provided employees to the database. Note
+	 * that this does not save any password changes.
+	 * 
+	 * @param employeeId
+	 *            the unique id of the employee whose password is being reset
+	 * @param hashedPass
+	 *            the new hashed password value to set for the employee
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void setPassword(Integer employeeId, String hashedPass)
 			throws DatabaseException;
 
 	/**
