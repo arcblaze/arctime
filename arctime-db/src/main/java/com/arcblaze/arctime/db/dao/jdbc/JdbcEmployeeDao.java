@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
+import com.arcblaze.arctime.db.DatabaseUniqueConstraintException;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
@@ -179,7 +181,7 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 */
 	@Override
 	public void add(Integer companyId, Collection<Employee> employees)
-			throws DatabaseException {
+			throws DatabaseUniqueConstraintException, DatabaseException {
 		if (employees == null || employees.isEmpty())
 			return;
 		if (companyId == null)
@@ -213,6 +215,8 @@ public class JdbcEmployeeDao implements EmployeeDao {
 						employee.setId(rs.getInt(1));
 				}
 			}
+		} catch (SQLIntegrityConstraintViolationException notUnique) {
+			throw new DatabaseUniqueConstraintException(notUnique);
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
@@ -223,7 +227,7 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 */
 	@Override
 	public void update(Integer companyId, Collection<Employee> employees)
-			throws DatabaseException {
+			throws DatabaseUniqueConstraintException, DatabaseException {
 		if (employees == null || employees.isEmpty())
 			return;
 		if (companyId == null)
@@ -252,6 +256,8 @@ public class JdbcEmployeeDao implements EmployeeDao {
 				ps.setInt(index++, companyId);
 				ps.executeUpdate();
 			}
+		} catch (SQLIntegrityConstraintViolationException notUnique) {
+			throw new DatabaseUniqueConstraintException(notUnique);
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
@@ -314,9 +320,9 @@ public class JdbcEmployeeDao implements EmployeeDao {
 		if (employeeId == null)
 			throw new IllegalArgumentException("Invalid null employee id");
 
-		String sql = "SELECT * FROM employees e JOIN supervisors s ON "
-				+ "(e.id = s.supervisor_id AND e.company_id = s.supervisor_id) "
-				+ "WHERE e.company_id = ? AND s.employee_id = ?";
+		String sql = "SELECT * FROM supervisors s JOIN employees e ON "
+				+ "(s.supervisor_id = e.id AND s.company_id = e.company_id) "
+				+ "WHERE s.company_id = ? AND s.employee_id = ?";
 
 		Set<Employee> supervisors = new TreeSet<>();
 		try (Connection conn = ConnectionManager.getConnection();

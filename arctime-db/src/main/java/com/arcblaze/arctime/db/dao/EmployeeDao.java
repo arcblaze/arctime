@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.arcblaze.arctime.db.DatabaseException;
+import com.arcblaze.arctime.db.DatabaseUniqueConstraintException;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
 
@@ -71,11 +72,14 @@ public interface EmployeeDao {
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
+	 * @throws DatabaseUniqueConstraintException
+	 *             if there is a problem adding the employee due to a unique
+	 *             constraint violation
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
 	public void add(Integer companyId, Collection<Employee> employees)
-			throws DatabaseException;
+			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
 	 * Save property updates within the provided employees to the database. Note
@@ -90,11 +94,14 @@ public interface EmployeeDao {
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
+	 * @throws DatabaseUniqueConstraintException
+	 *             if there is a problem adding the employee due to a unique
+	 *             constraint violation
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
 	public void update(Integer companyId, Collection<Employee> employees)
-			throws DatabaseException;
+			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
 	 * Save property updates within the provided employees to the database. Note

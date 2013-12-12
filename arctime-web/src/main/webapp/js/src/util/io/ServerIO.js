@@ -61,22 +61,16 @@ util.io.ServerIO = Ext.extend(Ext.util.Observable, {
 
 			// Add a default success function.
 			success: function(form, action) {
-				// Make sure the server returned success.
-				if (action.result.success) {
-					// Alert of the success.
-					Ext.Msg.alert('Success', action.result.msg);
+				// Alert of the success.
+				if (config.message && action.result.msg) {
+					var title = action.result.title ? action.result.title : 'Success';
+					Ext.Msg.alert(title, action.result.msg);
+				} else
+					Ext.Msg.close();
 
-					// Call the configuration function if it is specified.
-					if (c.mysuccess)
-						c.mysuccess(action.result);
-				} else {
-					// Warn when the Ajax request failed on the server.
-					Ext.Msg.alert('Failed', action.result.msg);
-
-					// Call the configuration function if it is specified.
-					if (c.myfailure)
-						c.myfailure(action.result);
-				}
+				// Call the configuration function if it is specified.
+				if (c.mysuccess)
+					c.mysuccess(action.result);
 			},
 
 			// Add a default failure function.

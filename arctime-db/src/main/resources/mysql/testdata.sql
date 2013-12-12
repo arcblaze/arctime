@@ -50,7 +50,7 @@ INSERT INTO `roles` (`name`, `employee_id`) VALUES
 ('PAYROLL', 4);
 
 
-INSERT INTO `supervisors` (`company_id`, `employee_id`, `supervisor_id`, `primary`) VALUES
+INSERT INTO `supervisors` (`company_id`, `employee_id`, `supervisor_id`, `is_primary`) VALUES
 (1, 1, 2, 1),
 (1, 1, 3, 0),
 (1, 1, 4, 0),

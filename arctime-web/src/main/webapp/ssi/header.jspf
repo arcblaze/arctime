@@ -4,6 +4,7 @@
     Header Content
 	<%= request.getRemoteUser() %>
 	<% if (request.getRemoteUser() != null) { %>
+		<a href="/user/profile.jsp">Profile</a>
 		<a href="/logout.jsp">Logout</a>
 	<% } %>
   </div>

@@ -102,7 +102,7 @@ public class ResetPasswordResourceTest {
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(1, Collections.singleton(employee));
+		employeeDao.add(company.getId(), Collections.singleton(employee));
 
 		SendResetPasswordEmail mockEmailSender = Mockito
 				.mock(SendResetPasswordEmail.class);
@@ -147,7 +147,7 @@ public class ResetPasswordResourceTest {
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(1, Collections.singleton(employee));
+		employeeDao.add(company.getId(), Collections.singleton(employee));
 
 		SendResetPasswordEmail mockEmailSender = Mockito
 				.mock(SendResetPasswordEmail.class);
@@ -194,7 +194,7 @@ public class ResetPasswordResourceTest {
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(1, Collections.singleton(employee));
+		employeeDao.add(company.getId(), Collections.singleton(employee));
 
 		SendResetPasswordEmail emailSender = new SendResetPasswordEmail();
 		SendResetPasswordEmail mockEmailSender = Mockito.spy(emailSender);

@@ -39,11 +39,14 @@ public class ResetPasswordResource extends BaseResource {
 	@XmlRootElement
 	static class PasswordReset {
 		@XmlElement
-		public String title = "Password Reset";
+		public final boolean success = true;
 
 		@XmlElement
-		public String msg = "An email with a new random password was sent "
-				+ "to the email address associated with your account. "
+		public final String title = "Password Reset";
+
+		@XmlElement
+		public final String msg = "An email with a new random password was "
+				+ "sent to the email address associated with your account. "
 				+ "Please check your email for your updated login info. "
 				+ "If you have any problems, please contact the web site "
 				+ "administrator (" + Property.EMAIL_SYSTEM_ADMIN.getString()
