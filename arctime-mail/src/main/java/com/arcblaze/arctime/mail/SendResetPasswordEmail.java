@@ -26,7 +26,7 @@ public class SendResetPasswordEmail {
 	 * @throws MessagingException
 	 *             if there is a problem sending the email
 	 */
-	public static void send(Employee employee, String newPassword)
+	public void send(Employee employee, String newPassword)
 			throws MessagingException {
 		if (employee == null)
 			throw new IllegalArgumentException("Invalid null employee");

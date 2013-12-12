@@ -1,7 +1,5 @@
 package com.arcblaze.arctime.rest.login;
 
-import java.util.Random;
-
 import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
@@ -53,6 +51,39 @@ public class ResetPasswordResource extends BaseResource {
 	}
 
 	/**
+	 * Used to send password-reset emails to the employee.
+	 */
+	private final SendResetPasswordEmail emailSender;
+
+	/**
+	 * Used to generate new random passwords for employees.
+	 */
+	private final Password password;
+
+	/**
+	 * Default constructor.
+	 */
+	public ResetPasswordResource() {
+		this.emailSender = new SendResetPasswordEmail();
+		this.password = new Password();
+	}
+
+	/**
+	 * @param emailSender
+	 *            the object responsible for sending emails
+	 * @param password
+	 *            the object used to generate new random passwords for employees
+	 */
+	public ResetPasswordResource(SendResetPasswordEmail emailSender,
+			Password password) {
+		if (emailSender == null)
+			throw new IllegalArgumentException("Invalid null email sender");
+
+		this.emailSender = emailSender;
+		this.password = password;
+	}
+
+	/**
 	 * @param login
 	 *            the user login to use when resetting the password
 	 * 
@@ -74,8 +105,8 @@ public class ResetPasswordResource extends BaseResource {
 			if (employee == null)
 				throw notFound("A user with the specified login was not found.");
 
-			String newPassword = generatePassword();
-			String hashedPass = Password.hash(newPassword);
+			String newPassword = this.password.random();
+			String hashedPass = this.password.hash(newPassword);
 			log.debug("  New password will be: {}", newPassword);
 			log.debug("  Hashed password will be: {}", hashedPass);
 
@@ -83,7 +114,7 @@ public class ResetPasswordResource extends BaseResource {
 			log.debug("  Password updated successfully");
 
 			try {
-				SendResetPasswordEmail.send(employee, newPassword);
+				this.emailSender.send(employee, newPassword);
 			} catch (MessagingException mailException) {
 				log.debug("  Failed to send email, setting password back");
 				dao.setPassword(employee.getId(), employee.getHashedPass());
@@ -94,18 +125,5 @@ public class ResetPasswordResource extends BaseResource {
 		} catch (DatabaseException dbException) {
 			throw dbError(dbException);
 		}
-	}
-
-	/**
-	 * @return a randomly generated password
-	 */
-	protected String generatePassword() {
-		final String chars = "aeuAEU23456789bdghjmnpqrstvzBDGHJLMNPQRSTVWXZ";
-
-		Random random = new Random();
-		StringBuilder password = new StringBuilder();
-		for (int i = 0; i < 14; i++)
-			password.append(chars.charAt(random.nextInt(chars.length())));
-		return password.toString();
 	}
 }

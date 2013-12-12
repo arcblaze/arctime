@@ -51,10 +51,7 @@ public class ArctimeApplication extends Application {
 			ClassPath classPath = ClassPath.from(getClass().getClassLoader());
 			for (ClassInfo classInfo : classPath
 					.getTopLevelClassesRecursive(packageName)) {
-				if (!StringUtils.endsWith(classInfo.getName(),
-						ArctimeApplication.class.getName())
-						&& !StringUtils.endsWith(classInfo.getName(),
-								"BaseResource"))
+				if (isValidResourceClass(classInfo.getName()))
 					classNames.add(classInfo.getName());
 			}
 		} catch (IOException classpathIssue) {
@@ -62,6 +59,17 @@ public class ArctimeApplication extends Application {
 					classpathIssue);
 		}
 		return classNames;
+	}
+
+	protected boolean isValidResourceClass(String className) {
+		if (ArctimeApplication.class.getName().equals(className))
+			return false;
+		if (StringUtils.endsWith(className, "Test"))
+			return false;
+		if (StringUtils.endsWith(className, "BaseResource"))
+			return false;
+
+		return true;
 	}
 
 	@Override

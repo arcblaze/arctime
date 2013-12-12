@@ -73,6 +73,9 @@ public class BaseResource {
 	protected InternalServerErrorException mailError(
 			MessagingException exception) {
 		log.error("Mail error", exception);
+		String message = exception.getMessage();
+		if (message == null)
+			message = "Failed to send email.";
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
 				.entity(exception.getMessage()).build());
@@ -86,6 +89,9 @@ public class BaseResource {
 	 * @return an instance of the application metric registry
 	 */
 	protected MetricRegistry getMetricRegistry(ServletContext context) {
+		if (context == null)
+			return null;
+
 		return (MetricRegistry) context
 				.getAttribute(MetricsServlet.METRICS_REGISTRY);
 	}
@@ -101,7 +107,11 @@ public class BaseResource {
 	 */
 	protected Timer.Context getTimer(ServletContext context, String name) {
 		log.info(name);
+
 		MetricRegistry metricRegistry = getMetricRegistry(context);
+		if (metricRegistry == null)
+			return null;
+
 		return metricRegistry.timer(name).time();
 	}
 }

@@ -97,6 +97,6 @@ public class SecurityRealm extends RealmBase {
 	 */
 	@Override
 	protected String digest(String credentials) {
-		return Password.hash(credentials);
+		return new Password().hash(credentials);
 	}
 }
