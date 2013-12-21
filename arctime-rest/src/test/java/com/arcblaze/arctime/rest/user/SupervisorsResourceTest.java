@@ -20,7 +20,6 @@ import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Employee;
-import com.arcblaze.arctime.model.PersonnelType;
 import com.arcblaze.arctime.rest.user.SupervisorsResource.EmployeeSupervisors;
 
 /**
@@ -66,9 +65,6 @@ public class SupervisorsResourceTest {
 		employee.setEmail("email@whatever.com");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
@@ -105,9 +101,6 @@ public class SupervisorsResourceTest {
 		supervisor1.setEmail("s1@whatever.com");
 		supervisor1.setFirstName("first");
 		supervisor1.setLastName("last");
-		supervisor1.setSuffix("suffix");
-		supervisor1.setDivision("division");
-		supervisor1.setPersonnelType(PersonnelType.EMPLOYEE);
 		supervisor1.setActive(true);
 
 		Employee supervisor2 = new Employee();
@@ -116,9 +109,6 @@ public class SupervisorsResourceTest {
 		supervisor2.setEmail("s2@whatever.com");
 		supervisor2.setFirstName("first");
 		supervisor2.setLastName("last");
-		supervisor2.setSuffix("suffix");
-		supervisor2.setDivision("division");
-		supervisor2.setPersonnelType(PersonnelType.EMPLOYEE);
 		supervisor2.setActive(true);
 
 		Employee employee = new Employee();
@@ -127,9 +117,6 @@ public class SupervisorsResourceTest {
 		employee.setEmail("email@whatever.com");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();

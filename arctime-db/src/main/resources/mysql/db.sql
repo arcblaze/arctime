@@ -28,9 +28,6 @@ CREATE TABLE IF NOT EXISTS employees (
     `email`          VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
     `first_name`     VARCHAR(50)  NOT NULL,
     `last_name`      VARCHAR(50)  NOT NULL,
-    `suffix`         VARCHAR(32),
-    `division`       VARCHAR(255) NOT NULL,
-    `personnel_type` VARCHAR(40)  NOT NULL,
     `active`         BOOLEAN      NOT NULL DEFAULT TRUE,
 
     CONSTRAINT fk_employees_company_id FOREIGN KEY (`company_id`)

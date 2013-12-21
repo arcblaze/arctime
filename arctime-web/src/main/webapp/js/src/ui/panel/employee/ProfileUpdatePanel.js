@@ -32,12 +32,6 @@ ui.panel.employee.ProfileUpdatePanel = Ext.extend(Ext.form.FormPanel, {
 					width:      300
 				}, {
 					xtype:      'textfield',
-					fieldLabel: 'Suffix',
-					name:       'suffix',
-					allowBlank: true,
-					width:      150
-				}, {
-					xtype:      'textfield',
 					fieldLabel: 'Login',
 					name:       'login',
 					allowBlank: false,
@@ -60,20 +54,6 @@ ui.panel.employee.ProfileUpdatePanel = Ext.extend(Ext.form.FormPanel, {
 					name:       'email',
 					allowBlank: false,
 					width:      360
-				}, {
-					xtype:      'textfield',
-					fieldLabel: 'Division',
-					name:       'division',
-					disabled:   true,
-					allowBlank: false,
-					width:      340
-				}, {
-					xtype:      'textfield',
-					fieldLabel: 'Personnel Type',
-					name:       'personnelType',
-					disabled:   true,
-					allowBlank: false,
-					width:      340
 				}
 			],
 			buttons: [
@@ -97,14 +77,10 @@ ui.panel.employee.ProfileUpdatePanel = Ext.extend(Ext.form.FormPanel, {
 			setValue(employee.data.firstName);
 		this.getForm().findField('lastName').
 			setValue(employee.data.lastName);
-		this.getForm().findField('suffix').setValue(employee.data.suffix);
 		this.getForm().findField('login').setValue(employee.data.login);
 		this.getForm().findField('password').setValue('');
 		this.getForm().findField('confirm').setValue('');
 		this.getForm().findField('email').setValue(employee.data.email);
-		this.getForm().findField('division').setValue(employee.data.division);
-		this.getForm().findField('personnelType').
-			setValue(employee.data.personnelType);
 
 		// Set the form focus.
 		this.setInitialFocus();

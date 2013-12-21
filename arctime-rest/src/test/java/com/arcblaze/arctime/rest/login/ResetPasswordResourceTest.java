@@ -23,7 +23,6 @@ import com.arcblaze.arctime.mail.SendResetPasswordEmail;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Password;
-import com.arcblaze.arctime.model.PersonnelType;
 
 /**
  * Perform testing of the password reset capabilities.
@@ -96,9 +95,6 @@ public class ResetPasswordResourceTest {
 		employee.setEmail("email@whatever.com");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
@@ -141,9 +137,6 @@ public class ResetPasswordResourceTest {
 		employee.setEmail("email@whatever.com");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
@@ -188,9 +181,6 @@ public class ResetPasswordResourceTest {
 		employee.setEmail("email@whatever.com");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();

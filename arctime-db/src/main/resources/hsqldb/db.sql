@@ -29,9 +29,6 @@ CREATE TABLE employees (
     email          VARCHAR_IGNORECASE(255) NOT NULL,
     first_name     VARCHAR(50)  NOT NULL,
     last_name      VARCHAR(50)  NOT NULL,
-    suffix         VARCHAR(32),
-    division       VARCHAR(255) NOT NULL,
-    personnel_type VARCHAR(40)  NOT NULL,
     active         BOOLEAN      DEFAULT TRUE NOT NULL,
 
     CONSTRAINT fk_employees_company_id FOREIGN KEY (company_id)

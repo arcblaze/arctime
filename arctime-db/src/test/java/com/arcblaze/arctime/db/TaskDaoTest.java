@@ -21,7 +21,6 @@ import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Assignment;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Employee;
-import com.arcblaze.arctime.model.PersonnelType;
 import com.arcblaze.arctime.model.Task;
 
 /**
@@ -107,9 +106,6 @@ public class TaskDaoTest {
 		employee.setEmail("email");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		DaoFactory.getEmployeeDao().add(company.getId(),
 				Collections.singleton(employee));
 

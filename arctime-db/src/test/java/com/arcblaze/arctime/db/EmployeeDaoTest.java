@@ -20,7 +20,6 @@ import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
-import com.arcblaze.arctime.model.PersonnelType;
 import com.arcblaze.arctime.model.Role;
 
 /**
@@ -70,9 +69,6 @@ public class EmployeeDaoTest {
 		employee.setEmail("email");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 
 		employeeDao.add(company.getId(), Collections.singleton(employee));
 		assertNotNull(employee.getId());
@@ -88,9 +84,6 @@ public class EmployeeDaoTest {
 		supervisor1.setEmail("supervisor1");
 		supervisor1.setFirstName("first");
 		supervisor1.setLastName("last");
-		supervisor1.setSuffix("suffix");
-		supervisor1.setDivision("division");
-		supervisor1.setPersonnelType(PersonnelType.EMPLOYEE);
 		employeeDao.add(company.getId(), Collections.singleton(supervisor1));
 		employeeDao.addSupervisors(company.getId(), employee.getId(),
 				Collections.singleton(supervisor1.getId()), true);
@@ -101,9 +94,6 @@ public class EmployeeDaoTest {
 		supervisor2.setEmail("supervisor2");
 		supervisor2.setFirstName("first");
 		supervisor2.setLastName("last");
-		supervisor2.setSuffix("suffix");
-		supervisor2.setDivision("division");
-		supervisor2.setPersonnelType(PersonnelType.EMPLOYEE);
 		employeeDao.add(company.getId(), Collections.singleton(supervisor2));
 		employeeDao.addSupervisors(company.getId(), employee.getId(),
 				Collections.singleton(supervisor2.getId()), false);
@@ -115,9 +105,6 @@ public class EmployeeDaoTest {
 			employee2.setEmail("email2");
 			employee2.setFirstName("first");
 			employee2.setLastName("last");
-			employee2.setSuffix("suffix");
-			employee2.setDivision("division");
-			employee2.setPersonnelType(PersonnelType.EMPLOYEE);
 			employeeDao.add(company.getId(), Collections.singleton(employee2));
 			throw new RuntimeException("No unique constraint was thrown");
 		} catch (DatabaseUniqueConstraintException uniqueConstraint) {
@@ -131,9 +118,6 @@ public class EmployeeDaoTest {
 			employee2.setEmail("EMAIL"); // same as other employee
 			employee2.setFirstName("first");
 			employee2.setLastName("last");
-			employee2.setSuffix("suffix");
-			employee2.setDivision("division");
-			employee2.setPersonnelType(PersonnelType.EMPLOYEE);
 			employeeDao.add(company.getId(), Collections.singleton(employee2));
 			throw new RuntimeException("No unique constraint was thrown");
 		} catch (DatabaseUniqueConstraintException uniqueConstraint) {

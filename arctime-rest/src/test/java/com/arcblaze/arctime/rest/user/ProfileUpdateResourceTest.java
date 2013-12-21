@@ -1,7 +1,6 @@
 package com.arcblaze.arctime.rest.user;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,7 +20,6 @@ import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Password;
-import com.arcblaze.arctime.model.PersonnelType;
 
 /**
  * Perform testing of the profile update capabilities.
@@ -52,7 +50,7 @@ public class ProfileUpdateResourceTest {
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters1() {
 		ProfileUpdateResource resource = new ProfileUpdateResource();
-		resource.update(null, " ", "a", "b", "c", "d", "e");
+		resource.update(null, " ", "a", "b", "c", "d");
 	}
 
 	/**
@@ -61,7 +59,7 @@ public class ProfileUpdateResourceTest {
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters2() {
 		ProfileUpdateResource resource = new ProfileUpdateResource();
-		resource.update(null, "a", " ", "b", "c", "d", "e");
+		resource.update(null, "a", " ", "b", "c", "d");
 	}
 
 	/**
@@ -70,7 +68,7 @@ public class ProfileUpdateResourceTest {
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters3() {
 		ProfileUpdateResource resource = new ProfileUpdateResource();
-		resource.update(null, "a", "b", "c", " ", "d", "e");
+		resource.update(null, "a", "b", " ", "c", "d");
 	}
 
 	/**
@@ -79,7 +77,7 @@ public class ProfileUpdateResourceTest {
 	@Test(expected = BadRequestException.class)
 	public void testInvalidParameters4() {
 		ProfileUpdateResource resource = new ProfileUpdateResource();
-		resource.update(null, "a", "b", "c", "d", " ", "e");
+		resource.update(null, "a", "b", "c", " ", "d");
 	}
 
 	/**
@@ -90,7 +88,7 @@ public class ProfileUpdateResourceTest {
 		SecurityContext security = Mockito.mock(SecurityContext.class);
 
 		ProfileUpdateResource resource = new ProfileUpdateResource();
-		resource.update(security, "a", "b", "c", null, "d", null);
+		resource.update(security, "a", "b", null, "c", null);
 	}
 
 	/**
@@ -113,9 +111,6 @@ public class ProfileUpdateResourceTest {
 		employee.setEmail("email@whatever.com");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
@@ -125,19 +120,15 @@ public class ProfileUpdateResourceTest {
 		Mockito.when(security.getUserPrincipal()).thenReturn(employee);
 
 		ProfileUpdateResource resource = new ProfileUpdateResource();
-		resource.update(security, "a", "b", "c", "d", "e", null);
+		resource.update(security, "a", "b", "c", "d", null);
 
 		Employee updated = employeeDao.getLogin("d");
 		assertEquals(employee.getId(), updated.getId());
 		assertEquals(company.getId(), updated.getCompanyId());
-		assertEquals("d", updated.getLogin());
-		assertEquals("e", updated.getEmail());
+		assertEquals("c", updated.getLogin());
+		assertEquals("d", updated.getEmail());
 		assertEquals("a", updated.getFirstName());
 		assertEquals("b", updated.getLastName());
-		assertEquals(employee.getDivision(), updated.getDivision());
-		assertEquals(employee.getPersonnelType(), updated.getPersonnelType());
-
-		assertEquals("c", updated.getSuffix());
 		assertEquals(employee.getHashedPass(), updated.getHashedPass());
 	}
 
@@ -161,9 +152,6 @@ public class ProfileUpdateResourceTest {
 		employee.setEmail("email@whatever.com");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
@@ -173,20 +161,15 @@ public class ProfileUpdateResourceTest {
 		Mockito.when(security.getUserPrincipal()).thenReturn(employee);
 
 		ProfileUpdateResource resource = new ProfileUpdateResource();
-		resource.update(security, "a", "b", "", "d", "e", "password");
+		resource.update(security, "a", "b", "c", "d", "password");
 
-		Employee updated = employeeDao.getLogin("d");
+		Employee updated = employeeDao.getLogin("c");
 		assertEquals(employee.getId(), updated.getId());
 		assertEquals(company.getId(), updated.getCompanyId());
-		assertEquals("d", updated.getLogin());
-		assertEquals("e", updated.getEmail());
+		assertEquals("c", updated.getLogin());
+		assertEquals("d", updated.getEmail());
 		assertEquals("a", updated.getFirstName());
 		assertEquals("b", updated.getLastName());
-		assertEquals(employee.getDivision(), updated.getDivision());
-		assertEquals(employee.getPersonnelType(), updated.getPersonnelType());
-
-		// Suffix gets set to null.
-		assertNull(updated.getSuffix());
 
 		// Password should be an updated value.
 		assertEquals(new Password().hash("password"), updated.getHashedPass());
@@ -213,9 +196,6 @@ public class ProfileUpdateResourceTest {
 		existing.setEmail("existing@whatever.com");
 		existing.setFirstName("first");
 		existing.setLastName("last");
-		existing.setSuffix("suffix");
-		existing.setDivision("division");
-		existing.setPersonnelType(PersonnelType.EMPLOYEE);
 		existing.setActive(true);
 
 		Employee employee = new Employee();
@@ -224,9 +204,6 @@ public class ProfileUpdateResourceTest {
 		employee.setEmail("email@whatever.com");
 		employee.setFirstName("first");
 		employee.setLastName("last");
-		employee.setSuffix("suffix");
-		employee.setDivision("division");
-		employee.setPersonnelType(PersonnelType.EMPLOYEE);
 		employee.setActive(true);
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
@@ -236,6 +213,6 @@ public class ProfileUpdateResourceTest {
 		Mockito.when(security.getUserPrincipal()).thenReturn(employee);
 
 		ProfileUpdateResource resource = new ProfileUpdateResource();
-		resource.update(security, "a", "b", "", "existing", "e", "password");
+		resource.update(security, "a", "b", "existing", "e", "password");
 	}
 }

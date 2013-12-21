@@ -41,9 +41,7 @@
 				  firstName: '<%= StringEscapeUtils.escapeJavaScript(employee.getFirstName()) %>',
 				  lastName: '<%= StringEscapeUtils.escapeJavaScript(employee.getLastName()) %>',
 				  login: '<%= StringEscapeUtils.escapeJavaScript(employee.getLogin()) %>',
-				  email: '<%= StringEscapeUtils.escapeJavaScript(employee.getEmail()) %>',
-				  division: '<%= StringEscapeUtils.escapeJavaScript(employee.getDivision()) %>',
-				  personnelType: '<%= employee.getPersonnelType().name() %>'
+				  email: '<%= StringEscapeUtils.escapeJavaScript(employee.getEmail()) %>'
 			  }
 		  }
 

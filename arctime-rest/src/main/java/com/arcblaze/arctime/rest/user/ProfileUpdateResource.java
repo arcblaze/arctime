@@ -57,8 +57,6 @@ public class ProfileUpdateResource extends BaseResource {
 	 *            the updated first name for the user
 	 * @param lastName
 	 *            the updated last name for the user
-	 * @param suffix
-	 *            the updated name suffix for the user
 	 * @param login
 	 *            the updated user login value
 	 * @param email
@@ -67,7 +65,7 @@ public class ProfileUpdateResource extends BaseResource {
 	 *            the updated password for the user
 	 */
 	protected void validateParams(String firstName, String lastName,
-			String suffix, String login, String email, String password) {
+			String login, String email, String password) {
 		if (StringUtils.isBlank(firstName))
 			throw badRequest("The firstName parameter must be specified.");
 		if (StringUtils.isBlank(lastName))
@@ -89,8 +87,6 @@ public class ProfileUpdateResource extends BaseResource {
 	 *            the updated first name for the user
 	 * @param lastName
 	 *            the updated last name for the user
-	 * @param suffix
-	 *            the updated name suffix for the user
 	 * @param login
 	 *            the updated user login value
 	 * @param email
@@ -105,14 +101,13 @@ public class ProfileUpdateResource extends BaseResource {
 	public ProfileUpdate update(@Context SecurityContext security,
 			@FormParam("firstName") String firstName,
 			@FormParam("lastName") String lastName,
-			@FormParam("suffix") String suffix,
 			@FormParam("login") String login, @FormParam("email") String email,
 			@FormParam("password") String password) {
 		log.debug("Profile update request");
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/user/profile")) {
 
-			validateParams(firstName, lastName, suffix, login, email, password);
+			validateParams(firstName, lastName, login, email, password);
 
 			Employee currentUser = (Employee) security.getUserPrincipal();
 			EmployeeDao dao = DaoFactory.getEmployeeDao();
@@ -125,11 +120,8 @@ public class ProfileUpdateResource extends BaseResource {
 
 			employee.setFirstName(firstName);
 			employee.setLastName(lastName);
-			employee.setSuffix(suffix);
 			employee.setLogin(login);
 			employee.setEmail(email);
-			employee.setDivision(currentUser.getDivision());
-			employee.setPersonnelType(currentUser.getPersonnelType());
 			employee.setActive(currentUser.isActive());
 			log.debug("  Modified employee: {}", employee);
 

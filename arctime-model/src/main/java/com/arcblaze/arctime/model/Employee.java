@@ -61,21 +61,6 @@ public class Employee implements Comparable<Employee>, Principal {
 	private String lastName;
 
 	/**
-	 * The employee's name suffix.
-	 */
-	private String suffix;
-
-	/**
-	 * The division within the company in which the employee resides.
-	 */
-	private String division;
-
-	/**
-	 * Describe's the employee's personnel category type.
-	 */
-	private PersonnelType personnelType;
-
-	/**
 	 * Whether this employee is an active account or not.
 	 */
 	private Boolean active = true;
@@ -83,12 +68,12 @@ public class Employee implements Comparable<Employee>, Principal {
 	/**
 	 * The roles assigned to the account.
 	 */
-	private Set<Role> roles = new TreeSet<>();
+	private final Set<Role> roles = new TreeSet<>();
 
 	/**
 	 * The employees that are being supervised by this employee.
 	 */
-	private Set<Employee> supervised = new TreeSet<>();
+	private final Set<Employee> supervised = new TreeSet<>();
 
 	/**
 	 * When an employee shows up in the supervised list, this determines whether
@@ -99,7 +84,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	/**
 	 * The employees that are supervisors of this employee.
 	 */
-	private Set<Employee> supervisors = new TreeSet<>();
+	private final Set<Employee> supervisors = new TreeSet<>();
 
 	/**
 	 * Default constructor.
@@ -297,28 +282,6 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the employee's name suffix
-	 */
-	@XmlElement
-	public String getSuffix() {
-		return this.suffix;
-	}
-
-	/**
-	 * @param suffix
-	 *            the new name suffix value for the employee
-	 * 
-	 * @return {@code this}
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided name suffix value is invalid
-	 */
-	public Employee setSuffix(String suffix) {
-		this.suffix = StringUtils.trimToNull(suffix);
-		return this;
-	}
-
-	/**
 	 * @return the full name of the employee
 	 */
 	@XmlElement
@@ -327,60 +290,7 @@ public class Employee implements Comparable<Employee>, Principal {
 		name.append(getFirstName());
 		name.append(" ");
 		name.append(getLastName());
-
-		String suf = getSuffix();
-		if (StringUtils.isNotBlank(suf)) {
-			name.append(" ");
-			name.append(suf);
-		}
 		return name.toString();
-	}
-
-	/**
-	 * @return the employee's company division
-	 */
-	@XmlElement
-	public String getDivision() {
-		return this.division;
-	}
-
-	/**
-	 * @param division
-	 *            the new company division value for the employee
-	 * 
-	 * @return {@code this}
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided division value is invalid
-	 */
-	public Employee setDivision(String division) {
-		this.division = StringUtils.trimToNull(division);
-		return this;
-	}
-
-	/**
-	 * @return the employee's personnel type
-	 */
-	@XmlElement
-	public PersonnelType getPersonnelType() {
-		return this.personnelType;
-	}
-
-	/**
-	 * @param personnelType
-	 *            the new personnel type value for the employee
-	 * 
-	 * @return {@code this}
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the provided personnel type value is invalid
-	 */
-	public Employee setPersonnelType(PersonnelType personnelType) {
-		if (personnelType == null)
-			throw new IllegalArgumentException("Invalid null personnel type");
-
-		this.personnelType = personnelType;
-		return this;
 	}
 
 	/**
@@ -734,9 +644,6 @@ public class Employee implements Comparable<Employee>, Principal {
 		builder.append("email", getEmail());
 		builder.append("firstName", getFirstName());
 		builder.append("lastName", getLastName());
-		builder.append("suffix", getSuffix());
-		builder.append("division", getDivision());
-		builder.append("personnelType", getPersonnelType());
 		builder.append("active", isActive());
 		builder.append("roles", StringUtils.join(getRoles(), ","));
 		return builder.toString();
@@ -757,9 +664,6 @@ public class Employee implements Comparable<Employee>, Principal {
 			builder.append(getEmail(), other.getEmail());
 			builder.append(getFirstName(), other.getFirstName());
 			builder.append(getLastName(), other.getLastName());
-			builder.append(getSuffix(), other.getSuffix());
-			builder.append(getDivision(), other.getDivision());
-			builder.append(getPersonnelType(), other.getPersonnelType());
 			builder.append(isActive(), other.isActive());
 			return builder.isEquals();
 		}
@@ -780,9 +684,6 @@ public class Employee implements Comparable<Employee>, Principal {
 		builder.append(getEmail());
 		builder.append(getFirstName());
 		builder.append(getLastName());
-		builder.append(getSuffix());
-		builder.append(getDivision());
-		builder.append(getPersonnelType());
 		builder.append(isActive());
 		return builder.toHashCode();
 	}
@@ -796,13 +697,10 @@ public class Employee implements Comparable<Employee>, Principal {
 		builder.append(other.isActive(), isActive());
 		builder.append(getLastName(), other.getLastName());
 		builder.append(getFirstName(), other.getFirstName());
-		builder.append(getSuffix(), other.getSuffix());
 		builder.append(getLogin(), other.getLogin());
 		builder.append(getCompanyId(), other.getCompanyId());
 		builder.append(getId(), other.getId());
 		builder.append(getEmail(), other.getEmail());
-		builder.append(getDivision(), other.getDivision());
-		builder.append(getPersonnelType(), other.getPersonnelType());
 		// HashedPass is specifically left out.
 		return builder.toComparison();
 	}

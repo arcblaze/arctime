@@ -26,7 +26,6 @@ import com.arcblaze.arctime.db.DatabaseUniqueConstraintException;
 import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
-import com.arcblaze.arctime.model.PersonnelType;
 import com.arcblaze.arctime.model.Role;
 
 /**
@@ -44,10 +43,6 @@ public class JdbcEmployeeDao implements EmployeeDao {
 		employee.setEmail(rs.getString("email"));
 		employee.setFirstName(rs.getString("first_name"));
 		employee.setLastName(rs.getString("last_name"));
-		employee.setSuffix(rs.getString("suffix"));
-		employee.setDivision(rs.getString("division"));
-		employee.setPersonnelType(PersonnelType.parse(rs
-				.getString("personnel_type")));
 		employee.setActive(rs.getBoolean("active"));
 		return employee;
 	}
@@ -209,9 +204,8 @@ public class JdbcEmployeeDao implements EmployeeDao {
 			throw new IllegalArgumentException("Invalid null company id");
 
 		String sql = "INSERT INTO employees (company_id, login, hashed_pass, "
-				+ "email, first_name, last_name, suffix, division, "
-				+ "personnel_type, active) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "email, first_name, last_name, active) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql,
@@ -225,9 +219,6 @@ public class JdbcEmployeeDao implements EmployeeDao {
 				ps.setString(index++, employee.getEmail());
 				ps.setString(index++, employee.getFirstName());
 				ps.setString(index++, employee.getLastName());
-				ps.setString(index++, employee.getSuffix());
-				ps.setString(index++, employee.getDivision());
-				ps.setString(index++, employee.getPersonnelType().name());
 				ps.setBoolean(index++, employee.isActive());
 				ps.executeUpdate();
 
@@ -257,8 +248,7 @@ public class JdbcEmployeeDao implements EmployeeDao {
 		// NOTE: the hashed_pass value is not updated.
 
 		String sql = "UPDATE employees SET login = ?, email = ?, "
-				+ "first_name = ?, last_name = ?, suffix = ?, "
-				+ "division = ?, personnel_type = ?, active = ? "
+				+ "first_name = ?, last_name = ?, active = ? "
 				+ "WHERE id = ? AND company_id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
@@ -269,9 +259,6 @@ public class JdbcEmployeeDao implements EmployeeDao {
 				ps.setString(index++, employee.getEmail());
 				ps.setString(index++, employee.getFirstName());
 				ps.setString(index++, employee.getLastName());
-				ps.setString(index++, employee.getSuffix());
-				ps.setString(index++, employee.getDivision());
-				ps.setString(index++, employee.getPersonnelType().name());
 				ps.setBoolean(index++, employee.isActive());
 				ps.setInt(index++, employee.getId());
 				ps.setInt(index++, companyId);

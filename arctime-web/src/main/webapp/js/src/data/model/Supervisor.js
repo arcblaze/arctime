@@ -57,24 +57,6 @@ Ext.define('data.model.Supervisor', {
 			sortable:  true,
 			type:      'string'
 		}, {
-			id:        'division',
-			name:      'division',
-			dataIndex: 'division',
-			header:    'Division',
-			width:     100,
-			hidden:    true,
-			sortable:  true,
-			type:      'string'
-		}, {
-			id:        'personnelType',
-			name:      'personnelType',
-			dataIndex: 'personnelType',
-			header:    'Type',
-			width:     100,
-			hidden:    true,
-			sortable:  true,
-			type:      'string'
-		}, {
 			id:        'primary',
 			name:      'primary',
 			dataIndex: 'primary',
