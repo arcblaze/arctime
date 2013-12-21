@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
 import com.arcblaze.arctime.model.PayPeriod;
 import com.arcblaze.arctime.model.Timesheet;
+import com.arcblaze.arctime.model.User;
 
 /**
  * Performs operations on timesheets in the system.
@@ -99,8 +99,8 @@ public interface TimesheetDao {
 	 * @param companyId
 	 *            the unique id of the company for which timesheet information
 	 *            will be retrieved
-	 * @param employeeId
-	 *            the unique id of the employee that owns the timesheet to be
+	 * @param userId
+	 *            the unique id of the user that owns the timesheet to be
 	 *            retrieved
 	 * @param payPeriod
 	 *            the pay period for which timesheet data will be returned
@@ -115,7 +115,7 @@ public interface TimesheetDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Timesheet getForEmployee(Integer companyId, Integer employeeId,
+	public Timesheet getForUser(Integer companyId, Integer userId,
 			PayPeriod payPeriod, Enrichment... enrichments)
 			throws DatabaseException;
 
@@ -123,8 +123,8 @@ public interface TimesheetDao {
 	 * @param companyId
 	 *            the unique id of the company for which timesheet information
 	 *            will be retrieved
-	 * @param employeeId
-	 *            the unique id of the employee that owns the timesheet to be
+	 * @param userId
+	 *            the unique id of the user that owns the timesheet to be
 	 *            retrieved
 	 * @param payPeriod
 	 *            the pay period for which timesheet data will be returned
@@ -139,7 +139,7 @@ public interface TimesheetDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Timesheet getForEmployee(Integer companyId, Integer employeeId,
+	public Timesheet getForUser(Integer companyId, Integer userId,
 			PayPeriod payPeriod, Set<Enrichment> enrichments)
 			throws DatabaseException;
 
@@ -147,8 +147,8 @@ public interface TimesheetDao {
 	 * @param companyId
 	 *            the unique id of the company for which timesheet information
 	 *            will be retrieved
-	 * @param employeeId
-	 *            the unique id of the employee that owns the timesheet to be
+	 * @param userId
+	 *            the unique id of the user that owns the timesheet to be
 	 *            retrieved
 	 * @param enrichments
 	 *            the types of additional data to include in the returned
@@ -161,16 +161,15 @@ public interface TimesheetDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Timesheet getLatestForEmployee(Integer companyId,
-			Integer employeeId, Enrichment... enrichments)
-			throws DatabaseException;
+	public Timesheet getLatestForUser(Integer companyId, Integer userId,
+			Enrichment... enrichments) throws DatabaseException;
 
 	/**
 	 * @param companyId
 	 *            the unique id of the company for which timesheet information
 	 *            will be retrieved
-	 * @param employeeId
-	 *            the unique id of the employee that owns the timesheet to be
+	 * @param userId
+	 *            the unique id of the user that owns the timesheet to be
 	 *            retrieved
 	 * @param enrichments
 	 *            the types of additional data to include in the returned
@@ -183,9 +182,8 @@ public interface TimesheetDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Timesheet getLatestForEmployee(Integer companyId,
-			Integer employeeId, Set<Enrichment> enrichments)
-			throws DatabaseException;
+	public Timesheet getLatestForUser(Integer companyId, Integer userId,
+			Set<Enrichment> enrichments) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -208,7 +206,7 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which approval status
 	 *            will be updated
 	 * @param approver
-	 *            the supervisor employee that approved the timesheets
+	 *            the supervisor user that approved the timesheets
 	 * @param approved
 	 *            the new value for the approved status
 	 * 
@@ -216,7 +214,7 @@ public interface TimesheetDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public void approve(Integer companyId, Collection<Integer> timesheetIds,
-			boolean approved, Employee approver) throws DatabaseException;
+			boolean approved, User approver) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -226,7 +224,7 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which verification status
 	 *            will be updated
 	 * @param verifier
-	 *            the payroll employee that verified the timesheets
+	 *            the payroll user that verified the timesheets
 	 * @param verified
 	 *            the new value for the verified status
 	 * 
@@ -234,7 +232,7 @@ public interface TimesheetDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public void verify(Integer companyId, Collection<Integer> timesheetIds,
-			boolean verified, Employee verifier) throws DatabaseException;
+			boolean verified, User verifier) throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -244,7 +242,7 @@ public interface TimesheetDao {
 	 *            the unique ids of the timesheets for which export status will
 	 *            be updated
 	 * @param exporter
-	 *            the payroll employee that exported the timesheets
+	 *            the payroll user that exported the timesheets
 	 * @param exported
 	 *            the new value for the export status
 	 * 
@@ -252,7 +250,7 @@ public interface TimesheetDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public void export(Integer companyId, Collection<Integer> timesheetIds,
-			boolean exported, Employee exporter) throws DatabaseException;
+			boolean exported, User exporter) throws DatabaseException;
 
 	/**
 	 * @param companyId

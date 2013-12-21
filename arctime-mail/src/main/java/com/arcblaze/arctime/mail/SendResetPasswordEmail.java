@@ -6,7 +6,7 @@ import javax.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.model.User;
 
 /**
  * Responsible for sending emails to user accounts when they request a password
@@ -17,21 +17,19 @@ public class SendResetPasswordEmail {
 	 * This method is responsible for sending the email when a user forgets
 	 * their password.
 	 * 
-	 * @param employee
-	 *            the {@link Employee} to whom the email will be sent
-	 * 
+	 * @param user
+	 *            the {@link User} to whom the email will be sent
 	 * @param newPassword
-	 *            the new password value to be sent to the employee
+	 *            the new password value to be sent to the user
 	 * 
 	 * @throws MessagingException
 	 *             if there is a problem sending the email
 	 */
-	public void send(Employee employee, String newPassword)
-			throws MessagingException {
-		if (employee == null)
-			throw new IllegalArgumentException("Invalid null employee");
-		if (StringUtils.isBlank(employee.getEmail()))
-			throw new IllegalArgumentException("Invalid blank employee email");
+	public void send(User user, String newPassword) throws MessagingException {
+		if (user == null)
+			throw new IllegalArgumentException("Invalid null user");
+		if (StringUtils.isBlank(user.getEmail()))
+			throw new IllegalArgumentException("Invalid blank user email");
 		if (StringUtils.isBlank(newPassword))
 			throw new IllegalArgumentException("Invalid blank password");
 
@@ -47,6 +45,6 @@ public class SendResetPasswordEmail {
 				+ "supervisor or ARCTIME support.\n\n";
 		String subject = "Password Change Notification";
 
-		MailSender.send(message, subject, Collections.singleton(employee));
+		MailSender.send(message, subject, Collections.singleton(user));
 	}
 }

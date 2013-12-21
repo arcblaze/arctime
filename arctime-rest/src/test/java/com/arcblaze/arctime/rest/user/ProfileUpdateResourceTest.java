@@ -15,11 +15,11 @@ import org.mockito.Mockito;
 
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Company;
-import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Password;
+import com.arcblaze.arctime.model.User;
 
 /**
  * Perform testing of the profile update capabilities.
@@ -105,31 +105,31 @@ public class ProfileUpdateResourceTest {
 
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email@whatever.com");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		employee.setActive(true);
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email@whatever.com");
+		user.setFirstName("first");
+		user.setLastName("last");
+		user.setActive(true);
 
-		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(company.getId(), Collections.singleton(employee));
+		UserDao userDao = DaoFactory.getUserDao();
+		userDao.add(company.getId(), Collections.singleton(user));
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
-		Mockito.when(security.getUserPrincipal()).thenReturn(employee);
+		Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 		ProfileUpdateResource resource = new ProfileUpdateResource();
 		resource.update(security, "a", "b", "c", "d", null);
 
-		Employee updated = employeeDao.getLogin("d");
-		assertEquals(employee.getId(), updated.getId());
+		User updated = userDao.getLogin("d");
+		assertEquals(user.getId(), updated.getId());
 		assertEquals(company.getId(), updated.getCompanyId());
 		assertEquals("c", updated.getLogin());
 		assertEquals("d", updated.getEmail());
 		assertEquals("a", updated.getFirstName());
 		assertEquals("b", updated.getLastName());
-		assertEquals(employee.getHashedPass(), updated.getHashedPass());
+		assertEquals(user.getHashedPass(), updated.getHashedPass());
 	}
 
 	/**
@@ -146,25 +146,25 @@ public class ProfileUpdateResourceTest {
 
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email@whatever.com");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		employee.setActive(true);
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email@whatever.com");
+		user.setFirstName("first");
+		user.setLastName("last");
+		user.setActive(true);
 
-		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(company.getId(), Collections.singleton(employee));
+		UserDao userDao = DaoFactory.getUserDao();
+		userDao.add(company.getId(), Collections.singleton(user));
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
-		Mockito.when(security.getUserPrincipal()).thenReturn(employee);
+		Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 		ProfileUpdateResource resource = new ProfileUpdateResource();
 		resource.update(security, "a", "b", "c", "d", "password");
 
-		Employee updated = employeeDao.getLogin("c");
-		assertEquals(employee.getId(), updated.getId());
+		User updated = userDao.getLogin("c");
+		assertEquals(user.getId(), updated.getId());
 		assertEquals(company.getId(), updated.getCompanyId());
 		assertEquals("c", updated.getLogin());
 		assertEquals("d", updated.getEmail());
@@ -190,7 +190,7 @@ public class ProfileUpdateResourceTest {
 
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		Employee existing = new Employee();
+		User existing = new User();
 		existing.setLogin("existing");
 		existing.setHashedPass("hashed");
 		existing.setEmail("existing@whatever.com");
@@ -198,19 +198,19 @@ public class ProfileUpdateResourceTest {
 		existing.setLastName("last");
 		existing.setActive(true);
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email@whatever.com");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		employee.setActive(true);
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email@whatever.com");
+		user.setFirstName("first");
+		user.setLastName("last");
+		user.setActive(true);
 
-		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(company.getId(), Arrays.asList(existing, employee));
+		UserDao userDao = DaoFactory.getUserDao();
+		userDao.add(company.getId(), Arrays.asList(existing, user));
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
-		Mockito.when(security.getUserPrincipal()).thenReturn(employee);
+		Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 		ProfileUpdateResource resource = new ProfileUpdateResource();
 		resource.update(security, "a", "b", "existing", "e", "password");

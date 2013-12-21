@@ -12,7 +12,7 @@ import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.CompanyDao;
 import com.arcblaze.arctime.model.Company;
-import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
@@ -39,7 +39,7 @@ public class CompanyResource extends BaseResource {
 			throws DatabaseException {
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/manager/company")) {
-			Employee currentUser = (Employee) security.getUserPrincipal();
+			User currentUser = (User) security.getUserPrincipal();
 			CompanyDao dao = DaoFactory.getCompanyDao();
 			return dao.get(currentUser.getCompanyId());
 		}

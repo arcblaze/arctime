@@ -17,12 +17,12 @@ import org.mockito.Mockito;
 
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.mail.SendResetPasswordEmail;
 import com.arcblaze.arctime.model.Company;
-import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Password;
+import com.arcblaze.arctime.model.User;
 
 /**
  * Perform testing of the password reset capabilities.
@@ -89,16 +89,16 @@ public class ResetPasswordResourceTest {
 
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email@whatever.com");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		employee.setActive(true);
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email@whatever.com");
+		user.setFirstName("first");
+		user.setLastName("last");
+		user.setActive(true);
 
-		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(company.getId(), Collections.singleton(employee));
+		UserDao userDao = DaoFactory.getUserDao();
+		userDao.add(company.getId(), Collections.singleton(user));
 
 		SendResetPasswordEmail mockEmailSender = Mockito
 				.mock(SendResetPasswordEmail.class);
@@ -109,10 +109,10 @@ public class ResetPasswordResourceTest {
 
 		ResetPasswordResource resource = new ResetPasswordResource(
 				mockEmailSender, mockPassword);
-		resource.reset("employee");
+		resource.reset("user");
 
 		// Make sure the password was updated.
-		Employee updated = employeeDao.getLogin(employee.getLogin());
+		User updated = userDao.getLogin(user.getLogin());
 		assertEquals("hashed-password", updated.getHashedPass());
 	}
 
@@ -131,16 +131,16 @@ public class ResetPasswordResourceTest {
 
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email@whatever.com");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		employee.setActive(true);
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email@whatever.com");
+		user.setFirstName("first");
+		user.setLastName("last");
+		user.setActive(true);
 
-		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(company.getId(), Collections.singleton(employee));
+		UserDao userDao = DaoFactory.getUserDao();
+		userDao.add(company.getId(), Collections.singleton(user));
 
 		SendResetPasswordEmail mockEmailSender = Mockito
 				.mock(SendResetPasswordEmail.class);
@@ -154,7 +154,7 @@ public class ResetPasswordResourceTest {
 		resource.reset("email@whatever.com");
 
 		// Make sure the password was updated.
-		Employee updated = employeeDao.getLogin(employee.getLogin());
+		User updated = userDao.getLogin(user.getLogin());
 		assertEquals("hashed-password", updated.getHashedPass());
 	}
 
@@ -175,21 +175,21 @@ public class ResetPasswordResourceTest {
 
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email@whatever.com");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		employee.setActive(true);
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email@whatever.com");
+		user.setFirstName("first");
+		user.setLastName("last");
+		user.setActive(true);
 
-		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(company.getId(), Collections.singleton(employee));
+		UserDao userDao = DaoFactory.getUserDao();
+		userDao.add(company.getId(), Collections.singleton(user));
 
 		SendResetPasswordEmail emailSender = new SendResetPasswordEmail();
 		SendResetPasswordEmail mockEmailSender = Mockito.spy(emailSender);
 		Mockito.doThrow(MessagingException.class).when(mockEmailSender)
-				.send(employee, "new-password");
+				.send(user, "new-password");
 
 		Password mockPassword = Mockito.mock(Password.class);
 		Mockito.when(mockPassword.random()).thenReturn("new-password");
@@ -199,14 +199,14 @@ public class ResetPasswordResourceTest {
 		try {
 			ResetPasswordResource resource = new ResetPasswordResource(
 					mockEmailSender, mockPassword);
-			resource.reset("employee");
+			resource.reset("user");
 			Assert.fail("Expected an email-sending error");
 		} catch (InternalServerErrorException expected) {
 			// This is expected.
 		}
 
 		// Make sure the password was reverted back to the original.
-		Employee updated = employeeDao.getLogin(employee.getLogin());
+		User updated = userDao.getLogin(user.getLogin());
 		assertEquals("hashed", updated.getHashedPass());
 	}
 }

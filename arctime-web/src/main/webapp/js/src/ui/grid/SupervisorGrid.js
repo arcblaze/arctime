@@ -3,8 +3,8 @@ Ext.namespace("ui.grid");
 
 ui.grid.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 	constructor: function(c) {
-		if (!c || !c.employee)
-			throw "SupervisorGrid requires an employee.";
+		if (!c || !c.user)
+			throw "SupervisorGrid requires an user.";
 
 		// Determine if the toolbar should be included.
 		var tbar = false;
@@ -24,14 +24,14 @@ ui.grid.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 			loadMask:         true,
 			columns:          supervisor.getColumnModel(),
 			store: new data.store.SupervisorStore({
-				employee: c.employee
+				user: c.user
 			})
 		});
 
 		if (tbar)
 			Ext.apply(config, {
 				tbar: new ui.tbar.SupervisorToolbar({
-					employee: c.employee
+					user: c.user
 				})
 			});
 

@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.mail.SendResetPasswordEmail;
-import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Password;
+import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
@@ -54,12 +54,12 @@ public class ResetPasswordResource extends BaseResource {
 	}
 
 	/**
-	 * Used to send password-reset emails to the employee.
+	 * Used to send password-reset emails to the user.
 	 */
 	private final SendResetPasswordEmail emailSender;
 
 	/**
-	 * Used to generate new random passwords for employees.
+	 * Used to generate new random passwords for users.
 	 */
 	private final Password password;
 
@@ -75,7 +75,7 @@ public class ResetPasswordResource extends BaseResource {
 	 * @param emailSender
 	 *            the object responsible for sending emails
 	 * @param password
-	 *            the object used to generate new random passwords for employees
+	 *            the object used to generate new random passwords for users
 	 */
 	public ResetPasswordResource(SendResetPasswordEmail emailSender,
 			Password password) {
@@ -101,11 +101,11 @@ public class ResetPasswordResource extends BaseResource {
 			if (StringUtils.isBlank(login))
 				throw badRequest("The j_username parameter must be specified.");
 
-			EmployeeDao dao = DaoFactory.getEmployeeDao();
-			Employee employee = dao.getLogin(login);
-			log.debug("  Found employee: {}", employee);
+			UserDao dao = DaoFactory.getUserDao();
+			User user = dao.getLogin(login);
+			log.debug("  Found user: {}", user);
 
-			if (employee == null)
+			if (user == null)
 				throw notFound("A user with the specified login was not found.");
 
 			String newPassword = this.password.random();
@@ -113,14 +113,14 @@ public class ResetPasswordResource extends BaseResource {
 			log.debug("  New password will be: {}", newPassword);
 			log.debug("  Hashed password will be: {}", hashedPass);
 
-			dao.setPassword(employee.getId(), hashedPass);
+			dao.setPassword(user.getId(), hashedPass);
 			log.debug("  Password updated successfully");
 
 			try {
-				this.emailSender.send(employee, newPassword);
+				this.emailSender.send(user, newPassword);
 			} catch (MessagingException mailException) {
 				log.debug("  Failed to send email, setting password back");
-				dao.setPassword(employee.getId(), employee.getHashedPass());
+				dao.setPassword(user.getId(), user.getHashedPass());
 				throw mailError(mailException);
 			}
 

@@ -14,8 +14,8 @@ import javax.ws.rs.core.SecurityContext;
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.TaskDao;
-import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Task;
+import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
@@ -45,7 +45,7 @@ public class TaskResource extends BaseResource {
 			@PathParam("taskId") Integer taskId) throws DatabaseException {
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/manager/task/{taskId}")) {
-			Employee currentUser = (Employee) security.getUserPrincipal();
+			User currentUser = (User) security.getUserPrincipal();
 			TaskDao dao = DaoFactory.getTaskDao();
 			return dao.get(currentUser.getCompanyId(), taskId);
 		}
@@ -67,7 +67,7 @@ public class TaskResource extends BaseResource {
 			throws DatabaseException {
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/manager/task")) {
-			Employee currentUser = (Employee) security.getUserPrincipal();
+			User currentUser = (User) security.getUserPrincipal();
 			TaskDao dao = DaoFactory.getTaskDao();
 			return dao.getAll(currentUser.getCompanyId());
 		}

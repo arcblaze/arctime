@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page import="com.arcblaze.arctime.model.Employee" %>
+<%@ page import="com.arcblaze.arctime.model.User" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <html>
   <head>
@@ -24,34 +24,34 @@
 
 	<!-- Add the profile management scripts. -->
 	<script src="/js/src/util/io/ServerIO.js"></script>
-	<script src="/js/src/data/model/Employee.js"></script>
+	<script src="/js/src/data/model/User.js"></script>
 	<script src="/js/src/data/model/Supervisor.js"></script>
 	<script src="/js/src/data/store/SupervisorStore.js"></script>
-	<script src="/js/src/action/employee/DoProfileUpdate.js"></script>
-	<script src="/js/src/ui/panel/employee/ProfileUpdatePanel.js"></script>
+	<script src="/js/src/action/user/DoProfileUpdate.js"></script>
+	<script src="/js/src/ui/panel/user/ProfileUpdatePanel.js"></script>
 	<script src="/js/src/ui/grid/SupervisorGrid.js"></script>
 	<script>
 	  // Invoked when the page is ready.
 	  Ext.onReady(function() {
-		  // Create the employee.
-		  <% Employee employee = (Employee) request.getUserPrincipal(); %>
-		  var employee = {
+		  // Create the user.
+		  <% User user = (User) request.getUserPrincipal(); %>
+		  var user = {
 			  data: {
-				  id: <%= employee.getId() %>,
-				  firstName: '<%= StringEscapeUtils.escapeJavaScript(employee.getFirstName()) %>',
-				  lastName: '<%= StringEscapeUtils.escapeJavaScript(employee.getLastName()) %>',
-				  login: '<%= StringEscapeUtils.escapeJavaScript(employee.getLogin()) %>',
-				  email: '<%= StringEscapeUtils.escapeJavaScript(employee.getEmail()) %>'
+				  id: <%= user.getId() %>,
+				  firstName: '<%= StringEscapeUtils.escapeJavaScript(user.getFirstName()) %>',
+				  lastName: '<%= StringEscapeUtils.escapeJavaScript(user.getLastName()) %>',
+				  login: '<%= StringEscapeUtils.escapeJavaScript(user.getLogin()) %>',
+				  email: '<%= StringEscapeUtils.escapeJavaScript(user.getEmail()) %>'
 			  }
 		  }
 
 		  // Create the panel.
-		  new ui.panel.employee.ProfileUpdatePanel({
+		  new ui.panel.user.ProfileUpdatePanel({
 			  // Specify where the panel will be rendered.
 			  renderTo: 'profile-update-panel',
 
-			  // Provide the employee data.
-			  employee: employee
+			  // Provide the user data.
+			  user: user
 		  });
 
 		  // Create the supervisor grid.
@@ -65,8 +65,8 @@
 			  // Set the height.
 			  height: 140,
 
-			  // Provide the employee data.
-			  employee: employee
+			  // Provide the user data.
+			  user: user
 		  });
 	  });
 	</script>

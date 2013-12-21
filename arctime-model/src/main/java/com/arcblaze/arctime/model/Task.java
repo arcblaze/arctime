@@ -34,8 +34,8 @@ public class Task implements Comparable<Task> {
 	private Integer companyId;
 
 	/**
-	 * The description of the task as displayed to employees in the system on
-	 * their timesheets.
+	 * The description of the task as displayed to users in the system on their
+	 * timesheets.
 	 */
 	private String description;
 
@@ -46,14 +46,13 @@ public class Task implements Comparable<Task> {
 	private String jobCode;
 
 	/**
-	 * Whether this task is administrative and available to all employees in the
+	 * Whether this task is administrative and available to all users in the
 	 * company.
 	 */
 	private Boolean administrative;
 
 	/**
-	 * Whether this task is active and available for employees to charge
-	 * against.
+	 * Whether this task is active and available for users to charge against.
 	 */
 	private Boolean active = true;
 
@@ -174,8 +173,7 @@ public class Task implements Comparable<Task> {
 	}
 
 	/**
-	 * @return whether this task is administrative and available to all
-	 *         employees
+	 * @return whether this task is administrative and available to all users
 	 */
 	@XmlElement
 	public Boolean isAdministrative() {

@@ -53,13 +53,13 @@
 	width:					0%;
 }
 
-#timesheet-table #timesheet-user-table #employee-label {
+#timesheet-table #timesheet-user-table #user-label {
 	font-weight:			bold;
 	padding-left:			10px;
 	padding-right:			20px;
 }
 
-#timesheet-table #timesheet-user-table #employee-name {
+#timesheet-table #timesheet-user-table #user-name {
 	padding-right:			40px;
 	white-space:			nowrap;
 	width:					100%;

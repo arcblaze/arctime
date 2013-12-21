@@ -3,8 +3,8 @@ Ext.namespace("data.store");
 
 data.store.SupervisorStore = Ext.extend(Ext.data.JsonStore, {
 	constructor: function(c) {
-		if (!c || !c.employee)
-			throw "SupervisorStore requires an employee.";
+		if (!c || !c.user)
+			throw "SupervisorStore requires an user.";
 
 		var config = Ext.applyIf(c || {}, {
 			model:    'data.model.Supervisor',
@@ -18,7 +18,7 @@ data.store.SupervisorStore = Ext.extend(Ext.data.JsonStore, {
 				}
 			},
 			baseParams: {
-				id: c.employee.data.id
+				id: c.user.data.id
 			}
 		});
 

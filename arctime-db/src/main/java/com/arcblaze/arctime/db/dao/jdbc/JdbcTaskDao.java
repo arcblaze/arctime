@@ -96,18 +96,18 @@ public class JdbcTaskDao implements TaskDao {
 	 */
 	@Override
 	public Set<Task> getForPayPeriod(Integer companyId, PayPeriod payPeriod,
-			Integer employeeId) throws DatabaseException {
+			Integer userId) throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 		if (payPeriod == null)
 			throw new IllegalArgumentException("Invalid null pay period");
 
 		String sql = "SELECT t.company_id, t.id, description, job_code, admin, "
 				+ "active FROM tasks t LEFT JOIN assignments a ON "
 				+ "(a.task_id = t.id) WHERE t.company_id = ? AND "
-				+ "(a.employee_id = ? OR t.admin = true) AND "
+				+ "(a.user_id = ? OR t.admin = true) AND "
 				+ "(begin IS NULL OR begin <= ?) AND "
 				+ "(end IS NULL OR end >= ?)";
 
@@ -115,7 +115,7 @@ public class JdbcTaskDao implements TaskDao {
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 			ps.setDate(3, new java.sql.Date(payPeriod.getEnd().getTime()));
 			ps.setDate(4, new java.sql.Date(payPeriod.getBegin().getTime()));
 
@@ -134,9 +134,9 @@ public class JdbcTaskDao implements TaskDao {
 	 * Used to enrich timesheets with task information.
 	 */
 	protected Map<Integer, Set<Task>> getForPayPeriod(Connection conn,
-			Integer companyId, PayPeriod payPeriod, Set<Integer> employeeIds)
+			Integer companyId, PayPeriod payPeriod, Set<Integer> userIds)
 			throws DatabaseException {
-		if (employeeIds == null || employeeIds.isEmpty())
+		if (userIds == null || userIds.isEmpty())
 			return Collections.emptyMap();
 		if (conn == null)
 			throw new IllegalArgumentException("Invalid null connection");
@@ -145,13 +145,12 @@ public class JdbcTaskDao implements TaskDao {
 		if (payPeriod == null)
 			throw new IllegalArgumentException("Invalid null pay period");
 
-		String sql = String.format("SELECT a.employee_id, t.company_id, t.id, "
+		String sql = String.format("SELECT a.user_id, t.company_id, t.id, "
 				+ "description, job_code, admin, active FROM tasks t "
 				+ "LEFT JOIN assignments a ON (a.task_id = t.id) "
-				+ "WHERE t.company_id = ? AND (a.employee_id IN (%s) OR "
+				+ "WHERE t.company_id = ? AND (a.user_id IN (%s) OR "
 				+ "t.admin = true) AND (begin IS NULL OR begin <= ?) AND "
-				+ "(end IS NULL OR end >= ?)",
-				StringUtils.join(employeeIds, ","));
+				+ "(end IS NULL OR end >= ?)", StringUtils.join(userIds, ","));
 
 		Map<Integer, Set<Task>> taskMap = new TreeMap<>();
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -162,12 +161,12 @@ public class JdbcTaskDao implements TaskDao {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Task task = fromResultSet(rs);
-					int employeeId = rs.getInt("employee_id");
+					int userId = rs.getInt("user_id");
 
-					Set<Task> tasks = taskMap.get(employeeId);
+					Set<Task> tasks = taskMap.get(userId);
 					if (tasks == null) {
 						tasks = new TreeSet<>();
-						taskMap.put(employeeId, tasks);
+						taskMap.put(userId, tasks);
 					}
 					tasks.add(task);
 				}
@@ -183,17 +182,17 @@ public class JdbcTaskDao implements TaskDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Task> getForEmployee(Integer companyId, Integer employeeId,
-			Date day, boolean includeAdmin) throws DatabaseException {
+	public Set<Task> getForUser(Integer companyId, Integer userId, Date day,
+			boolean includeAdmin) throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 
 		String sql = "SELECT t.company_id, t.id, description, job_code, admin, "
 				+ "active FROM tasks t LEFT JOIN assignments a ON "
 				+ "(a.task_id = t.id) WHERE t.company_id = ? AND "
-				+ "(a.employee_id = ? OR t.admin = true)";
+				+ "(a.user_id = ? OR t.admin = true)";
 
 		if (day != null) {
 			sql += " AND (begin IS NULL OR begin <= ?)";
@@ -207,7 +206,7 @@ public class JdbcTaskDao implements TaskDao {
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 			if (day != null) {
 				ps.setTimestamp(3, new Timestamp(day.getTime()));
 				ps.setTimestamp(4, new Timestamp(day.getTime()));

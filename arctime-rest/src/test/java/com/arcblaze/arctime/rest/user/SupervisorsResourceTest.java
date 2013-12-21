@@ -16,11 +16,11 @@ import org.mockito.Mockito;
 
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Company;
-import com.arcblaze.arctime.model.Employee;
-import com.arcblaze.arctime.rest.user.SupervisorsResource.EmployeeSupervisors;
+import com.arcblaze.arctime.model.User;
+import com.arcblaze.arctime.rest.user.SupervisorsResource.UserSupervisors;
 
 /**
  * Perform testing of the profile update capabilities.
@@ -59,22 +59,22 @@ public class SupervisorsResourceTest {
 
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email@whatever.com");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		employee.setActive(true);
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email@whatever.com");
+		user.setFirstName("first");
+		user.setLastName("last");
+		user.setActive(true);
 
-		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(company.getId(), Collections.singleton(employee));
+		UserDao userDao = DaoFactory.getUserDao();
+		userDao.add(company.getId(), Collections.singleton(user));
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
-		Mockito.when(security.getUserPrincipal()).thenReturn(employee);
+		Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 		SupervisorsResource resource = new SupervisorsResource();
-		EmployeeSupervisors supervisors = resource.get(security);
+		UserSupervisors supervisors = resource.get(security);
 
 		assertNotNull(supervisors);
 		assertNotNull(supervisors.supervisors);
@@ -95,7 +95,7 @@ public class SupervisorsResourceTest {
 
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
-		Employee supervisor1 = new Employee();
+		User supervisor1 = new User();
 		supervisor1.setLogin("s1");
 		supervisor1.setHashedPass("hashed");
 		supervisor1.setEmail("s1@whatever.com");
@@ -103,7 +103,7 @@ public class SupervisorsResourceTest {
 		supervisor1.setLastName("last");
 		supervisor1.setActive(true);
 
-		Employee supervisor2 = new Employee();
+		User supervisor2 = new User();
 		supervisor2.setLogin("s2");
 		supervisor2.setHashedPass("hashed");
 		supervisor2.setEmail("s2@whatever.com");
@@ -111,28 +111,28 @@ public class SupervisorsResourceTest {
 		supervisor2.setLastName("last");
 		supervisor2.setActive(true);
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email@whatever.com");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		employee.setActive(true);
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email@whatever.com");
+		user.setFirstName("first");
+		user.setLastName("last");
+		user.setActive(true);
 
-		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		employeeDao.add(company.getId(),
-				Arrays.asList(supervisor1, supervisor2, employee));
+		UserDao userDao = DaoFactory.getUserDao();
+		userDao.add(company.getId(),
+				Arrays.asList(supervisor1, supervisor2, user));
 
-		employeeDao.addSupervisors(company.getId(), employee.getId(),
+		userDao.addSupervisors(company.getId(), user.getId(),
 				Collections.singleton(supervisor1.getId()), true);
-		employeeDao.addSupervisors(company.getId(), employee.getId(),
+		userDao.addSupervisors(company.getId(), user.getId(),
 				Collections.singleton(supervisor2.getId()), false);
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
-		Mockito.when(security.getUserPrincipal()).thenReturn(employee);
+		Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
 		SupervisorsResource resource = new SupervisorsResource();
-		EmployeeSupervisors response = resource.get(security);
+		UserSupervisors response = resource.get(security);
 
 		assertNotNull(response);
 		assertNotNull(response.supervisors);

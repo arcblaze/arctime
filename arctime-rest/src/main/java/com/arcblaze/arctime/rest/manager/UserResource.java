@@ -14,47 +14,46 @@ import javax.ws.rs.core.SecurityContext;
 
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
-import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.model.Enrichment;
+import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
 /**
- * The REST end-point for managing employees.
+ * The REST end-point for managing users.
  */
-@Path("/manager/employee")
-public class EmployeeResource extends BaseResource {
+@Path("/manager/user")
+public class UserResource extends BaseResource {
 	@Context
 	private ServletContext servletContext;
 
 	/**
 	 * @param security
 	 *            the security information associated with the request
-	 * @param employeeId
-	 *            the unique id of the employee to retrieve
+	 * @param userId
+	 *            the unique id of the user to retrieve
 	 * @param enrichments
 	 *            indicates the additional data to be included in the returned
-	 *            employee
+	 *            user
 	 * 
-	 * @return the requested employee (if in the same company as the current
-	 *         user)
+	 * @return the requested user (if in the same company as the current user)
 	 * 
 	 * @throws DatabaseException
 	 *             if there is an error communicating with the back-end
 	 */
 	@GET
-	@Path("{employeeId}")
+	@Path("{userId}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Employee one(@Context SecurityContext security,
-			@PathParam("employeeId") Integer employeeId,
+	public User one(@Context SecurityContext security,
+			@PathParam("userId") Integer userId,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
 		try (Timer.Context timer = getTimer(this.servletContext,
-				"/manager/employee/{employeeId}")) {
-			Employee currentUser = (Employee) security.getUserPrincipal();
-			EmployeeDao dao = DaoFactory.getEmployeeDao();
-			return dao.get(currentUser.getCompanyId(), employeeId, enrichments);
+				"/manager/user/{userId}")) {
+			User currentUser = (User) security.getUserPrincipal();
+			UserDao dao = DaoFactory.getUserDao();
+			return dao.get(currentUser.getCompanyId(), userId, enrichments);
 		}
 	}
 
@@ -63,9 +62,9 @@ public class EmployeeResource extends BaseResource {
 	 *            the security information associated with the request
 	 * @param enrichments
 	 *            indicates the additional data to be included in the returned
-	 *            employees
+	 *            users
 	 * 
-	 * @return all of the available employees in the same company as the current
+	 * @return all of the available users in the same company as the current
 	 *         user
 	 * 
 	 * @throws DatabaseException
@@ -73,13 +72,13 @@ public class EmployeeResource extends BaseResource {
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Set<Employee> all(@Context SecurityContext security,
+	public Set<User> all(@Context SecurityContext security,
 			@QueryParam("enrichments") Set<Enrichment> enrichments)
 			throws DatabaseException {
 		try (Timer.Context timer = getTimer(this.servletContext,
-				"/manager/employee")) {
-			Employee currentUser = (Employee) security.getUserPrincipal();
-			EmployeeDao dao = DaoFactory.getEmployeeDao();
+				"/manager/user")) {
+			User currentUser = (User) security.getUserPrincipal();
+			UserDao dao = DaoFactory.getUserDao();
 			return dao.getAll(currentUser.getCompanyId(), enrichments);
 		}
 	}

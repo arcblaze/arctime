@@ -23,39 +23,39 @@ import org.apache.commons.lang.StringUtils;
 import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.DatabaseUniqueConstraintException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
-import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.model.Enrichment;
 import com.arcblaze.arctime.model.Role;
+import com.arcblaze.arctime.model.User;
 
 /**
- * Manages employees within the back-end database.
+ * Manages users within the back-end database.
  */
-public class JdbcEmployeeDao implements EmployeeDao {
-	protected Employee fromResultSet(ResultSet rs, boolean includePass)
+public class JdbcUserDao implements UserDao {
+	protected User fromResultSet(ResultSet rs, boolean includePass)
 			throws SQLException {
-		Employee employee = new Employee();
-		employee.setId(rs.getInt("id"));
-		employee.setCompanyId(rs.getInt("company_id"));
-		employee.setLogin(rs.getString("login"));
+		User user = new User();
+		user.setId(rs.getInt("id"));
+		user.setCompanyId(rs.getInt("company_id"));
+		user.setLogin(rs.getString("login"));
 		if (includePass)
-			employee.setHashedPass(rs.getString("hashed_pass"));
-		employee.setEmail(rs.getString("email"));
-		employee.setFirstName(rs.getString("first_name"));
-		employee.setLastName(rs.getString("last_name"));
-		employee.setActive(rs.getBoolean("active"));
-		return employee;
+			user.setHashedPass(rs.getString("hashed_pass"));
+		user.setEmail(rs.getString("email"));
+		user.setFirstName(rs.getString("first_name"));
+		user.setLastName(rs.getString("last_name"));
+		user.setActive(rs.getBoolean("active"));
+		return user;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Employee getLogin(String login) throws DatabaseException {
+	public User getLogin(String login) throws DatabaseException {
 		if (StringUtils.isBlank(login))
 			throw new IllegalArgumentException("Invalid blank login");
 
-		String sql = "SELECT * FROM employees WHERE active = true AND "
+		String sql = "SELECT * FROM users WHERE active = true AND "
 				+ "(login = ? OR LOWER(email) = LOWER(?))";
 
 		try (Connection conn = ConnectionManager.getConnection();
@@ -78,39 +78,39 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Employee get(Integer companyId, Integer employeeId,
+	public User get(Integer companyId, Integer userId,
 			Enrichment... enrichments) throws DatabaseException {
 		Set<Enrichment> enrichmentSet = enrichments == null ? null
 				: new LinkedHashSet<>(Arrays.asList(enrichments));
-		return this.get(companyId, employeeId, enrichmentSet);
+		return this.get(companyId, userId, enrichmentSet);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Employee get(Integer companyId, Integer employeeId,
+	public User get(Integer companyId, Integer userId,
 			Set<Enrichment> enrichments) throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 
-		String sql = "SELECT * FROM employees WHERE company_id = ? AND id = ?";
+		String sql = "SELECT * FROM users WHERE company_id = ? AND id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 
 			try (ResultSet rs = ps.executeQuery();) {
 				if (rs.next()) {
-					Employee employee = fromResultSet(rs, false);
+					User user = fromResultSet(rs, false);
 
-					enrich(conn, companyId, Collections.singleton(employee),
+					enrich(conn, companyId, Collections.singleton(user),
 							enrichments);
 
-					return employee;
+					return user;
 				}
 			}
 
@@ -124,7 +124,7 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Employee> getAll(Integer companyId, Enrichment... enrichments)
+	public Set<User> getAll(Integer companyId, Enrichment... enrichments)
 			throws DatabaseException {
 		Set<Enrichment> enrichmentSet = enrichments == null ? null
 				: new LinkedHashSet<>(Arrays.asList(enrichments));
@@ -135,32 +135,32 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Employee> getAll(Integer companyId, Set<Enrichment> enrichments)
+	public Set<User> getAll(Integer companyId, Set<Enrichment> enrichments)
 			throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "SELECT * FROM employees WHERE company_id = ?";
+		String sql = "SELECT * FROM users WHERE company_id = ?";
 
-		Set<Employee> employees = new TreeSet<>();
+		Set<User> users = new TreeSet<>();
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					employees.add(fromResultSet(rs, false));
+					users.add(fromResultSet(rs, false));
 			}
 
-			enrich(conn, companyId, employees, enrichments);
+			enrich(conn, companyId, users, enrichments);
 
-			return employees;
+			return users;
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
 	}
 
-	protected Map<Integer, Employee> getForTimesheets(Connection conn,
+	protected Map<Integer, User> getForTimesheets(Connection conn,
 			Integer companyId, Set<Integer> timesheetIds)
 			throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
@@ -171,60 +171,60 @@ public class JdbcEmployeeDao implements EmployeeDao {
 			throw new IllegalArgumentException("Invalid null company id");
 
 		String sql = String.format("SELECT t.id AS timesheet_id, e.* FROM "
-				+ "timesheets t JOIN employees e ON (e.id = t.employee_id AND "
+				+ "timesheets t JOIN users e ON (e.id = t.user_id AND "
 				+ "e.company_id = t.company_id) WHERE e.company_id = %d AND "
 				+ "t.id IN (%s)", companyId,
 				StringUtils.join(timesheetIds, ","));
 
-		Map<Integer, Employee> employeeMap = new TreeMap<>();
+		Map<Integer, User> userMap = new TreeMap<>();
 		try (PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				Employee employee = fromResultSet(rs, false);
+				User user = fromResultSet(rs, false);
 				int timesheetId = rs.getInt("timesheet_id");
 
-				employeeMap.put(timesheetId, employee);
+				userMap.put(timesheetId, user);
 			}
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
 
-		return employeeMap;
+		return userMap;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void add(Integer companyId, Collection<Employee> employees)
+	public void add(Integer companyId, Collection<User> users)
 			throws DatabaseUniqueConstraintException, DatabaseException {
-		if (employees == null || employees.isEmpty())
+		if (users == null || users.isEmpty())
 			return;
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "INSERT INTO employees (company_id, login, hashed_pass, "
+		String sql = "INSERT INTO users (company_id, login, hashed_pass, "
 				+ "email, first_name, last_name, active) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql,
 						Statement.RETURN_GENERATED_KEYS)) {
-			for (Employee employee : employees) {
+			for (User user : users) {
 				int index = 1;
-				employee.setCompanyId(companyId);
-				ps.setInt(index++, employee.getCompanyId());
-				ps.setString(index++, employee.getLogin());
-				ps.setString(index++, employee.getHashedPass());
-				ps.setString(index++, employee.getEmail());
-				ps.setString(index++, employee.getFirstName());
-				ps.setString(index++, employee.getLastName());
-				ps.setBoolean(index++, employee.isActive());
+				user.setCompanyId(companyId);
+				ps.setInt(index++, user.getCompanyId());
+				ps.setString(index++, user.getLogin());
+				ps.setString(index++, user.getHashedPass());
+				ps.setString(index++, user.getEmail());
+				ps.setString(index++, user.getFirstName());
+				ps.setString(index++, user.getLastName());
+				ps.setBoolean(index++, user.isActive());
 				ps.executeUpdate();
 
 				try (ResultSet rs = ps.getGeneratedKeys()) {
 					if (rs.next())
-						employee.setId(rs.getInt(1));
+						user.setId(rs.getInt(1));
 				}
 			}
 		} catch (SQLIntegrityConstraintViolationException notUnique) {
@@ -238,29 +238,29 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void update(Integer companyId, Collection<Employee> employees)
+	public void update(Integer companyId, Collection<User> users)
 			throws DatabaseUniqueConstraintException, DatabaseException {
-		if (employees == null || employees.isEmpty())
+		if (users == null || users.isEmpty())
 			return;
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
 		// NOTE: the hashed_pass value is not updated.
 
-		String sql = "UPDATE employees SET login = ?, email = ?, "
+		String sql = "UPDATE users SET login = ?, email = ?, "
 				+ "first_name = ?, last_name = ?, active = ? "
 				+ "WHERE id = ? AND company_id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
-			for (Employee employee : employees) {
+			for (User user : users) {
 				int index = 1;
-				ps.setString(index++, employee.getLogin());
-				ps.setString(index++, employee.getEmail());
-				ps.setString(index++, employee.getFirstName());
-				ps.setString(index++, employee.getLastName());
-				ps.setBoolean(index++, employee.isActive());
-				ps.setInt(index++, employee.getId());
+				ps.setString(index++, user.getLogin());
+				ps.setString(index++, user.getEmail());
+				ps.setString(index++, user.getFirstName());
+				ps.setString(index++, user.getLastName());
+				ps.setBoolean(index++, user.isActive());
+				ps.setInt(index++, user.getId());
 				ps.setInt(index++, companyId);
 				ps.executeUpdate();
 			}
@@ -275,19 +275,19 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setPassword(Integer employeeId, String hashedPass)
+	public void setPassword(Integer userId, String hashedPass)
 			throws DatabaseException {
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 		if (StringUtils.isBlank(hashedPass))
 			throw new IllegalArgumentException("Invalid blank password");
 
-		String sql = "UPDATE employees SET hashed_pass = ? WHERE id = ?";
+		String sql = "UPDATE users SET hashed_pass = ? WHERE id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, hashedPass);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 			ps.executeUpdate();
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
@@ -306,7 +306,7 @@ public class JdbcEmployeeDao implements EmployeeDao {
 			throw new IllegalArgumentException("Invalid null company id");
 
 		String sql = String.format(
-				"DELETE FROM employees WHERE company_id = %d AND id IN (%s)",
+				"DELETE FROM users WHERE company_id = %d AND id IN (%s)",
 				companyId, StringUtils.join(ids, ","));
 
 		try (Connection conn = ConnectionManager.getConnection();
@@ -321,28 +321,28 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Employee> getSupervisors(Integer companyId, Integer employeeId,
+	public Set<User> getSupervisors(Integer companyId, Integer userId,
 			Set<Enrichment> enrichments) throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 
-		String sql = "SELECT * FROM supervisors s JOIN employees e ON "
+		String sql = "SELECT * FROM supervisors s JOIN users e ON "
 				+ "(s.supervisor_id = e.id AND s.company_id = e.company_id) "
-				+ "WHERE s.company_id = ? AND s.employee_id = ?";
+				+ "WHERE s.company_id = ? AND s.user_id = ?";
 
-		Set<Employee> supervisors = new TreeSet<>();
+		Set<User> supervisors = new TreeSet<>();
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Employee employee = fromResultSet(rs, false);
-					employee.setPrimary(rs.getBoolean("is_primary"));
-					supervisors.add(employee);
+					User user = fromResultSet(rs, false);
+					user.setPrimary(rs.getBoolean("is_primary"));
+					supervisors.add(user);
 				}
 			}
 		} catch (SQLException sqlException) {
@@ -355,24 +355,24 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void addSupervisors(Integer companyId, Integer employeeId,
+	public void addSupervisors(Integer companyId, Integer userId,
 			Collection<Integer> supervisorIds, boolean primary)
 			throws DatabaseException {
 		if (supervisorIds == null || supervisorIds.isEmpty())
 			return;
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 
-		String sql = "INSERT INTO supervisors (company_id, employee_id, "
+		String sql = "INSERT INTO supervisors (company_id, user_id, "
 				+ "supervisor_id, is_primary) VALUES (?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (Integer supervisorId : supervisorIds) {
 				ps.setInt(1, companyId);
-				ps.setInt(2, employeeId);
+				ps.setInt(2, userId);
 				ps.setInt(3, supervisorId);
 				ps.setBoolean(4, primary);
 				ps.executeUpdate();
@@ -386,23 +386,23 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteSupervisors(Integer companyId, Integer employeeId,
+	public void deleteSupervisors(Integer companyId, Integer userId,
 			Collection<Integer> supervisorIds) throws DatabaseException {
 		if (supervisorIds == null || supervisorIds.isEmpty())
 			return;
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 
 		String sql = "DELETE FROM supervisors WHERE company_id = ? AND "
-				+ "employee_id = ? AND supervisor_id = ?";
+				+ "user_id = ? AND supervisor_id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (Integer supervisorId : supervisorIds) {
 				ps.setInt(1, companyId);
-				ps.setInt(2, employeeId);
+				ps.setInt(2, userId);
 				ps.setInt(3, supervisorId);
 				ps.executeUpdate();
 			}
@@ -411,10 +411,9 @@ public class JdbcEmployeeDao implements EmployeeDao {
 		}
 	}
 
-	protected void enrich(Connection conn, Integer companyId,
-			Set<Employee> employees, Set<Enrichment> enrichments)
-			throws DatabaseException {
-		if (employees == null || employees.isEmpty())
+	protected void enrich(Connection conn, Integer companyId, Set<User> users,
+			Set<Enrichment> enrichments) throws DatabaseException {
+		if (users == null || users.isEmpty())
 			return;
 		if (enrichments == null || enrichments.isEmpty())
 			return;
@@ -424,43 +423,43 @@ public class JdbcEmployeeDao implements EmployeeDao {
 
 		for (Enrichment enrichment : enrichments) {
 			if (enrichment == Enrichment.ROLES)
-				enrichWithRoles(conn, employees);
+				enrichWithRoles(conn, users);
 			else if (enrichment == Enrichment.SUPERVISED)
-				enrichWithSupervised(conn, companyId, employees);
+				enrichWithSupervised(conn, companyId, users);
 			else if (enrichment == Enrichment.SUPERVISERS)
-				enrichWithSupervisors(conn, companyId, employees);
+				enrichWithSupervisors(conn, companyId, users);
 			else
 				throw new DatabaseException("Invalid enrichment specified: "
 						+ enrichment);
 		}
 	}
 
-	protected void enrichWithRoles(Connection conn, Set<Employee> employees)
+	protected void enrichWithRoles(Connection conn, Set<User> users)
 			throws DatabaseException {
-		Set<Integer> ids = getEmployeeIds(employees);
+		Set<Integer> ids = getUserIds(users);
 		if (ids.isEmpty())
 			return;
 
-		Map<Integer, Employee> employeeMap = getEmployeeMap(employees);
+		Map<Integer, User> userMap = getUserMap(users);
 		Map<Integer, Set<Role>> roleMap = new JdbcRoleDao().get(conn, ids);
 
 		for (Entry<Integer, Set<Role>> entry : roleMap.entrySet()) {
-			Employee employee = employeeMap.get(entry.getKey());
-			if (employee != null)
-				employee.setRoles(entry.getValue());
+			User user = userMap.get(entry.getKey());
+			if (user != null)
+				user.setRoles(entry.getValue());
 		}
 	}
 
 	protected void enrichWithSupervised(Connection conn, Integer companyId,
-			Set<Employee> employees) throws DatabaseException {
-		Set<Integer> ids = getEmployeeIds(employees);
+			Set<User> users) throws DatabaseException {
+		Set<Integer> ids = getUserIds(users);
 		if (ids.isEmpty())
 			return;
 
-		Map<Integer, Employee> employeeMap = getEmployeeMap(employees);
+		Map<Integer, User> userMap = getUserMap(users);
 
-		String sql = String.format("SELECT * FROM employees e "
-				+ "JOIN supervisors s ON (e.id = s.employee_id AND "
+		String sql = String.format("SELECT * FROM users e "
+				+ "JOIN supervisors s ON (e.id = s.user_id AND "
 				+ "e.company_id = s.company_id) WHERE e.company_id = %d AND "
 				+ "s.supervisor_id IN (%s)", companyId,
 				StringUtils.join(ids, ","));
@@ -468,14 +467,14 @@ public class JdbcEmployeeDao implements EmployeeDao {
 		try (PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				Employee employee = fromResultSet(rs, false);
-				employee.setPrimary(rs.getBoolean("is_primary"));
+				User user = fromResultSet(rs, false);
+				user.setPrimary(rs.getBoolean("is_primary"));
 
 				int supervisorId = rs.getInt("supervisor_id");
 
-				Employee supervisor = employeeMap.get(supervisorId);
+				User supervisor = userMap.get(supervisorId);
 				if (supervisor != null)
-					supervisor.addSupervised(employee);
+					supervisor.addSupervised(user);
 			}
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
@@ -483,49 +482,48 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	}
 
 	protected void enrichWithSupervisors(Connection conn, Integer companyId,
-			Set<Employee> employees) throws DatabaseException {
-		Set<Integer> ids = getEmployeeIds(employees);
+			Set<User> users) throws DatabaseException {
+		Set<Integer> ids = getUserIds(users);
 		if (ids.isEmpty())
 			return;
 
-		Map<Integer, Employee> employeeMap = getEmployeeMap(employees);
+		Map<Integer, User> userMap = getUserMap(users);
 
-		String sql = String.format("SELECT * FROM employees e "
+		String sql = String.format("SELECT * FROM users e "
 				+ "JOIN supervisors s ON (e.id = s.supervisor_id AND "
 				+ "e.company_id = s.company_id) WHERE e.company_id = %d AND "
-				+ "s.employee_id IN (%s)", companyId,
-				StringUtils.join(ids, ","));
+				+ "s.user_id IN (%s)", companyId, StringUtils.join(ids, ","));
 
 		try (PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				Employee employee = fromResultSet(rs, false);
-				employee.setPrimary(rs.getBoolean("is_primary"));
+				User user = fromResultSet(rs, false);
+				user.setPrimary(rs.getBoolean("is_primary"));
 
-				int employeeId = rs.getInt("employee_id");
+				int userId = rs.getInt("user_id");
 
-				Employee supervised = employeeMap.get(employeeId);
+				User supervised = userMap.get(userId);
 				if (supervised != null)
-					supervised.addSupervisors(employee);
+					supervised.addSupervisors(user);
 			}
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
 	}
 
-	protected SortedSet<Integer> getEmployeeIds(Set<Employee> employees) {
+	protected SortedSet<Integer> getUserIds(Set<User> users) {
 		SortedSet<Integer> ids = new TreeSet<>();
-		for (Employee employee : employees)
-			if (employee.getId() != null)
-				ids.add(employee.getId());
+		for (User user : users)
+			if (user.getId() != null)
+				ids.add(user.getId());
 		return ids;
 	}
 
-	protected Map<Integer, Employee> getEmployeeMap(Set<Employee> employees) {
-		Map<Integer, Employee> map = new HashMap<>();
-		for (Employee employee : employees)
-			if (employee.getId() != null)
-				map.put(employee.getId(), employee);
+	protected Map<Integer, User> getUserMap(Set<User> users) {
+		Map<Integer, User> map = new HashMap<>();
+		for (User user : users)
+			if (user.getId() != null)
+				map.put(user.getId(), user);
 		return map;
 	}
 }

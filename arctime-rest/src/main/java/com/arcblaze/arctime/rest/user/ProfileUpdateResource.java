@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.DatabaseUniqueConstraintException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
-import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.model.Password;
+import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
@@ -109,24 +109,23 @@ public class ProfileUpdateResource extends BaseResource {
 
 			validateParams(firstName, lastName, login, email, password);
 
-			Employee currentUser = (Employee) security.getUserPrincipal();
-			EmployeeDao dao = DaoFactory.getEmployeeDao();
-			Employee employee = dao.get(currentUser.getCompanyId(),
-					currentUser.getId());
-			log.debug("  Found employee: {}", employee);
+			User currentUser = (User) security.getUserPrincipal();
+			UserDao dao = DaoFactory.getUserDao();
+			User user = dao
+					.get(currentUser.getCompanyId(), currentUser.getId());
+			log.debug("  Found user: {}", user);
 
-			if (employee == null)
-				throw notFound("The current employee was not found.");
+			if (user == null)
+				throw notFound("The current user was not found.");
 
-			employee.setFirstName(firstName);
-			employee.setLastName(lastName);
-			employee.setLogin(login);
-			employee.setEmail(email);
-			employee.setActive(currentUser.isActive());
-			log.debug("  Modified employee: {}", employee);
+			user.setFirstName(firstName);
+			user.setLastName(lastName);
+			user.setLogin(login);
+			user.setEmail(email);
+			user.setActive(currentUser.isActive());
+			log.debug("  Modified user: {}", user);
 
-			dao.update(currentUser.getCompanyId(),
-					Collections.singleton(employee));
+			dao.update(currentUser.getCompanyId(), Collections.singleton(user));
 
 			if (StringUtils.isNotBlank(password)) {
 				log.debug("  Updating user password");

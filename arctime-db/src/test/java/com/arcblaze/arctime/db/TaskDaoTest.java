@@ -20,8 +20,8 @@ import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Assignment;
 import com.arcblaze.arctime.model.Company;
-import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Task;
+import com.arcblaze.arctime.model.User;
 
 /**
  * Perform database integration testing.
@@ -100,19 +100,19 @@ public class TaskDaoTest {
 
 		dao.add(company.getId(), Arrays.asList(adminTask, task));
 
-		Employee employee = new Employee();
-		employee.setLogin("employee");
-		employee.setHashedPass("hashed");
-		employee.setEmail("email");
-		employee.setFirstName("first");
-		employee.setLastName("last");
-		DaoFactory.getEmployeeDao().add(company.getId(),
-				Collections.singleton(employee));
+		User user = new User();
+		user.setLogin("user");
+		user.setHashedPass("hashed");
+		user.setEmail("email");
+		user.setFirstName("first");
+		user.setLastName("last");
+		DaoFactory.getUserDao().add(company.getId(),
+				Collections.singleton(user));
 
 		Assignment assignment = new Assignment();
 		assignment.setCompanyId(company.getId());
 		assignment.setTaskId(task.getId());
-		assignment.setEmployeeId(employee.getId());
+		assignment.setUserId(user.getId());
 		assignment.setLaborCat("labor cat");
 		assignment.setItemName("item name");
 		assignment.setBegin(DateUtils.truncate(
@@ -122,50 +122,50 @@ public class TaskDaoTest {
 		DaoFactory.getAssignmentDao().add(company.getId(),
 				Collections.singleton(assignment));
 
-		Set<Task> assignedTasks = dao.getForEmployee(company.getId(),
-				employee.getId(), null, true);
+		Set<Task> assignedTasks = dao.getForUser(company.getId(), user.getId(),
+				null, true);
 		assertNotNull(assignedTasks);
 		assertEquals(2, assignedTasks.size());
 		assertTrue(assignedTasks.contains(task));
 		assertTrue(assignedTasks.contains(adminTask));
 
-		assignedTasks = dao.getForEmployee(company.getId(), employee.getId(),
-				null, false);
+		assignedTasks = dao.getForUser(company.getId(), user.getId(), null,
+				false);
 		assertNotNull(assignedTasks);
 		assertEquals(1, assignedTasks.size());
 		assertTrue(assignedTasks.contains(task));
 
-		assignedTasks = dao.getForEmployee(company.getId(), employee.getId(),
+		assignedTasks = dao.getForUser(company.getId(), user.getId(),
 				new Date(), true);
 		assertNotNull(assignedTasks);
 		assertEquals(2, assignedTasks.size());
 		assertTrue(assignedTasks.contains(task));
 		assertTrue(assignedTasks.contains(adminTask));
 
-		assignedTasks = dao.getForEmployee(company.getId(), employee.getId(),
+		assignedTasks = dao.getForUser(company.getId(), user.getId(),
 				new Date(), false);
 		assertNotNull(assignedTasks);
 		assertEquals(1, assignedTasks.size());
 		assertTrue(assignedTasks.contains(task));
 
-		assignedTasks = dao.getForEmployee(company.getId(), employee.getId(),
+		assignedTasks = dao.getForUser(company.getId(), user.getId(),
 				DateUtils.addDays(new Date(), -15), true);
 		assertNotNull(assignedTasks);
 		assertEquals(1, assignedTasks.size());
 		assertTrue(assignedTasks.contains(adminTask));
 
-		assignedTasks = dao.getForEmployee(company.getId(), employee.getId(),
+		assignedTasks = dao.getForUser(company.getId(), user.getId(),
 				DateUtils.addDays(new Date(), -15), false);
 		assertNotNull(assignedTasks);
 		assertEquals(0, assignedTasks.size());
 
-		assignedTasks = dao.getForEmployee(company.getId(), employee.getId(),
+		assignedTasks = dao.getForUser(company.getId(), user.getId(),
 				DateUtils.addDays(new Date(), 15), true);
 		assertNotNull(assignedTasks);
 		assertEquals(1, assignedTasks.size());
 		assertTrue(assignedTasks.contains(adminTask));
 
-		assignedTasks = dao.getForEmployee(company.getId(), employee.getId(),
+		assignedTasks = dao.getForUser(company.getId(), user.getId(),
 				DateUtils.addDays(new Date(), 15), false);
 		assertNotNull(assignedTasks);
 		assertEquals(0, assignedTasks.size());

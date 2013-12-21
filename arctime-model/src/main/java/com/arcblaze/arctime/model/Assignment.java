@@ -19,7 +19,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Represents an assignment of an employee to a task.
+ * Represents an assignment of a user to a task.
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -35,17 +35,17 @@ public class Assignment implements Comparable<Assignment> {
 	private Integer companyId;
 
 	/**
-	 * The unique id of the task to which the employee is assigned.
+	 * The unique id of the task to which the user is assigned.
 	 */
 	private Integer taskId;
 
 	/**
-	 * The unique id of the employee assigned to the task.
+	 * The unique id of the user assigned to the task.
 	 */
-	private Integer employeeId;
+	private Integer userId;
 
 	/**
-	 * The labor category being used by the employee on the task.
+	 * The labor category being used by the user on the task.
 	 */
 	private String laborCat;
 
@@ -67,7 +67,7 @@ public class Assignment implements Comparable<Assignment> {
 	/**
 	 * The bills applied to this assignment during a pay period.
 	 */
-	private Set<Bill> bills = new TreeSet<>();
+	private final Set<Bill> bills = new TreeSet<>();
 
 	/**
 	 * Default constructor.
@@ -160,16 +160,16 @@ public class Assignment implements Comparable<Assignment> {
 	}
 
 	/**
-	 * @return the unique id of the employee for which this assignment applies
+	 * @return the unique id of the user for which this assignment applies
 	 */
 	@XmlElement
-	public Integer getEmployeeId() {
-		return this.employeeId;
+	public Integer getUserId() {
+		return this.userId;
 	}
 
 	/**
-	 * @param employeeId
-	 *            the new unique id of the employee for which this assignment
+	 * @param userId
+	 *            the new unique id of the user for which this assignment
 	 *            applies
 	 * 
 	 * @return {@code this}
@@ -177,13 +177,13 @@ public class Assignment implements Comparable<Assignment> {
 	 * @throws IllegalArgumentException
 	 *             if the provided id value is invalid
 	 */
-	public Assignment setEmployeeId(Integer employeeId) {
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
-		if (employeeId < 0)
-			throw new IllegalArgumentException("Invalid negative employee id");
+	public Assignment setUserId(Integer userId) {
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
+		if (userId < 0)
+			throw new IllegalArgumentException("Invalid negative user id");
 
-		this.employeeId = employeeId;
+		this.userId = userId;
 		return this;
 	}
 
@@ -377,7 +377,7 @@ public class Assignment implements Comparable<Assignment> {
 		builder.append("id", getId());
 		builder.append("companyId", getCompanyId());
 		builder.append("taskId", getTaskId());
-		builder.append("employeeId", getEmployeeId());
+		builder.append("userId", getUserId());
 		builder.append("laborCat", getLaborCat());
 		builder.append("itemName", getItemName());
 		builder.append("begin", getBegin());
@@ -396,7 +396,7 @@ public class Assignment implements Comparable<Assignment> {
 			builder.append(getId(), other.getId());
 			builder.append(getCompanyId(), other.getCompanyId());
 			builder.append(getTaskId(), other.getTaskId());
-			builder.append(getEmployeeId(), other.getEmployeeId());
+			builder.append(getUserId(), other.getUserId());
 			builder.append(getLaborCat(), other.getLaborCat());
 			builder.append(getItemName(), other.getItemName());
 			builder.append(getBegin(), other.getBegin());
@@ -416,7 +416,7 @@ public class Assignment implements Comparable<Assignment> {
 		builder.append(getId());
 		builder.append(getCompanyId());
 		builder.append(getTaskId());
-		builder.append(getEmployeeId());
+		builder.append(getUserId());
 		builder.append(getLaborCat());
 		builder.append(getItemName());
 		builder.append(getBegin());
@@ -431,7 +431,7 @@ public class Assignment implements Comparable<Assignment> {
 	public int compareTo(Assignment other) {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(other.getCompanyId(), getCompanyId());
-		builder.append(getEmployeeId(), other.getEmployeeId());
+		builder.append(getUserId(), other.getUserId());
 		builder.append(getTaskId(), other.getTaskId());
 		builder.append(getLaborCat(), other.getLaborCat());
 		builder.append(getItemName(), other.getItemName());

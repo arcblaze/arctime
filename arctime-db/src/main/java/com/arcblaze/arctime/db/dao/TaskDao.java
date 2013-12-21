@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.Set;
 
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.model.Task;
 import com.arcblaze.arctime.model.PayPeriod;
+import com.arcblaze.arctime.model.Task;
 
 /**
  * Performs operations on tasks in the system.
@@ -46,12 +46,11 @@ public interface TaskDao {
 	 *            the unique id of the company for which tasks will be retrieved
 	 * @param payPeriod
 	 *            the pay period for which to retrieve tasks
-	 * @param employeeId
-	 *            the unique id of the employee for which tasks will be
-	 *            retrieved
+	 * @param userId
+	 *            the unique id of the user for which tasks will be retrieved
 	 * 
-	 * @return all available tasks for the employee during the provided pay
-	 *         period, possibly empty but never {@code null}
+	 * @return all available tasks for the user during the provided pay period,
+	 *         possibly empty but never {@code null}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids or pay period are invalid
@@ -59,30 +58,29 @@ public interface TaskDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public Set<Task> getForPayPeriod(Integer companyId, PayPeriod payPeriod,
-			Integer employeeId) throws DatabaseException;
+			Integer userId) throws DatabaseException;
 
 	/**
 	 * @param companyId
 	 *            the unique id of the company for which tasks will be retrieved
-	 * @param employeeId
-	 *            the unique id of the employee for which tasks will be
-	 *            retrieved
+	 * @param userId
+	 *            the unique id of the user for which tasks will be retrieved
 	 * @param day
 	 *            the day for which task assignments must be valid, may be
 	 *            {@code null} if date is not important
 	 * @param includeAdmin
 	 *            whether administrative tasks should be included
 	 * 
-	 * @return all available tasks for the employee on the given day, possibly
-	 *         empty but never {@code null}
+	 * @return all available tasks for the user on the given day, possibly empty
+	 *         but never {@code null}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids or pay period are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Set<Task> getForEmployee(Integer companyId, Integer employeeId,
-			Date day, boolean includeAdmin) throws DatabaseException;
+	public Set<Task> getForUser(Integer companyId, Integer userId, Date day,
+			boolean includeAdmin) throws DatabaseException;
 
 	/**
 	 * @param companyId

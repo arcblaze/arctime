@@ -25,14 +25,14 @@ import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.arcblaze.arctime.model.AuditLog;
-import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Enrichment;
 import com.arcblaze.arctime.model.PayPeriod;
 import com.arcblaze.arctime.model.Task;
 import com.arcblaze.arctime.model.Timesheet;
+import com.arcblaze.arctime.model.User;
 
 /**
- * Manages employees within the back-end database.
+ * Manages users within the back-end database.
  */
 public class JdbcTimesheetDao implements TimesheetDao {
 	/**
@@ -57,8 +57,8 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		if (timesheetId == null)
 			throw new IllegalArgumentException("Invalid null timesheet id");
 
-		String sql = "SELECT t.* FROM timesheets t JOIN employees e ON "
-				+ "(t.employee_id = e.id AND e.company_id = ?) WHERE t.id = ?";
+		String sql = "SELECT t.* FROM timesheets t JOIN users e ON "
+				+ "(t.user_id = e.id AND e.company_id = ?) WHERE t.id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -70,7 +70,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 					Timesheet timesheet = new Timesheet();
 					timesheet.setId(rs.getInt("id"));
 					timesheet.setCompanyId(rs.getInt("company_id"));
-					timesheet.setEmployeeId(rs.getInt("employee_id"));
+					timesheet.setUserId(rs.getInt("user_id"));
 					timesheet.setBegin(rs.getDate("pp_begin"));
 					timesheet.setCompleted(rs.getBoolean("completed"));
 					timesheet.setApproved(rs.getBoolean("approved"));
@@ -125,7 +125,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 			throw new IllegalArgumentException("Invalid null company id");
 
 		String sql = String.format("SELECT t.* FROM timesheets t JOIN "
-				+ "employees e ON (t.employee_id = e.id AND "
+				+ "users e ON (t.user_id = e.id AND "
 				+ "e.company_id = %d) WHERE t.id IN (%s)", companyId,
 				StringUtils.join(timesheetIds, ","));
 
@@ -137,7 +137,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 				Timesheet timesheet = new Timesheet();
 				timesheet.setId(rs.getInt("id"));
 				timesheet.setCompanyId(rs.getInt("company_id"));
-				timesheet.setEmployeeId(rs.getInt("employee_id"));
+				timesheet.setUserId(rs.getInt("user_id"));
 				timesheet.setBegin(rs.getDate("pp_begin"));
 				timesheet.setCompleted(rs.getBoolean("completed"));
 				timesheet.setApproved(rs.getBoolean("approved"));
@@ -169,37 +169,36 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Timesheet getForEmployee(Integer companyId, Integer employeeId,
+	public Timesheet getForUser(Integer companyId, Integer userId,
 			PayPeriod payPeriod, Enrichment... enrichments)
 			throws DatabaseException {
 		Set<Enrichment> enrichmentSet = enrichments == null ? null
 				: new LinkedHashSet<>(Arrays.asList(enrichments));
-		return this.getForEmployee(companyId, employeeId, payPeriod,
-				enrichmentSet);
+		return this.getForUser(companyId, userId, payPeriod, enrichmentSet);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Timesheet getForEmployee(Integer companyId, Integer employeeId,
+	public Timesheet getForUser(Integer companyId, Integer userId,
 			PayPeriod payPeriod, Set<Enrichment> enrichments)
 			throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 		if (payPeriod == null)
 			throw new IllegalArgumentException("Invalid null pay period");
 
-		String sql = "SELECT t.* FROM timesheets t JOIN employees e ON "
-				+ "(t.employee_id = e.id AND e.company_id = ?) "
-				+ "WHERE t.employee_id = ? AND t.pp_begin = ?";
+		String sql = "SELECT t.* FROM timesheets t JOIN users e ON "
+				+ "(t.user_id = e.id AND e.company_id = ?) "
+				+ "WHERE t.user_id = ? AND t.pp_begin = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 			ps.setDate(3, new Date(payPeriod.getBegin().getTime()));
 
 			try (ResultSet rs = ps.executeQuery()) {
@@ -207,7 +206,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 					Timesheet timesheet = new Timesheet();
 					timesheet.setId(rs.getInt("id"));
 					timesheet.setCompanyId(rs.getInt("company_id"));
-					timesheet.setEmployeeId(rs.getInt("employee_id"));
+					timesheet.setUserId(rs.getInt("user_id"));
 					timesheet.setBegin(rs.getDate("pp_begin"));
 					timesheet.setCompleted(rs.getBoolean("completed"));
 					timesheet.setApproved(rs.getBoolean("approved"));
@@ -241,42 +240,40 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Timesheet getLatestForEmployee(Integer companyId,
-			Integer employeeId, Enrichment... enrichments)
-			throws DatabaseException {
+	public Timesheet getLatestForUser(Integer companyId, Integer userId,
+			Enrichment... enrichments) throws DatabaseException {
 		Set<Enrichment> enrichmentSet = enrichments == null ? null
 				: new LinkedHashSet<>(Arrays.asList(enrichments));
-		return getLatestForEmployee(companyId, employeeId, enrichmentSet);
+		return getLatestForUser(companyId, userId, enrichmentSet);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Timesheet getLatestForEmployee(Integer companyId,
-			Integer employeeId, Set<Enrichment> enrichments)
-			throws DatabaseException {
+	public Timesheet getLatestForUser(Integer companyId, Integer userId,
+			Set<Enrichment> enrichments) throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 
-		String sql = "SELECT t.* FROM timesheets t JOIN employees e ON "
-				+ "(t.employee_id = e.id AND e.company_id = ?) "
-				+ "WHERE t.employee_id = ? AND completed = false "
+		String sql = "SELECT t.* FROM timesheets t JOIN users e ON "
+				+ "(t.user_id = e.id AND e.company_id = ?) "
+				+ "WHERE t.user_id = ? AND completed = false "
 				+ "ORDER BY pp_begin DESC LIMIT 1";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					Timesheet timesheet = new Timesheet();
 					timesheet.setId(rs.getInt("id"));
 					timesheet.setCompanyId(rs.getInt("company_id"));
-					timesheet.setEmployeeId(rs.getInt("employee_id"));
+					timesheet.setUserId(rs.getInt("user_id"));
 					timesheet.setBegin(rs.getDate("pp_begin"));
 					timesheet.setCompleted(rs.getBoolean("completed"));
 					timesheet.setApproved(rs.getBoolean("approved"));
@@ -317,7 +314,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "INSERT INTO timesheets (company_id, employee_id, "
+		String sql = "INSERT INTO timesheets (company_id, user_id, "
 				+ "pp_begin, completed, approved, verified, exported) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, ?)";
 
@@ -328,7 +325,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 				int index = 1;
 				timesheet.setCompanyId(companyId);
 				ps.setInt(index++, timesheet.getCompanyId());
-				ps.setInt(index++, timesheet.getEmployeeId());
+				ps.setInt(index++, timesheet.getUserId());
 				ps.setDate(index++, new Date(timesheet.getBegin().getTime()));
 				ps.setBoolean(index++, timesheet.isCompleted());
 				ps.setBoolean(index++, timesheet.isApproved());
@@ -351,7 +348,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 */
 	@Override
 	public void approve(Integer companyId, Collection<Integer> timesheetIds,
-			boolean approved, Employee approver) throws DatabaseException {
+			boolean approved, User approver) throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
 			return;
 		if (companyId == null)
@@ -385,7 +382,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 */
 	@Override
 	public void verify(Integer companyId, Collection<Integer> timesheetIds,
-			boolean verified, Employee verifier) throws DatabaseException {
+			boolean verified, User verifier) throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
 			return;
 		if (companyId == null)
@@ -419,7 +416,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 */
 	@Override
 	public void export(Integer companyId, Collection<Integer> timesheetIds,
-			boolean exported, Employee exporter) throws DatabaseException {
+			boolean exported, User exporter) throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
 			return;
 		if (companyId == null)
@@ -483,8 +480,8 @@ public class JdbcTimesheetDao implements TimesheetDao {
 			throw new IllegalArgumentException("Invalid null connection");
 
 		for (Enrichment enrichment : enrichments) {
-			if (enrichment == Enrichment.EMPLOYEES)
-				enrichWithEmployees(conn, companyId, timesheets);
+			if (enrichment == Enrichment.USERS)
+				enrichWithUsers(conn, companyId, timesheets);
 			else if (enrichment == Enrichment.PAY_PERIODS)
 				enrichWithPayPeriods(conn, companyId, timesheets);
 			else if (enrichment == Enrichment.AUDIT_LOGS)
@@ -497,20 +494,20 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		}
 	}
 
-	protected void enrichWithEmployees(Connection conn, Integer companyId,
+	protected void enrichWithUsers(Connection conn, Integer companyId,
 			Set<Timesheet> timesheets) throws DatabaseException {
 		Set<Integer> ids = getTimesheetIds(timesheets);
 		if (ids.isEmpty())
 			return;
 
 		Map<Integer, Timesheet> timesheetMap = getTimesheetMap(timesheets);
-		Map<Integer, Employee> employeeMap = new JdbcEmployeeDao()
-				.getForTimesheets(conn, companyId, ids);
+		Map<Integer, User> userMap = new JdbcUserDao().getForTimesheets(conn,
+				companyId, ids);
 
-		for (Entry<Integer, Employee> entry : employeeMap.entrySet()) {
+		for (Entry<Integer, User> entry : userMap.entrySet()) {
 			Timesheet timesheet = timesheetMap.get(entry.getKey());
 			if (timesheet != null)
-				timesheet.setEmployee(entry.getValue());
+				timesheet.setUser(entry.getValue());
 		}
 	}
 
@@ -553,31 +550,30 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		if (timesheets.isEmpty())
 			return;
 
-		Map<PayPeriod, Map<Integer, Timesheet>> employeeGroups = new HashMap<>();
+		Map<PayPeriod, Map<Integer, Timesheet>> userGroups = new HashMap<>();
 		for (Timesheet timesheet : timesheets) {
 			PayPeriod payPeriod = timesheet.getPayPeriod();
 			if (payPeriod == null)
 				continue;
 
-			Map<Integer, Timesheet> employeeIds = employeeGroups.get(payPeriod);
-			if (employeeIds == null) {
-				employeeIds = new TreeMap<>();
-				employeeGroups.put(payPeriod, employeeIds);
+			Map<Integer, Timesheet> userIds = userGroups.get(payPeriod);
+			if (userIds == null) {
+				userIds = new TreeMap<>();
+				userGroups.put(payPeriod, userIds);
 			}
-			employeeIds.put(timesheet.getEmployeeId(), timesheet);
+			userIds.put(timesheet.getUserId(), timesheet);
 		}
 
 		JdbcTaskDao taskDao = new JdbcTaskDao();
-		for (Entry<PayPeriod, Map<Integer, Timesheet>> entry : employeeGroups
+		for (Entry<PayPeriod, Map<Integer, Timesheet>> entry : userGroups
 				.entrySet()) {
 			Map<Integer, Set<Task>> map = taskDao.getForPayPeriod(conn,
 					companyId, entry.getKey(), entry.getValue().keySet());
 
-			for (Entry<Integer, Set<Task>> employeeTasks : map.entrySet()) {
-				Timesheet timesheet = entry.getValue().get(
-						employeeTasks.getKey());
+			for (Entry<Integer, Set<Task>> userTasks : map.entrySet()) {
+				Timesheet timesheet = entry.getValue().get(userTasks.getKey());
 				if (timesheet != null)
-					timesheet.setTasks(employeeTasks.getValue());
+					timesheet.setTasks(userTasks.getValue());
 			}
 		}
 	}

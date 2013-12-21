@@ -7,49 +7,48 @@ import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.model.Role;
 
 /**
- * Performs operations on employee roles in the system.
+ * Performs operations on user roles in the system.
  */
 public interface RoleDao {
 	/**
-	 * @param employeeId
-	 *            the unique id of the employee for which roles will be
-	 *            identified
+	 * @param userId
+	 *            the unique id of the user for which roles will be identified
 	 * 
-	 * @return the identified roles for the provided employee, possibly empty
-	 *         but never {@code null}
+	 * @return the identified roles for the provided user, possibly empty but
+	 *         never {@code null}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Set<Role> get(Integer employeeId) throws DatabaseException;
+	public Set<Role> get(Integer userId) throws DatabaseException;
 
 	/**
-	 * @param employeeId
-	 *            the unique id of the employee for which roles will be added
+	 * @param userId
+	 *            the unique id of the user for which roles will be added
 	 * @param roles
-	 *            the new roles to be given to the specified employee
+	 *            the new roles to be given to the specified user
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void add(Integer employeeId, Collection<Role> roles)
+	public void add(Integer userId, Collection<Role> roles)
 			throws DatabaseException;
 
 	/**
-	 * @param employeeId
-	 *            the unique id of the employee for which roles will be removed
+	 * @param userId
+	 *            the unique id of the user for which roles will be removed
 	 * @param roles
-	 *            the roles to be removed from the specified employee
+	 *            the roles to be removed from the specified user
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void delete(Integer employeeId, Collection<Role> roles)
+	public void delete(Integer userId, Collection<Role> roles)
 			throws DatabaseException;
 }

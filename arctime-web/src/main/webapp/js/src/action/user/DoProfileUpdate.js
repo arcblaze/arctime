@@ -1,14 +1,14 @@
 
-Ext.namespace("action.employee");
+Ext.namespace("action.user");
 
-action.employee.DoProfileUpdate = function() {
+action.user.DoProfileUpdate = function() {
 	return new Ext.Action({
-		id:      'action.employee.doprofileupdate',
+		id:      'action.user.doprofileupdate',
 		text:    'Update',
-		iconCls: 'icon-employee-edit',
+		iconCls: 'icon-user-edit',
 		handler: function() {
 			// Get the form panel.
-			var form = Ext.getCmp('ui.panel.employee.profileupdatepanel');
+			var form = Ext.getCmp('ui.panel.user.profileupdatepanel');
 
 			// Make sure the form is valid.
 			if (!form.getForm().isValid()) {
@@ -29,7 +29,7 @@ action.employee.DoProfileUpdate = function() {
 				return;
 			}
 
-			// Show the progress bar while the employee is being saved.
+			// Show the progress bar while the user is being saved.
 			Ext.Msg.progress('Updating Profile',
 				'Please wait while your profile is saved...');
 

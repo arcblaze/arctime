@@ -18,7 +18,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Represents a timesheet for an employee during a pay period.
+ * Represents a timesheet for a user during a pay period.
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -34,14 +34,14 @@ public class Timesheet implements Comparable<Timesheet> {
 	private Integer companyId;
 
 	/**
-	 * The unique id of the employee that owns this timesheet.
+	 * The unique id of the user that owns this timesheet.
 	 */
-	private Integer employeeId;
+	private Integer userId;
 
 	/**
-	 * The employee that owns this timesheet.
+	 * The user that owns this timesheet.
 	 */
-	private Employee employee;
+	private User user;
 
 	/**
 	 * The first day in the pay period associated with this timesheet.
@@ -54,12 +54,12 @@ public class Timesheet implements Comparable<Timesheet> {
 	private PayPeriod payPeriod;
 
 	/**
-	 * Whether this timesheet has been completed by the employee.
+	 * Whether this timesheet has been completed by the user.
 	 */
 	private Boolean completed;
 
 	/**
-	 * Whether this timesheet has been approved by the employee's supervisor.
+	 * Whether this timesheet has been approved by the user's supervisor.
 	 */
 	private Boolean approved;
 
@@ -79,9 +79,9 @@ public class Timesheet implements Comparable<Timesheet> {
 	private Integer approverId;
 
 	/**
-	 * The employee that approved this timesheet (if it has been approved).
+	 * The user that approved this timesheet (if it has been approved).
 	 */
-	private Employee approver;
+	private User approver;
 
 	/**
 	 * The id of the payroll person that verified this timesheet.
@@ -89,10 +89,9 @@ public class Timesheet implements Comparable<Timesheet> {
 	private Integer verifierId;
 
 	/**
-	 * The payroll employee that verified this timesheet (if it has been
-	 * verified).
+	 * The payroll user that verified this timesheet (if it has been verified).
 	 */
-	private Employee verifier;
+	private User verifier;
 
 	/**
 	 * The id of the payroll person that exported this timesheet.
@@ -100,26 +99,25 @@ public class Timesheet implements Comparable<Timesheet> {
 	private Integer exporterId;
 
 	/**
-	 * The payroll employee that exported this timesheet (if it has been
-	 * exported).
+	 * The payroll user that exported this timesheet (if it has been exported).
 	 */
-	private Employee exporter;
+	private User exporter;
 
 	/**
-	 * The tasks to which the employee can charge hours during this pay period.
+	 * The tasks to which the user can charge hours during this pay period.
 	 */
-	private Set<Task> tasks = new TreeSet<>();
+	private final Set<Task> tasks = new TreeSet<>();
 
 	/**
 	 * The audit logs associated with this timesheet.
 	 */
-	private Set<AuditLog> auditLogs = new TreeSet<>();
+	private final Set<AuditLog> auditLogs = new TreeSet<>();
 
 	/**
 	 * The company holidays used to flag specific days in the pay period as
 	 * being holidays or not.
 	 */
-	private Set<Holiday> holidays = new TreeSet<>();
+	private final Set<Holiday> holidays = new TreeSet<>();
 
 	/**
 	 * Default constructor.
@@ -183,54 +181,54 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
-	 * @return the unique id of the employee that owns this timesheet
+	 * @return the unique id of the user that owns this timesheet
 	 */
 	@XmlElement
-	public Integer getEmployeeId() {
-		return this.employeeId;
+	public Integer getUserId() {
+		return this.userId;
 	}
 
 	/**
-	 * @param employeeId
-	 *            the new unique id of the employee that owns this timesheet
+	 * @param userId
+	 *            the new unique id of the user that owns this timesheet
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id value is invalid
 	 */
-	public Timesheet setEmployeeId(Integer employeeId) {
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
-		if (employeeId < 0)
-			throw new IllegalArgumentException("Invalid negative employee id");
+	public Timesheet setUserId(Integer userId) {
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
+		if (userId < 0)
+			throw new IllegalArgumentException("Invalid negative user id");
 
-		this.employeeId = employeeId;
+		this.userId = userId;
 		return this;
 	}
 
 	/**
-	 * @return the employee that owns this timesheet
+	 * @return the user that owns this timesheet
 	 */
 	@XmlElement
-	public Employee getEmployee() {
-		return this.employee;
+	public User getUser() {
+		return this.user;
 	}
 
 	/**
-	 * @param employee
-	 *            the new employee that owns this timesheet
+	 * @param user
+	 *            the new user that owns this timesheet
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided value is invalid
 	 */
-	public Timesheet setEmployee(Employee employee) {
-		if (employee == null)
-			throw new IllegalArgumentException("Invalid null employee");
+	public Timesheet setUser(User user) {
+		if (user == null)
+			throw new IllegalArgumentException("Invalid null user");
 
-		this.employee = employee;
+		this.user = user;
 		return this;
 	}
 
@@ -286,7 +284,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
-	 * @return whether the timesheet has been completed by the employee
+	 * @return whether the timesheet has been completed by the user
 	 */
 	@XmlElement
 	public Boolean isCompleted() {
@@ -296,7 +294,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	/**
 	 * @param completed
 	 *            the new value indicating whether this timesheet has been
-	 *            completed by the employee
+	 *            completed by the user
 	 * 
 	 * @return {@code this}
 	 * 
@@ -312,8 +310,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
-	 * @return whether the timesheet has been approved by the employee's
-	 *         supervisor
+	 * @return whether the timesheet has been approved by the user's supervisor
 	 */
 	@XmlElement
 	public Boolean isApproved() {
@@ -323,7 +320,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	/**
 	 * @param approved
 	 *            the new value indicating whether this timesheet has been
-	 *            approved by the employee's supervisor
+	 *            approved by the user's supervisor
 	 * 
 	 * @return {@code this}
 	 * 
@@ -422,7 +419,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	 * @return the person that approved this timesheet
 	 */
 	@XmlElement
-	public Employee getApprover() {
+	public User getApprover() {
 		return this.approver;
 	}
 
@@ -435,7 +432,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	 * @throws IllegalArgumentException
 	 *             if the provided value is invalid
 	 */
-	public Timesheet setApprover(Employee approver) {
+	public Timesheet setApprover(User approver) {
 		if (approver == null)
 			throw new IllegalArgumentException("Invalid null approver");
 
@@ -475,7 +472,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	 * @return the payroll person that verified this timesheet
 	 */
 	@XmlElement
-	public Employee getVerifier() {
+	public User getVerifier() {
 		return this.verifier;
 	}
 
@@ -489,7 +486,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	 * @throws IllegalArgumentException
 	 *             if the provided value is invalid
 	 */
-	public Timesheet setVerifier(Employee verifier) {
+	public Timesheet setVerifier(User verifier) {
 		if (verifier == null)
 			throw new IllegalArgumentException("Invalid null verifier");
 
@@ -529,7 +526,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	 * @return the payroll person that exported this timesheet
 	 */
 	@XmlElement
-	public Employee getExporter() {
+	public User getExporter() {
 		return this.exporter;
 	}
 
@@ -543,7 +540,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	 * @throws IllegalArgumentException
 	 *             if the provided value is invalid
 	 */
-	public Timesheet setExporter(Employee exporter) {
+	public Timesheet setExporter(User exporter) {
 		if (exporter == null)
 			throw new IllegalArgumentException("Invalid null exporter");
 
@@ -552,7 +549,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
-	 * @return all of the tasks the employee can bill hours to
+	 * @return all of the tasks the user can bill hours to
 	 */
 	@XmlElement
 	public Set<Task> getTasks() {
@@ -569,7 +566,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newTasks
-	 *            the new tasks to which the employee can bill hours
+	 *            the new tasks to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 * 
@@ -585,7 +582,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newTasks
-	 *            the new tasks to which the employee can bill hours
+	 *            the new tasks to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 */
@@ -602,7 +599,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newTasks
-	 *            the new tasks to which the employee can bill hours
+	 *            the new tasks to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 * 
@@ -618,7 +615,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newTasks
-	 *            the new tasks to which the employee can bill hours
+	 *            the new tasks to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 */
@@ -633,7 +630,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
-	 * @return all of the auditLogs the employee can bill hours to
+	 * @return all of the auditLogs the user can bill hours to
 	 */
 	@XmlElement
 	public Set<AuditLog> getAuditLogs() {
@@ -650,7 +647,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newAuditLogs
-	 *            the new auditLogs to which the employee can bill hours
+	 *            the new auditLogs to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 * 
@@ -666,7 +663,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newAuditLogs
-	 *            the new auditLogs to which the employee can bill hours
+	 *            the new auditLogs to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 */
@@ -683,7 +680,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newAuditLogs
-	 *            the new auditLogs to which the employee can bill hours
+	 *            the new auditLogs to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 * 
@@ -699,7 +696,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newAuditLogs
-	 *            the new auditLogs to which the employee can bill hours
+	 *            the new auditLogs to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 */
@@ -714,7 +711,7 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
-	 * @return all of the holidays the employee can bill hours to
+	 * @return all of the holidays the user can bill hours to
 	 */
 	@XmlElement
 	public Set<Holiday> getHolidays() {
@@ -731,7 +728,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newHolidays
-	 *            the new holidays to which the employee can bill hours
+	 *            the new holidays to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 * 
@@ -747,7 +744,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newHolidays
-	 *            the new holidays to which the employee can bill hours
+	 *            the new holidays to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 */
@@ -764,7 +761,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newHolidays
-	 *            the new holidays to which the employee can bill hours
+	 *            the new holidays to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 * 
@@ -780,7 +777,7 @@ public class Timesheet implements Comparable<Timesheet> {
 
 	/**
 	 * @param newHolidays
-	 *            the new holidays to which the employee can bill hours
+	 *            the new holidays to which the user can bill hours
 	 * 
 	 * @return {@code this}
 	 */
@@ -802,7 +799,7 @@ public class Timesheet implements Comparable<Timesheet> {
 		ToStringBuilder builder = new ToStringBuilder(this);
 		builder.append("id", getId());
 		builder.append("companyId", getCompanyId());
-		builder.append("employeeId", getEmployeeId());
+		builder.append("userId", getUserId());
 		builder.append("begin", getBegin());
 		builder.append("completed", isCompleted());
 		builder.append("approved", isApproved());
@@ -824,7 +821,7 @@ public class Timesheet implements Comparable<Timesheet> {
 			EqualsBuilder builder = new EqualsBuilder();
 			builder.append(getId(), other.getId());
 			builder.append(getCompanyId(), other.getCompanyId());
-			builder.append(getEmployeeId(), other.getEmployeeId());
+			builder.append(getUserId(), other.getUserId());
 			builder.append(getBegin(), other.getBegin());
 			builder.append(isCompleted(), other.isCompleted());
 			builder.append(isApproved(), other.isApproved());
@@ -847,7 +844,7 @@ public class Timesheet implements Comparable<Timesheet> {
 		HashCodeBuilder builder = new HashCodeBuilder();
 		builder.append(getId());
 		builder.append(getCompanyId());
-		builder.append(getEmployeeId());
+		builder.append(getUserId());
 		builder.append(getBegin());
 		builder.append(isCompleted());
 		builder.append(isApproved());
@@ -867,7 +864,7 @@ public class Timesheet implements Comparable<Timesheet> {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(getCompanyId(), getCompanyId());
 		builder.append(other.getBegin(), getBegin());
-		builder.append(getEmployeeId(), other.getEmployeeId());
+		builder.append(getUserId(), other.getUserId());
 		builder.append(getId(), other.getId());
 		builder.append(isCompleted(), other.isCompleted());
 		builder.append(isApproved(), other.isApproved());

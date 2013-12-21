@@ -29,7 +29,7 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		assignment.setId(rs.getInt("id"));
 		assignment.setCompanyId(rs.getInt("company_id"));
 		assignment.setTaskId(rs.getInt("task_id"));
-		assignment.setEmployeeId(rs.getInt("employee_id"));
+		assignment.setUserId(rs.getInt("user_id"));
 		assignment.setLaborCat(rs.getString("labor_cat"));
 		assignment.setItemName(rs.getString("item_name"));
 		Date begin = rs.getDate("begin");
@@ -74,15 +74,15 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Assignment> getForEmployee(Integer companyId,
-			Integer employeeId, Date day) throws DatabaseException {
+	public Set<Assignment> getForUser(Integer companyId, Integer userId,
+			Date day) throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 
 		String sql = "SELECT * FROM assignments WHERE company_id = ? AND "
-				+ "employee_id = ?";
+				+ "user_id = ?";
 
 		if (day != null) {
 			sql += " AND (begin IS NULL OR begin <= ?)";
@@ -93,7 +93,7 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 			if (day != null) {
 				ps.setTimestamp(3, new Timestamp(day.getTime()));
 				ps.setTimestamp(4, new Timestamp(day.getTime()));
@@ -114,25 +114,25 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	 * Used for timesheet enrichment.
 	 */
 	protected Set<Assignment> getForPayPeriod(Connection conn,
-			Integer companyId, Integer employeeId, PayPeriod payPeriod)
+			Integer companyId, Integer userId, PayPeriod payPeriod)
 			throws DatabaseException {
 		if (conn == null)
 			throw new IllegalArgumentException("Invalid null connection");
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
-		if (employeeId == null)
-			throw new IllegalArgumentException("Invalid null employee id");
+		if (userId == null)
+			throw new IllegalArgumentException("Invalid null user id");
 		if (payPeriod == null)
 			throw new IllegalArgumentException("Invalid null pay period");
 
 		String sql = "SELECT * FROM assignments WHERE company_id = ? AND "
-				+ "employee_id = ? AND (begin IS NULL OR begin <= ?) AND "
+				+ "user_id = ? AND (begin IS NULL OR begin <= ?) AND "
 				+ "(end IS NULL OR end >= ?)";
 
 		Set<Assignment> assignments = new TreeSet<>();
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
-			ps.setInt(2, employeeId);
+			ps.setInt(2, userId);
 			ps.setTimestamp(3, new Timestamp(payPeriod.getEnd().getTime()));
 			ps.setTimestamp(4, new Timestamp(payPeriod.getBegin().getTime()));
 
@@ -159,7 +159,7 @@ public class JdbcAssignmentDao implements AssignmentDao {
 			throw new IllegalArgumentException("Invalid null company id");
 
 		String sql = "INSERT INTO assignments (company_id, task_id, "
-				+ "employee_id, labor_cat, item_name, begin, end) "
+				+ "user_id, labor_cat, item_name, begin, end) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
@@ -170,7 +170,7 @@ public class JdbcAssignmentDao implements AssignmentDao {
 				assignment.setCompanyId(companyId);
 				ps.setInt(index++, assignment.getCompanyId());
 				ps.setInt(index++, assignment.getTaskId());
-				ps.setInt(index++, assignment.getEmployeeId());
+				ps.setInt(index++, assignment.getUserId());
 				ps.setString(index++, assignment.getLaborCat());
 				ps.setString(index++, assignment.getItemName());
 				if (assignment.getBegin() == null)
@@ -206,7 +206,7 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = "UPDATE assignments SET task_id = ?, employee_id = ?, "
+		String sql = "UPDATE assignments SET task_id = ?, user_id = ?, "
 				+ "labor_cat = ?, item_name = ?, begin = ?, end = ? "
 				+ "WHERE id = ? AND company_id = ?";
 
@@ -215,7 +215,7 @@ public class JdbcAssignmentDao implements AssignmentDao {
 			for (Assignment assignment : assignments) {
 				int index = 1;
 				ps.setInt(index++, assignment.getTaskId());
-				ps.setInt(index++, assignment.getEmployeeId());
+				ps.setInt(index++, assignment.getUserId());
 				ps.setString(index++, assignment.getLaborCat());
 				ps.setString(index++, assignment.getItemName());
 				if (assignment.getBegin() == null)

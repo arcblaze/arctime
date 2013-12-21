@@ -12,11 +12,11 @@ import org.apache.catalina.realm.RealmBase;
 
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.dao.RoleDao;
-import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.model.Password;
 import com.arcblaze.arctime.model.Role;
+import com.arcblaze.arctime.model.User;
 
 /**
  * Provides an implementation of the security realm used to authenticate users
@@ -29,7 +29,7 @@ public class SecurityRealm extends RealmBase {
 	/**
 	 * Cache looked-up users for better performance.
 	 */
-	private final Map<String, Employee> userMap = new ConcurrentHashMap<>();
+	private final Map<String, User> userMap = new ConcurrentHashMap<>();
 
 	/**
 	 * @param realmName
@@ -53,14 +53,14 @@ public class SecurityRealm extends RealmBase {
 	 */
 	@Override
 	protected String getPassword(String username) {
-		EmployeeDao dao = DaoFactory.getEmployeeDao();
+		UserDao dao = DaoFactory.getUserDao();
 		try {
-			Employee employee = dao.getLogin(username);
-			if (employee == null)
+			User user = dao.getLogin(username);
+			if (user == null)
 				return null;
 
-			this.userMap.put(username, employee);
-			return employee.getHashedPass();
+			this.userMap.put(username, user);
+			return user.getHashedPass();
 		} catch (DatabaseException databaseException) {
 			databaseException.printStackTrace();
 		}
@@ -72,19 +72,19 @@ public class SecurityRealm extends RealmBase {
 	 */
 	@Override
 	protected Principal getPrincipal(String username) {
-		Employee employee = this.userMap.get(username);
-		if (employee != null) {
+		User user = this.userMap.get(username);
+		if (user != null) {
 			RoleDao dao = DaoFactory.getRoleDao();
 			try {
-				Set<Role> roles = dao.get(employee.getId());
+				Set<Role> roles = dao.get(user.getId());
 				List<String> roleNames = new ArrayList<>(roles.size() + 1);
 				roleNames.add(Role.USER.name());
 				for (Role role : roles)
 					roleNames.add(role.name());
-				employee.setRoles(roles);
+				user.setRoles(roles);
 
-				return new GenericPrincipal(employee.getLogin(),
-						employee.getHashedPass(), roleNames, employee);
+				return new GenericPrincipal(user.getLogin(),
+						user.getHashedPass(), roleNames, user);
 			} catch (DatabaseException databaseException) {
 				databaseException.printStackTrace();
 			}

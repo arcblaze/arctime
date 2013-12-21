@@ -5,20 +5,20 @@ import com.arcblaze.arctime.db.dao.AssignmentDao;
 import com.arcblaze.arctime.db.dao.AuditLogDao;
 import com.arcblaze.arctime.db.dao.BillDao;
 import com.arcblaze.arctime.db.dao.CompanyDao;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.dao.HolidayDao;
 import com.arcblaze.arctime.db.dao.RoleDao;
 import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
+import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcAssignmentDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcAuditLogDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcBillDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcCompanyDao;
-import com.arcblaze.arctime.db.dao.jdbc.JdbcEmployeeDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcRoleDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTimesheetDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcUserDao;
 
 /**
  * Used to retrieve DAO instances to work with the configured back-end database.
@@ -28,7 +28,7 @@ public class DaoFactory {
 	private static DatabaseType cachedDatabaseType = null;
 
 	private static CompanyDao cachedCompanyDao = null;
-	private static EmployeeDao cachedEmployeeDao = null;
+	private static UserDao cachedUserDao = null;
 	private static RoleDao cachedRoleDao = null;
 	private static TimesheetDao cachedTimesheetDao = null;
 	private static TaskDao cachedTaskDao = null;
@@ -59,24 +59,24 @@ public class DaoFactory {
 	}
 
 	/**
-	 * @return an {@link EmployeeDao} based on the currently configured database
+	 * @return an {@link UserDao} based on the currently configured database
 	 */
-	public static EmployeeDao getEmployeeDao() {
+	public static UserDao getUserDao() {
 		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
 		if (type != cachedDatabaseType) {
 			clearCachedDaos();
 			cachedDatabaseType = type;
 		}
 
-		if (cachedEmployeeDao == null) {
+		if (cachedUserDao == null) {
 			if (DatabaseType.JDBC.equals(type))
-				cachedEmployeeDao = new JdbcEmployeeDao();
+				cachedUserDao = new JdbcUserDao();
 			else
 				throw new RuntimeException("Invalid database type: " + type);
 			cachedDatabaseType = type;
 		}
 
-		return cachedEmployeeDao;
+		return cachedUserDao;
 	}
 
 	/**
@@ -230,7 +230,7 @@ public class DaoFactory {
 
 	private static synchronized void clearCachedDaos() {
 		cachedCompanyDao = null;
-		cachedEmployeeDao = null;
+		cachedUserDao = null;
 		cachedRoleDao = null;
 		cachedTaskDao = null;
 		cachedAssignmentDao = null;

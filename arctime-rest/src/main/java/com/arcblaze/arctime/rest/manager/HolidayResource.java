@@ -14,8 +14,8 @@ import javax.ws.rs.core.SecurityContext;
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.HolidayDao;
-import com.arcblaze.arctime.model.Employee;
 import com.arcblaze.arctime.model.Holiday;
+import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
@@ -51,7 +51,7 @@ public class HolidayResource extends BaseResource {
 			throws DatabaseException, HolidayConfigurationException {
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/manager/holiday/{holidayId}")) {
-			Employee currentUser = (Employee) security.getUserPrincipal();
+			User currentUser = (User) security.getUserPrincipal();
 			HolidayDao dao = DaoFactory.getHolidayDao();
 			return dao.get(currentUser.getCompanyId(), holidayId);
 		}
@@ -75,7 +75,7 @@ public class HolidayResource extends BaseResource {
 			throws DatabaseException, HolidayConfigurationException {
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/manager/holiday")) {
-			Employee currentUser = (Employee) security.getUserPrincipal();
+			User currentUser = (User) security.getUserPrincipal();
 			HolidayDao dao = DaoFactory.getHolidayDao();
 			return dao.getAll(currentUser.getCompanyId());
 		}

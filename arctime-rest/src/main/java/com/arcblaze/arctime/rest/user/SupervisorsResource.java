@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.EmployeeDao;
-import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.db.dao.UserDao;
+import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
@@ -34,31 +34,31 @@ public class SupervisorsResource extends BaseResource {
 	private ServletContext servletContext;
 
 	@XmlRootElement
-	static class EmployeeSupervisors {
+	static class UserSupervisors {
 		@XmlElement
-		public Set<Employee> supervisors;
+		public Set<User> supervisors;
 	}
 
 	/**
 	 * @param security
 	 *            the security information associated with the request
 	 * 
-	 * @return the employee supervisors response
+	 * @return the user supervisors response
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public EmployeeSupervisors get(@Context SecurityContext security) {
+	public UserSupervisors get(@Context SecurityContext security) {
 		log.debug("User supervisor request");
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/user/supervisors")) {
 
-			Employee currentUser = (Employee) security.getUserPrincipal();
-			EmployeeDao dao = DaoFactory.getEmployeeDao();
-			Set<Employee> supervisors = dao.getSupervisors(
+			User currentUser = (User) security.getUserPrincipal();
+			UserDao dao = DaoFactory.getUserDao();
+			Set<User> supervisors = dao.getSupervisors(
 					currentUser.getCompanyId(), currentUser.getId(), null);
 			log.debug("  Found supervisors: {}", supervisors.size());
 
-			EmployeeSupervisors response = new EmployeeSupervisors();
+			UserSupervisors response = new UserSupervisors();
 			response.supervisors = supervisors;
 			return response;
 		} catch (DatabaseException dbException) {

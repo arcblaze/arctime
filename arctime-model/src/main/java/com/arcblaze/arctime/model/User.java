@@ -20,48 +20,48 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Represents an employee.
+ * Represents a user of this system.
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class Employee implements Comparable<Employee>, Principal {
+public class User implements Comparable<User>, Principal {
 	/**
-	 * The unique id of the employee.
+	 * The unique id of the user.
 	 */
 	private Integer id;
 
 	/**
-	 * The unique id of the company in which this employee resides.
+	 * The unique id of the company in which this user resides.
 	 */
 	private Integer companyId;
 
 	/**
-	 * The login name for the employee.
+	 * The login name for the user.
 	 */
 	private String login;
 
 	/**
-	 * The hashed password value for the employee.
+	 * The hashed password value for the user.
 	 */
 	private String hashedPass;
 
 	/**
-	 * The employee's email address.
+	 * The user's email address.
 	 */
 	private String email;
 
 	/**
-	 * The employee's first name.
+	 * The user's first name.
 	 */
 	private String firstName;
 
 	/**
-	 * The employee's last name.
+	 * The user's last name.
 	 */
 	private String lastName;
 
 	/**
-	 * Whether this employee is an active account or not.
+	 * Whether this user is an active account or not.
 	 */
 	private Boolean active = true;
 
@@ -71,30 +71,30 @@ public class Employee implements Comparable<Employee>, Principal {
 	private final Set<Role> roles = new TreeSet<>();
 
 	/**
-	 * The employees that are being supervised by this employee.
+	 * The users that are being supervised by this user.
 	 */
-	private final Set<Employee> supervised = new TreeSet<>();
+	private final Set<User> supervised = new TreeSet<>();
 
 	/**
-	 * When an employee shows up in the supervised list, this determines whether
-	 * the supervisor is a primary supervisor or not.
+	 * When a user shows up in the supervised list, this determines whether the
+	 * supervisor is a primary supervisor or not.
 	 */
 	private Boolean primary;
 
 	/**
-	 * The employees that are supervisors of this employee.
+	 * The users that are supervisors of this user.
 	 */
-	private final Set<Employee> supervisors = new TreeSet<>();
+	private final Set<User> supervisors = new TreeSet<>();
 
 	/**
 	 * Default constructor.
 	 */
-	public Employee() {
+	public User() {
 		// Nothing to do.
 	}
 
 	/**
-	 * @return the unique id of the employee
+	 * @return the unique id of the user
 	 */
 	@XmlElement
 	public Integer getId() {
@@ -103,14 +103,14 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param id
-	 *            the new unique employee id value
+	 *            the new unique user id value
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id value is invalid
 	 */
-	public Employee setId(Integer id) {
+	public User setId(Integer id) {
 		if (id == null)
 			throw new IllegalArgumentException("Invalid null id");
 		if (id < 0)
@@ -121,7 +121,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the unique id of the company in which this employee resides
+	 * @return the unique id of the company in which this user resides
 	 */
 	@XmlElement
 	public Integer getCompanyId() {
@@ -137,7 +137,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * @throws IllegalArgumentException
 	 *             if the provided companyId value is invalid
 	 */
-	public Employee setCompanyId(Integer companyId) {
+	public User setCompanyId(Integer companyId) {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 		if (companyId < 0)
@@ -148,7 +148,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the employee login value
+	 * @return the user login value
 	 */
 	@Override
 	@XmlTransient
@@ -157,7 +157,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the employee login value
+	 * @return the user login value
 	 */
 	@XmlElement
 	public String getLogin() {
@@ -166,14 +166,14 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param login
-	 *            the new employee login value
+	 *            the new user login value
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided login value is invalid
 	 */
-	public Employee setLogin(String login) {
+	public User setLogin(String login) {
 		if (StringUtils.isBlank(login))
 			throw new IllegalArgumentException("Invalid blank login");
 
@@ -182,7 +182,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the hashed value of the employee's password
+	 * @return the hashed value of the user's password
 	 */
 	@XmlElement
 	public String getHashedPass() {
@@ -191,14 +191,14 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param hashedPass
-	 *            the new hashed value of the employee's password
+	 *            the new hashed value of the user's password
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided hashed password value is invalid
 	 */
-	public Employee setHashedPass(String hashedPass) {
+	public User setHashedPass(String hashedPass) {
 		if (StringUtils.isBlank(hashedPass))
 			throw new IllegalArgumentException("Invalid blank hashed password");
 
@@ -207,7 +207,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the employee's email address
+	 * @return the user's email address
 	 */
 	@XmlElement
 	public String getEmail() {
@@ -216,14 +216,14 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param email
-	 *            the new email address for the employee
+	 *            the new email address for the user
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided email value is invalid
 	 */
-	public Employee setEmail(String email) {
+	public User setEmail(String email) {
 		if (StringUtils.isBlank(email))
 			throw new IllegalArgumentException("Invalid blank email");
 
@@ -232,7 +232,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the employee's first name
+	 * @return the user's first name
 	 */
 	@XmlElement
 	public String getFirstName() {
@@ -241,14 +241,14 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param firstName
-	 *            the new first name value for the employee
+	 *            the new first name value for the user
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided first name value is invalid
 	 */
-	public Employee setFirstName(String firstName) {
+	public User setFirstName(String firstName) {
 		if (StringUtils.isBlank(firstName))
 			throw new IllegalArgumentException("Invalid blank first name");
 
@@ -257,7 +257,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the employee's last name
+	 * @return the user's last name
 	 */
 	@XmlElement
 	public String getLastName() {
@@ -266,14 +266,14 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param lastName
-	 *            the new last name value for the employee
+	 *            the new last name value for the user
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided last name value is invalid
 	 */
-	public Employee setLastName(String lastName) {
+	public User setLastName(String lastName) {
 		if (StringUtils.isBlank(lastName))
 			throw new IllegalArgumentException("Invalid blank last name");
 
@@ -282,7 +282,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return the full name of the employee
+	 * @return the full name of the user
 	 */
 	@XmlElement
 	public String getFullName() {
@@ -294,7 +294,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return whether this employee represents an active account in the system
+	 * @return whether this user represents an active account in the system
 	 */
 	@XmlElement
 	public Boolean isActive() {
@@ -311,7 +311,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * @throws IllegalArgumentException
 	 *             if the provided active value is invalid
 	 */
-	public Employee setActive(Boolean active) {
+	public User setActive(Boolean active) {
 		if (active == null)
 			throw new IllegalArgumentException("Invalid null active value");
 
@@ -341,7 +341,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	/**
 	 * @return {@code this}
 	 */
-	public Employee clearRoles() {
+	public User clearRoles() {
 		this.roles.clear();
 		return this;
 	}
@@ -355,7 +355,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * @throws IllegalArgumentException
 	 *             if the provided roles value is invalid
 	 */
-	public Employee setRoles(Role... newRoles) {
+	public User setRoles(Role... newRoles) {
 		if (newRoles == null)
 			throw new IllegalArgumentException("Invalid null roles");
 
@@ -368,7 +368,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * 
 	 * @return {@code this}
 	 */
-	public Employee setRoles(Collection<Role> newRoles) {
+	public User setRoles(Collection<Role> newRoles) {
 		synchronized (this.roles) {
 			this.roles.clear();
 			if (newRoles != null)
@@ -388,7 +388,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * @throws IllegalArgumentException
 	 *             if the provided roles value is invalid
 	 */
-	public Employee addRoles(Role... newRoles) {
+	public User addRoles(Role... newRoles) {
 		if (newRoles == null)
 			throw new IllegalArgumentException("Invalid null roles");
 
@@ -401,7 +401,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * 
 	 * @return {@code this}
 	 */
-	public Employee addRoles(Collection<Role> newRoles) {
+	public User addRoles(Collection<Role> newRoles) {
 		synchronized (this.roles) {
 			if (newRoles != null)
 				for (Role role : newRoles)
@@ -412,7 +412,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return whether this employee is a system administrator
+	 * @return whether this user is a system administrator
 	 */
 	@XmlElement
 	public boolean isAdmin() {
@@ -420,7 +420,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return whether this employee is involved in managing payroll
+	 * @return whether this user is involved in managing payroll
 	 */
 	@XmlElement
 	public boolean isPayroll() {
@@ -428,7 +428,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return whether this employee is a system manager
+	 * @return whether this user is a system manager
 	 */
 	@XmlElement
 	public boolean isManager() {
@@ -436,31 +436,31 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return all of the employees being supervised by this account
+	 * @return all of the users being supervised by this account
 	 */
 	@XmlElement
-	public Set<Employee> getSupervised() {
+	public Set<User> getSupervised() {
 		return Collections.unmodifiableSet(this.supervised);
 	}
 
 	/**
 	 * @return {@code this}
 	 */
-	public Employee clearSupervised() {
+	public User clearSupervised() {
 		this.supervised.clear();
 		return this;
 	}
 
 	/**
 	 * @param newSupervised
-	 *            the new employees to be assigned to this account
+	 *            the new users to be assigned to this account
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the provided supervised employees value is invalid
+	 *             if the provided supervised users value is invalid
 	 */
-	public Employee setSupervised(Employee... newSupervised) {
+	public User setSupervised(User... newSupervised) {
 		if (newSupervised == null)
 			throw new IllegalArgumentException("Invalid null supervised");
 
@@ -469,31 +469,31 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param newSupervised
-	 *            the new employees to be assigned to this account
+	 *            the new users to be assigned to this account
 	 * 
 	 * @return {@code this}
 	 */
-	public Employee setSupervised(Collection<Employee> newSupervised) {
+	public User setSupervised(Collection<User> newSupervised) {
 		synchronized (this.supervised) {
 			this.supervised.clear();
 			if (newSupervised != null)
-				for (Employee employee : newSupervised)
-					if (employee != null)
-						this.supervised.add(employee);
+				for (User user : newSupervised)
+					if (user != null)
+						this.supervised.add(user);
 		}
 		return this;
 	}
 
 	/**
 	 * @param newSupervised
-	 *            the new employees to be assigned to this account
+	 *            the new users to be assigned to this account
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the provided supervised employees value is invalid
+	 *             if the provided supervised users value is invalid
 	 */
-	public Employee addSupervised(Employee... newSupervised) {
+	public User addSupervised(User... newSupervised) {
 		if (newSupervised == null)
 			throw new IllegalArgumentException("Invalid null supervised");
 
@@ -502,22 +502,22 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param newSupervised
-	 *            the new employees to be assigned to this account
+	 *            the new users to be assigned to this account
 	 * 
 	 * @return {@code this}
 	 */
-	public Employee addSupervised(Collection<Employee> newSupervised) {
+	public User addSupervised(Collection<User> newSupervised) {
 		synchronized (this.supervised) {
 			if (newSupervised != null)
-				for (Employee employee : newSupervised)
-					if (employee != null)
-						this.supervised.add(employee);
+				for (User user : newSupervised)
+					if (user != null)
+						this.supervised.add(user);
 		}
 		return this;
 	}
 
 	/**
-	 * @return whether this employee is a supervisor
+	 * @return whether this user is a supervisor
 	 */
 	@XmlElement
 	public boolean isSupervisor() {
@@ -525,7 +525,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return if the supervisor for this employee is the primary supervisor
+	 * @return if the supervisor for this user is the primary supervisor
 	 */
 	@XmlElement
 	public Boolean isPrimary() {
@@ -534,15 +534,15 @@ public class Employee implements Comparable<Employee>, Principal {
 
 	/**
 	 * @param primary
-	 *            the new value indicating whether the supervisor for this
-	 *            employee is a primary supervisor
+	 *            the new value indicating whether the supervisor for this user
+	 *            is a primary supervisor
 	 * 
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided primary value is invalid
 	 */
-	public Employee setPrimary(Boolean primary) {
+	public User setPrimary(Boolean primary) {
 		if (primary == null)
 			throw new IllegalArgumentException("Invalid null primary value");
 
@@ -551,17 +551,17 @@ public class Employee implements Comparable<Employee>, Principal {
 	}
 
 	/**
-	 * @return all of the supervisors for this employee
+	 * @return all of the supervisors for this user
 	 */
 	@XmlElement
-	public Set<Employee> getSupervisors() {
+	public Set<User> getSupervisors() {
 		return Collections.unmodifiableSet(this.supervisors);
 	}
 
 	/**
 	 * @return {@code this}
 	 */
-	public Employee clearSupervisors() {
+	public User clearSupervisors() {
 		this.supervisors.clear();
 		return this;
 	}
@@ -575,7 +575,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * @throws IllegalArgumentException
 	 *             if the provided supervisors value is invalid
 	 */
-	public Employee setSupervisors(Employee... newSupervisors) {
+	public User setSupervisors(User... newSupervisors) {
 		if (newSupervisors == null)
 			throw new IllegalArgumentException("Invalid null supervisors");
 
@@ -588,13 +588,13 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * 
 	 * @return {@code this}
 	 */
-	public Employee setSupervisors(Collection<Employee> newSupervisors) {
+	public User setSupervisors(Collection<User> newSupervisors) {
 		synchronized (this.supervisors) {
 			this.supervisors.clear();
 			if (newSupervisors != null)
-				for (Employee employee : newSupervisors)
-					if (employee != null)
-						this.supervisors.add(employee);
+				for (User user : newSupervisors)
+					if (user != null)
+						this.supervisors.add(user);
 		}
 		return this;
 	}
@@ -608,7 +608,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * @throws IllegalArgumentException
 	 *             if the provided supervisors value is invalid
 	 */
-	public Employee addSupervisors(Employee... newSupervisors) {
+	public User addSupervisors(User... newSupervisors) {
 		if (newSupervisors == null)
 			throw new IllegalArgumentException("Invalid null supervisors");
 
@@ -621,12 +621,12 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * 
 	 * @return {@code this}
 	 */
-	public Employee addSupervisors(Collection<Employee> newSupervisors) {
+	public User addSupervisors(Collection<User> newSupervisors) {
 		synchronized (this.supervisors) {
 			if (newSupervisors != null)
-				for (Employee employee : newSupervisors)
-					if (employee != null)
-						this.supervisors.add(employee);
+				for (User user : newSupervisors)
+					if (user != null)
+						this.supervisors.add(user);
 		}
 		return this;
 	}
@@ -654,8 +654,8 @@ public class Employee implements Comparable<Employee>, Principal {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Employee) {
-			Employee other = (Employee) obj;
+		if (obj instanceof User) {
+			User other = (User) obj;
 			EqualsBuilder builder = new EqualsBuilder();
 			builder.append(getId(), other.getId());
 			builder.append(getCompanyId(), other.getCompanyId());
@@ -692,7 +692,7 @@ public class Employee implements Comparable<Employee>, Principal {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int compareTo(Employee other) {
+	public int compareTo(User other) {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(other.isActive(), isActive());
 		builder.append(getLastName(), other.getLastName());

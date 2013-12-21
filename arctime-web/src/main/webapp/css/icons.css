@@ -69,20 +69,20 @@
 	background-image:		url(/img/timesheet_auditlog.png) !important;
 }
 
-.icon-employees {
-	background-image:		url(/img/employees.png) !important;
+.icon-users {
+	background-image:		url(/img/users.png) !important;
 }
-.icon-employee-add {
-	background-image:		url(/img/employee_add.png) !important;
+.icon-user-add {
+	background-image:		url(/img/user_add.png) !important;
 }
-.icon-employee-delete {
-	background-image:		url(/img/employee_delete.png) !important;
+.icon-user-delete {
+	background-image:		url(/img/user_delete.png) !important;
 }
-.icon-employee-edit {
-	background-image:		url(/img/employee_edit.png) !important;
+.icon-user-edit {
+	background-image:		url(/img/user_edit.png) !important;
 }
-.icon-employee-go {
-	background-image:		url(/img/employee_go.png) !important;
+.icon-user-go {
+	background-image:		url(/img/user_go.png) !important;
 }
 
 .icon-supervisor-add {

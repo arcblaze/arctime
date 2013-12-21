@@ -1,15 +1,15 @@
 
-Ext.namespace("ui.panel.employee");
+Ext.namespace("ui.panel.user");
 
-ui.panel.employee.ProfileUpdatePanel = Ext.extend(Ext.form.FormPanel, {
+ui.panel.user.ProfileUpdatePanel = Ext.extend(Ext.form.FormPanel, {
 	constructor: function(c) {
-		if (!c || !c.employee)
-			throw "ProfileUpdatePanel requires an employee.";
+		if (!c || !c.user)
+			throw "ProfileUpdatePanel requires an user.";
 
 		var form = this;
 
 		var config = Ext.applyIf(c || {}, {
-			id:         'ui.panel.employee.profileupdatepanel',
+			id:         'ui.panel.user.profileupdatepanel',
 			border:     true,
 			frame:      false,
 			title:       'Update Profile',
@@ -57,30 +57,30 @@ ui.panel.employee.ProfileUpdatePanel = Ext.extend(Ext.form.FormPanel, {
 				}
 			],
 			buttons: [
-				new Ext.Button(new action.employee.DoProfileUpdate())
+				new Ext.Button(new action.user.DoProfileUpdate())
 			]
 		});
 
-		ui.panel.employee.ProfileUpdatePanel.superclass.constructor.call(this, config);
+		ui.panel.user.ProfileUpdatePanel.superclass.constructor.call(this, config);
 
 		// Set the values in the form.
-		this.setValues(c.employee);
+		this.setValues(c.user);
 	},
 
 	setInitialFocus: function() {
 		this.getForm().findField('firstName').focus();
 	},
 
-	setValues: function(employee) {
+	setValues: function(user) {
 		// Set the form values.
 		this.getForm().findField('firstName').
-			setValue(employee.data.firstName);
+			setValue(user.data.firstName);
 		this.getForm().findField('lastName').
-			setValue(employee.data.lastName);
-		this.getForm().findField('login').setValue(employee.data.login);
+			setValue(user.data.lastName);
+		this.getForm().findField('login').setValue(user.data.login);
 		this.getForm().findField('password').setValue('');
 		this.getForm().findField('confirm').setValue('');
-		this.getForm().findField('email').setValue(employee.data.email);
+		this.getForm().findField('email').setValue(user.data.email);
 
 		// Set the form focus.
 		this.setInitialFocus();

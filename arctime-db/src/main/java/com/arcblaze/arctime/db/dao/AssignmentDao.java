@@ -32,23 +32,23 @@ public interface AssignmentDao {
 	 * @param companyId
 	 *            the unique id of the company for which assignments will be
 	 *            retrieved
-	 * @param employeeId
-	 *            the unique id of the employee for which assignments will be
+	 * @param userId
+	 *            the unique id of the user for which assignments will be
 	 *            retrieved
 	 * @param day
 	 *            the day for which assignment assignments must be valid, may be
 	 *            {@code null} if date is not important
 	 * 
-	 * @return all available assignments for the employee during the specified
-	 *         day, possibly empty but never {@code null}
+	 * @return all available assignments for the user during the specified day,
+	 *         possibly empty but never {@code null}
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids or pay period are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public Set<Assignment> getForEmployee(Integer companyId,
-			Integer employeeId, Date day) throws DatabaseException;
+	public Set<Assignment> getForUser(Integer companyId, Integer userId,
+			Date day) throws DatabaseException;
 
 	/**
 	 * @param companyId

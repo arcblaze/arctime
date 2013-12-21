@@ -42,7 +42,7 @@ public class JdbcBillDao implements BillDao {
 					bill.setId(rs.getInt("id"));
 					bill.setAssignmentId(rs.getInt("assignment_id"));
 					bill.setTaskId(rs.getInt("task_id"));
-					bill.setEmployeeId(rs.getInt("employee_id"));
+					bill.setUserId(rs.getInt("user_id"));
 					bill.setDay(rs.getDate("day"));
 					bill.setHours(rs.getFloat("hours"));
 					bill.setTimestamp(rs.getTimestamp("timestamp"));
@@ -79,7 +79,7 @@ public class JdbcBillDao implements BillDao {
 				bill.setId(rs.getInt("id"));
 				bill.setAssignmentId(rs.getInt("assignment_id"));
 				bill.setTaskId(rs.getInt("task_id"));
-				bill.setEmployeeId(rs.getInt("employee_id"));
+				bill.setUserId(rs.getInt("user_id"));
 				bill.setDay(rs.getDate("day"));
 				bill.setHours(rs.getFloat("hours"));
 				bill.setTimestamp(rs.getTimestamp("timestamp"));
@@ -100,7 +100,7 @@ public class JdbcBillDao implements BillDao {
 		if (bills == null || bills.isEmpty())
 			return;
 
-		String sql = "INSERT INTO bills (assignment_id, task_id, employee_id, "
+		String sql = "INSERT INTO bills (assignment_id, task_id, user_id, "
 				+ "day, hours, timestamp) VALUES (?, ?, ?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
@@ -110,7 +110,7 @@ public class JdbcBillDao implements BillDao {
 				int index = 1;
 				ps.setInt(index++, bill.getAssignmentId());
 				ps.setInt(index++, bill.getTaskId());
-				ps.setInt(index++, bill.getEmployeeId());
+				ps.setInt(index++, bill.getUserId());
 				ps.setDate(index++, new Date(bill.getDay().getTime()));
 				ps.setFloat(index++, bill.getHours());
 				ps.setTimestamp(index++, new Timestamp(bill.getTimestamp()
@@ -136,7 +136,7 @@ public class JdbcBillDao implements BillDao {
 			return;
 
 		String sql = "UPDATE bills SET assignment_id = ?, task_id = ?, "
-				+ "employee_id = ?, day = ?, hours = ?, timestamp = ? "
+				+ "user_id = ?, day = ?, hours = ?, timestamp = ? "
 				+ "WHERE id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
@@ -145,7 +145,7 @@ public class JdbcBillDao implements BillDao {
 				int index = 1;
 				ps.setInt(index++, bill.getAssignmentId());
 				ps.setInt(index++, bill.getTaskId());
-				ps.setInt(index++, bill.getEmployeeId());
+				ps.setInt(index++, bill.getUserId());
 				ps.setDate(index++, new Date(bill.getDay().getTime()));
 				ps.setFloat(index++, bill.getHours());
 				ps.setTimestamp(index++, new Timestamp(bill.getTimestamp()

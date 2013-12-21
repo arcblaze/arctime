@@ -7,24 +7,24 @@ import org.apache.commons.lang.StringUtils;
  */
 public enum Enrichment {
 	/**
-	 * Used to enrich employee data with the employee's roles.
+	 * Used to enrich user data with the user's roles.
 	 */
 	ROLES,
 
 	/**
-	 * Used to enrich employee data with the employees being supervised.
+	 * Used to enrich user data with the users being supervised.
 	 */
 	SUPERVISED,
 
 	/**
-	 * Used to enrich employee data with the employee's supervisors.
+	 * Used to enrich user data with the user's supervisors.
 	 */
 	SUPERVISERS,
 
 	/**
-	 * Used to enrich timesheet data with the employee that owns each timesheet.
+	 * Used to enrich timesheet data with the user that owns each timesheet.
 	 */
-	EMPLOYEES,
+	USERS,
 
 	/**
 	 * Used to enrich timesheet data with the pay period in which the timesheet
@@ -38,7 +38,7 @@ public enum Enrichment {
 	AUDIT_LOGS,
 
 	/**
-	 * Used to enrich timesheet data with the tasks for which the employee is
+	 * Used to enrich timesheet data with the tasks for which the user is
 	 * assigned during the pay period.
 	 */
 	TASKS,

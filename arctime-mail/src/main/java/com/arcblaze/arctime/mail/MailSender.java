@@ -1,6 +1,8 @@
 package com.arcblaze.arctime.mail;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -12,7 +14,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.arcblaze.arctime.config.Property;
-import com.arcblaze.arctime.model.Employee;
+import com.arcblaze.arctime.model.User;
 
 /**
  * Responsible for sending emails based on the system configuration.
@@ -39,17 +41,32 @@ class MailSender {
 	/**
 	 * @param msg
 	 *            the content within the body of the email
-	 * 
 	 * @param subject
 	 *            the subject to include in the email
-	 * 
-	 * @param employees
-	 *            the employees to which the message will be sent
+	 * @param users
+	 *            the users to which the message will be sent
 	 * 
 	 * @throws MessagingException
 	 *             if there is a problem sending the messages
 	 */
-	public static void send(String msg, String subject, Set<Employee> employees)
+	public static void send(String msg, String subject, User... users)
+			throws MessagingException {
+		if (users != null)
+			send(msg, subject, new LinkedHashSet<>(Arrays.asList(users)));
+	}
+
+	/**
+	 * @param msg
+	 *            the content within the body of the email
+	 * @param subject
+	 *            the subject to include in the email
+	 * @param users
+	 *            the users to which the message will be sent
+	 * 
+	 * @throws MessagingException
+	 *             if there is a problem sending the messages
+	 */
+	public static void send(String msg, String subject, Set<User> users)
 			throws MessagingException {
 		Properties props = getConfiguration();
 
@@ -58,11 +75,10 @@ class MailSender {
 		try {
 			message.setFrom(new InternetAddress(
 					Property.EMAIL_AUTHENTICATE_USER.getString(), "ARCTIME"));
-			for (Employee employee : employees)
+			for (User user : users)
 				message.addRecipient(
 						Message.RecipientType.TO,
-						new InternetAddress(employee.getEmail(), employee
-								.getFullName()));
+						new InternetAddress(user.getEmail(), user.getFullName()));
 			message.setSubject(subject);
 			message.setText(msg);
 		} catch (UnsupportedEncodingException badEncoding) {
