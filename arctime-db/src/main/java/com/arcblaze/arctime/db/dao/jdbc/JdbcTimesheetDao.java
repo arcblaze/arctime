@@ -7,9 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -33,6 +35,17 @@ import com.arcblaze.arctime.model.Timesheet;
  * Manages employees within the back-end database.
  */
 public class JdbcTimesheetDao implements TimesheetDao {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Timesheet get(Integer companyId, Integer timesheetId,
+			Enrichment... enrichments) throws DatabaseException {
+		Set<Enrichment> enrichmentSet = enrichments == null ? null
+				: new LinkedHashSet<>(Arrays.asList(enrichments));
+		return this.get(companyId, timesheetId, enrichmentSet);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -85,6 +98,18 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Timesheet> getGroup(Integer companyId,
+			Set<Integer> timesheetIds, Enrichment... enrichments)
+			throws DatabaseException {
+		Set<Enrichment> enrichmentSet = enrichments == null ? null
+				: new LinkedHashSet<>(Arrays.asList(enrichments));
+		return this.getGroup(companyId, timesheetIds, enrichmentSet);
 	}
 
 	/**
@@ -145,6 +170,19 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 */
 	@Override
 	public Timesheet getForEmployee(Integer companyId, Integer employeeId,
+			PayPeriod payPeriod, Enrichment... enrichments)
+			throws DatabaseException {
+		Set<Enrichment> enrichmentSet = enrichments == null ? null
+				: new LinkedHashSet<>(Arrays.asList(enrichments));
+		return this.getForEmployee(companyId, employeeId, payPeriod,
+				enrichmentSet);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Timesheet getForEmployee(Integer companyId, Integer employeeId,
 			PayPeriod payPeriod, Set<Enrichment> enrichments)
 			throws DatabaseException {
 		if (companyId == null)
@@ -197,6 +235,18 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Timesheet getLatestForEmployee(Integer companyId,
+			Integer employeeId, Enrichment... enrichments)
+			throws DatabaseException {
+		Set<Enrichment> enrichmentSet = enrichments == null ? null
+				: new LinkedHashSet<>(Arrays.asList(enrichments));
+		return getLatestForEmployee(companyId, employeeId, enrichmentSet);
 	}
 
 	/**

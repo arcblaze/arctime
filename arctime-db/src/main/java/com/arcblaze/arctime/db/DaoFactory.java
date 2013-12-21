@@ -9,6 +9,7 @@ import com.arcblaze.arctime.db.dao.EmployeeDao;
 import com.arcblaze.arctime.db.dao.HolidayDao;
 import com.arcblaze.arctime.db.dao.RoleDao;
 import com.arcblaze.arctime.db.dao.TaskDao;
+import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcAssignmentDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcAuditLogDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcBillDao;
@@ -17,6 +18,7 @@ import com.arcblaze.arctime.db.dao.jdbc.JdbcEmployeeDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcRoleDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcTimesheetDao;
 
 /**
  * Used to retrieve DAO instances to work with the configured back-end database.
@@ -28,6 +30,7 @@ public class DaoFactory {
 	private static CompanyDao cachedCompanyDao = null;
 	private static EmployeeDao cachedEmployeeDao = null;
 	private static RoleDao cachedRoleDao = null;
+	private static TimesheetDao cachedTimesheetDao = null;
 	private static TaskDao cachedTaskDao = null;
 	private static AssignmentDao cachedAssignmentDao = null;
 	private static HolidayDao cachedHolidayDao = null;
@@ -95,6 +98,28 @@ public class DaoFactory {
 		}
 
 		return cachedRoleDao;
+	}
+
+	/**
+	 * @return an {@link TimesheetDao} based on the currently configured
+	 *         database
+	 */
+	public static TimesheetDao getTimesheetDao() {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
+			clearCachedDaos();
+			cachedDatabaseType = type;
+		}
+
+		if (cachedTimesheetDao == null) {
+			if (DatabaseType.JDBC.equals(type))
+				cachedTimesheetDao = new JdbcTimesheetDao();
+			else
+				throw new RuntimeException("Invalid database type: " + type);
+			cachedDatabaseType = type;
+		}
+
+		return cachedTimesheetDao;
 	}
 
 	/**

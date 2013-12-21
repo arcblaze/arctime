@@ -117,7 +117,7 @@ public class ProfileUpdateResource extends BaseResource {
 			Employee currentUser = (Employee) security.getUserPrincipal();
 			EmployeeDao dao = DaoFactory.getEmployeeDao();
 			Employee employee = dao.get(currentUser.getCompanyId(),
-					currentUser.getId(), null);
+					currentUser.getId());
 			log.debug("  Found employee: {}", employee);
 
 			if (employee == null)

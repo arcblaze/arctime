@@ -43,7 +43,45 @@ public interface EmployeeDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public Employee get(Integer companyId, Integer employeeId,
+			Enrichment... enrichments) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the employee will be
+	 *            retrieved
+	 * @param employeeId
+	 *            the unique id of the employee to retrieve
+	 * @param enrichments
+	 *            the types of additional data to include in the returned
+	 *            employees
+	 * 
+	 * @return the requested employee, possibly {@code null} if not found
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public Employee get(Integer companyId, Integer employeeId,
 			Set<Enrichment> enrichments) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which employees will be
+	 *            retrieved
+	 * @param enrichments
+	 *            the types of additional data to include in the returned
+	 *            employees
+	 * 
+	 * @return all available employees, possibly empty but never {@code null}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public Set<Employee> getAll(Integer companyId, Enrichment... enrichments)
+			throws DatabaseException;
 
 	/**
 	 * @param companyId

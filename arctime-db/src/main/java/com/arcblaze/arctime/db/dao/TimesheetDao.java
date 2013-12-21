@@ -31,7 +31,48 @@ public interface TimesheetDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public Timesheet get(Integer companyId, Integer timesheetId,
+			Enrichment... enrichments) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be retrieved
+	 * @param timesheetId
+	 *            the unique id of the timesheet to be retrieved
+	 * @param enrichments
+	 *            the types of additional data to include in the returned
+	 *            timesheets
+	 * 
+	 * @return the requested timesheet, possibly {@code null} if not found
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public Timesheet get(Integer companyId, Integer timesheetId,
 			Set<Enrichment> enrichments) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be retrieved
+	 * @param timesheetIds
+	 *            the unique ids of the timesheets to be retrieved
+	 * @param enrichments
+	 *            the types of additional data to include in the returned
+	 *            timesheets
+	 * 
+	 * @return the requested timesheet, possibly {@code null} if not found
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public Set<Timesheet> getGroup(Integer companyId,
+			Set<Integer> timesheetIds, Enrichment... enrichments)
+			throws DatabaseException;
 
 	/**
 	 * @param companyId
@@ -75,7 +116,53 @@ public interface TimesheetDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public Timesheet getForEmployee(Integer companyId, Integer employeeId,
+			PayPeriod payPeriod, Enrichment... enrichments)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be retrieved
+	 * @param employeeId
+	 *            the unique id of the employee that owns the timesheet to be
+	 *            retrieved
+	 * @param payPeriod
+	 *            the pay period for which timesheet data will be returned
+	 * @param enrichments
+	 *            the types of additional data to include in the returned
+	 *            timesheets
+	 * 
+	 * @return the requested timesheet, possibly {@code null} if not found
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public Timesheet getForEmployee(Integer companyId, Integer employeeId,
 			PayPeriod payPeriod, Set<Enrichment> enrichments)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be retrieved
+	 * @param employeeId
+	 *            the unique id of the employee that owns the timesheet to be
+	 *            retrieved
+	 * @param enrichments
+	 *            the types of additional data to include in the returned
+	 *            timesheets
+	 * 
+	 * @return the requested timesheet, possibly {@code null} if not found
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public Timesheet getLatestForEmployee(Integer companyId,
+			Integer employeeId, Enrichment... enrichments)
 			throws DatabaseException;
 
 	/**

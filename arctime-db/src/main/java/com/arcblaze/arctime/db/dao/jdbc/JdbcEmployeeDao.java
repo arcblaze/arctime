@@ -6,9 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -82,6 +84,17 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 */
 	@Override
 	public Employee get(Integer companyId, Integer employeeId,
+			Enrichment... enrichments) throws DatabaseException {
+		Set<Enrichment> enrichmentSet = enrichments == null ? null
+				: new LinkedHashSet<>(Arrays.asList(enrichments));
+		return this.get(companyId, employeeId, enrichmentSet);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Employee get(Integer companyId, Integer employeeId,
 			Set<Enrichment> enrichments) throws DatabaseException {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
@@ -116,6 +129,17 @@ public class JdbcEmployeeDao implements EmployeeDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Set<Employee> getAll(Integer companyId, Enrichment... enrichments)
+			throws DatabaseException {
+		Set<Enrichment> enrichmentSet = enrichments == null ? null
+				: new LinkedHashSet<>(Arrays.asList(enrichments));
+		return this.getAll(companyId, enrichmentSet);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Set<Employee> getAll(Integer companyId, Set<Enrichment> enrichments)
 			throws DatabaseException {
 		if (companyId == null)
@@ -141,9 +165,6 @@ public class JdbcEmployeeDao implements EmployeeDao {
 		}
 	}
 
-	/**
-	 * Used to perform timesheet enrichment.
-	 */
 	protected Map<Integer, Employee> getForTimesheets(Connection conn,
 			Integer companyId, Set<Integer> timesheetIds)
 			throws DatabaseException {
