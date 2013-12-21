@@ -218,12 +218,6 @@
 			</dependency>
 
 			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>15.0</version>
-			</dependency>
-
-			<dependency>
 				<groupId>javax.mail</groupId>
 				<artifactId>mail</artifactId>
 				<version>1.4.7</version>
@@ -293,6 +287,13 @@
 				<artifactId>mockito-core</artifactId>
 				<version>1.9.5</version>
 				<scope>test</scope>
+				<exclusions>
+					<!-- Since junit includes a more recent version -->
+					<exclusion>
+						<groupId>org.hamcrest</groupId>
+						<artifactId>hamcrest-core</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>

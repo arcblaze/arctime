@@ -81,6 +81,14 @@
 					</plugin>
 				</plugins>
 			</build>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>arctime-web</artifactId>
+					<version>${project.version}</version>
+					<type>zip</type>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 
@@ -104,12 +112,6 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>arctime-rest</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>arctime-web</artifactId>
-			<version>${project.version}</version>
-			<type>zip</type>
 		</dependency>
 	</dependencies>
 </project>
