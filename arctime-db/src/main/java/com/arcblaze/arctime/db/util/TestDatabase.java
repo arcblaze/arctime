@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,14 +40,26 @@ public class TestDatabase {
 		Property.DB_USERNAME.set("SA");
 		Property.DB_PASSWORD.set("");
 
-		File schema = new File("src/main/resources/hsqldb/db.sql");
-		if (!schema.exists()) {
-			URL resource = TestDatabase.class.getClassLoader().getResource(
+		StringBuilder sql = null;
+		File schemaFile = new File("src/main/resources/hsqldb/db.sql");
+		if (!schemaFile.exists()) {
+			URL schemaUrl = TestDatabase.class.getClassLoader().getResource(
 					"hsqldb/db.sql");
-			if (resource != null)
-				schema = new File(resource.getFile());
-		}
+			if (schemaUrl != null)
+				sql = getSqlFromURL(schemaUrl);
+			else
+				throw new IOException("Failed to find database schema.");
+		} else
+			sql = getSqlFromFile(schemaFile);
 
+		try (Connection conn = ConnectionManager.getConnection();
+				Statement stmt = conn.createStatement()) {
+			stmt.execute(sql.toString());
+		}
+	}
+
+	protected static StringBuilder getSqlFromFile(File schema)
+			throws FileNotFoundException, IOException {
 		StringBuilder sql = new StringBuilder();
 		try (FileReader fr = new FileReader(schema);
 				BufferedReader br = new BufferedReader(fr)) {
@@ -55,10 +69,21 @@ public class TestDatabase {
 				sql.append("\n");
 			}
 		}
+		return sql;
+	}
 
-		try (Connection conn = ConnectionManager.getConnection();
-				Statement stmt = conn.createStatement()) {
-			stmt.execute(sql.toString());
+	protected static StringBuilder getSqlFromURL(URL schema)
+			throws FileNotFoundException, IOException {
+		StringBuilder sql = new StringBuilder();
+		try (InputStream is = schema.openStream();
+				InputStreamReader isr = new InputStreamReader(is);
+				BufferedReader br = new BufferedReader(isr)) {
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				sql.append(line);
+				sql.append("\n");
+			}
 		}
+		return sql;
 	}
 }
