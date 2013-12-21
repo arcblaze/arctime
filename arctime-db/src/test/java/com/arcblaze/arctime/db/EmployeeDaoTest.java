@@ -60,7 +60,7 @@ public class EmployeeDaoTest {
 		DaoFactory.getCompanyDao().add(Collections.singleton(company));
 
 		EmployeeDao employeeDao = DaoFactory.getEmployeeDao();
-		Set<Employee> employees = employeeDao.getAll(company.getId(), null);
+		Set<Employee> employees = employeeDao.getAll(company.getId());
 		assertNotNull(employees);
 		assertEquals(0, employees.size());
 
@@ -140,7 +140,7 @@ public class EmployeeDaoTest {
 			// Expected
 		}
 
-		employees = employeeDao.getAll(company.getId(), null);
+		employees = employeeDao.getAll(company.getId());
 		assertNotNull(employees);
 		assertEquals(3, employees.size());
 		assertTrue(employees.contains(employee));
@@ -183,7 +183,7 @@ public class EmployeeDaoTest {
 				.next());
 
 		Employee getEmployee = employeeDao.get(company.getId(),
-				employee.getId(), null);
+				employee.getId());
 		assertEquals(employee, getEmployee);
 		assertEquals(0, getEmployee.getRoles().size());
 
@@ -208,7 +208,7 @@ public class EmployeeDaoTest {
 
 		employee.setEmail("New Email");
 		employeeDao.update(company.getId(), Collections.singleton(employee));
-		getEmployee = employeeDao.get(company.getId(), employee.getId(), null);
+		getEmployee = employeeDao.get(company.getId(), employee.getId());
 		assertEquals(employee, getEmployee);
 		assertEquals(0, getEmployee.getRoles().size());
 
@@ -223,10 +223,10 @@ public class EmployeeDaoTest {
 
 		employeeDao.delete(company.getId(), Arrays.asList(employee.getId(),
 				supervisor1.getId(), supervisor2.getId()));
-		getEmployee = employeeDao.get(company.getId(), employee.getId(), null);
+		getEmployee = employeeDao.get(company.getId(), employee.getId());
 		assertNull(getEmployee);
 
-		employees = employeeDao.getAll(company.getId(), null);
+		employees = employeeDao.getAll(company.getId());
 		assertNotNull(employees);
 		assertEquals(0, employees.size());
 	}
