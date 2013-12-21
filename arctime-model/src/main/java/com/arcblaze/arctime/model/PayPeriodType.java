@@ -9,7 +9,7 @@ public enum PayPeriodType {
 	/**
 	 * A pay period every month.
 	 */
-	MONTH,
+	MONTHLY,
 
 	/**
 	 * Two pay periods per month.
@@ -20,6 +20,11 @@ public enum PayPeriodType {
 	 * One pay period every two weeks.
 	 */
 	BI_WEEKLY,
+
+	/**
+	 * One pay period every week.
+	 */
+	WEEKLY,
 
 	;
 

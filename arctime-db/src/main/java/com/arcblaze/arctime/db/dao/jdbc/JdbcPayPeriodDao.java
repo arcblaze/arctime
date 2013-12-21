@@ -5,14 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
@@ -51,6 +55,155 @@ public class JdbcPayPeriodDao implements PayPeriodDao {
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
 			ps.setDate(2, new java.sql.Date(begin.getTime()));
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return fromResultSet(rs);
+
+				return null;
+			}
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PayPeriod getContaining(Integer companyId, Date day)
+			throws DatabaseException {
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+		if (day == null)
+			throw new IllegalArgumentException("Invalid null day");
+
+		Date truncated = DateUtils.truncate(day, Calendar.DATE);
+
+		String sql = "SELECT * FROM pay_periods WHERE company_id = ? AND "
+				+ "begin <= ? AND end >= ?";
+
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
+			ps.setDate(2, new java.sql.Date(truncated.getTime()));
+			ps.setDate(3, new java.sql.Date(truncated.getTime()));
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return fromResultSet(rs);
+			}
+
+			// A pay period for the requested day does not exist. Create the
+			// necessary pay periods and return the result.
+			return addThrough(companyId, day);
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * Make sure all of the pay periods exist in the database through the
+	 * specified day (either forwards or backwards).
+	 * 
+	 * @param companyId
+	 *            the company for which timesheets should be created
+	 * @param day
+	 *            the {@link Date} for which pay periods should be created
+	 *            through
+	 * 
+	 * @return the created pay period that contains the specified day, or
+	 *         {@code null} if there are no existing pay periods from which to
+	 *         derive the pay period that contains the specified day
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	protected PayPeriod addThrough(Integer companyId, Date day)
+			throws DatabaseException {
+		PayPeriod latest = getLatest(companyId);
+		PayPeriod earliest = getEarliest(companyId);
+
+		// Make sure at least one pay period exists in the database for this
+		// company.
+		if (latest == null || earliest == null)
+			return null;
+
+		PayPeriod payPeriod = null;
+		if (earliest.isAfter(day))
+			payPeriod = earliest;
+		else if (latest.isBefore(day))
+			payPeriod = latest;
+		else {
+			// An unexpected situation where a pay period containing the
+			// specified date does not exist, though there are pay periods
+			// both before and after?
+			throw new DatabaseException("Unexpected missing pay period "
+					+ "that should contain: " + day);
+		}
+
+		List<PayPeriod> toAdd = new LinkedList<PayPeriod>();
+		while (!payPeriod.contains(day)) {
+			if (payPeriod.isAfter(day))
+				payPeriod = payPeriod.getPrevious();
+			else
+				payPeriod = payPeriod.getNext();
+			toAdd.add(payPeriod);
+		}
+
+		add(companyId, toAdd);
+
+		return payPeriod;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PayPeriod getCurrent(Integer companyId) throws DatabaseException {
+		return getContaining(companyId, new Date());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PayPeriod getEarliest(Integer companyId) throws DatabaseException {
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+
+		String sql = "SELECT * FROM pay_periods WHERE company_id = ? "
+				+ "ORDER BY begin LIMIT 1";
+
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return fromResultSet(rs);
+
+				return null;
+			}
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PayPeriod getLatest(Integer companyId) throws DatabaseException {
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+
+		String sql = "SELECT * FROM pay_periods WHERE company_id = ? "
+				+ "ORDER BY begin DESC LIMIT 1";
+
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())

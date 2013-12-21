@@ -6,6 +6,7 @@ import com.arcblaze.arctime.db.dao.AuditLogDao;
 import com.arcblaze.arctime.db.dao.BillDao;
 import com.arcblaze.arctime.db.dao.CompanyDao;
 import com.arcblaze.arctime.db.dao.HolidayDao;
+import com.arcblaze.arctime.db.dao.PayPeriodDao;
 import com.arcblaze.arctime.db.dao.RoleDao;
 import com.arcblaze.arctime.db.dao.TaskDao;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
@@ -15,6 +16,7 @@ import com.arcblaze.arctime.db.dao.jdbc.JdbcAuditLogDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcBillDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcCompanyDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcHolidayDao;
+import com.arcblaze.arctime.db.dao.jdbc.JdbcPayPeriodDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcRoleDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTaskDao;
 import com.arcblaze.arctime.db.dao.jdbc.JdbcTimesheetDao;
@@ -30,6 +32,7 @@ public class DaoFactory {
 	private static CompanyDao cachedCompanyDao = null;
 	private static UserDao cachedUserDao = null;
 	private static RoleDao cachedRoleDao = null;
+	private static PayPeriodDao cachedPayPeriodDao = null;
 	private static TimesheetDao cachedTimesheetDao = null;
 	private static TaskDao cachedTaskDao = null;
 	private static AssignmentDao cachedAssignmentDao = null;
@@ -98,6 +101,28 @@ public class DaoFactory {
 		}
 
 		return cachedRoleDao;
+	}
+
+	/**
+	 * @return an {@link PayPeriodDao} based on the currently configured
+	 *         database
+	 */
+	public static PayPeriodDao getPayPeriodDao() {
+		DatabaseType type = DatabaseType.parse(Property.DB_TYPE.getString());
+		if (type != cachedDatabaseType) {
+			clearCachedDaos();
+			cachedDatabaseType = type;
+		}
+
+		if (cachedPayPeriodDao == null) {
+			if (DatabaseType.JDBC.equals(type))
+				cachedPayPeriodDao = new JdbcPayPeriodDao();
+			else
+				throw new RuntimeException("Invalid database type: " + type);
+			cachedDatabaseType = type;
+		}
+
+		return cachedPayPeriodDao;
 	}
 
 	/**
@@ -232,6 +257,8 @@ public class DaoFactory {
 		cachedCompanyDao = null;
 		cachedUserDao = null;
 		cachedRoleDao = null;
+		cachedPayPeriodDao = null;
+		cachedTimesheetDao = null;
 		cachedTaskDao = null;
 		cachedAssignmentDao = null;
 		cachedHolidayDao = null;

@@ -103,6 +103,153 @@ public class PayPeriod implements Comparable<PayPeriod> {
 	}
 
 	/**
+	 * @param date
+	 *            the date to check
+	 * 
+	 * @return true if the end date in this pay period (truncated to the day)
+	 *         comes before the provided date (also truncated to the day)
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is {@code null}
+	 */
+	public boolean isBefore(Date date) {
+		if (date == null)
+			throw new IllegalArgumentException("Invalid null date");
+
+		Date truncated = DateUtils.truncate(date, Calendar.DATE);
+		Date endTruncated = DateUtils.truncate(getEnd(), Calendar.DATE);
+
+		return endTruncated.before(truncated);
+	}
+
+	/**
+	 * @param date
+	 *            the date to check
+	 * 
+	 * @return true if the begin date in this pay period (truncated to the day)
+	 *         comes after the provided date (also truncated to the day)
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided parameter is {@code null}
+	 */
+	public boolean isAfter(Date date) {
+		if (date == null)
+			throw new IllegalArgumentException("Invalid null date");
+
+		Date truncated = DateUtils.truncate(date, Calendar.DATE);
+		Date beginTruncated = DateUtils.truncate(getBegin(), Calendar.DATE);
+
+		return beginTruncated.after(truncated);
+	}
+
+	/**
+	 * @return a calculation of what the previous pay period is based on the
+	 *         configuration of this pay period
+	 */
+	public PayPeriod getPrevious() {
+		PayPeriod payPeriod = new PayPeriod();
+		payPeriod.setCompanyId(getCompanyId());
+		payPeriod.setType(getType());
+
+		Date b = getBegin();
+		Date e = getEnd();
+
+		switch (payPeriod.getType()) {
+		case WEEKLY:
+			// Subtract 7 days from the start and end.
+			b = DateUtils.addDays(b, -7);
+			e = DateUtils.addDays(e, -7);
+			break;
+		case BI_WEEKLY:
+			// Subtract 14 days from the start and end.
+			b = DateUtils.addDays(b, -14);
+			e = DateUtils.addDays(e, -14);
+			break;
+		case MONTHLY:
+			// The end of the previous pay period is the day before the
+			// beginning of this pay period.
+			e = DateUtils.addDays(b, -1);
+			b = DateUtils.addMonths(b, -1);
+			break;
+		case SEMI_MONTHLY:
+			// The end of the previous pay period is the day before the
+			// beginning of this pay period.
+			e = DateUtils.addDays(b, -1);
+
+			// Use the original end date to calculate the previous begin date.
+			b = DateUtils.addMonths(DateUtils.addDays(getEnd(), 1), -1);
+			break;
+		}
+
+		payPeriod.setBegin(b);
+		payPeriod.setEnd(e);
+		return payPeriod;
+	}
+
+	/**
+	 * @return a calculation of what the next pay period is based on the
+	 *         configuration of this pay period
+	 */
+	public PayPeriod getNext() {
+		PayPeriod payPeriod = new PayPeriod();
+		payPeriod.setCompanyId(getCompanyId());
+		payPeriod.setType(getType());
+
+		Date b = getBegin();
+		Date e = getEnd();
+
+		switch (payPeriod.getType()) {
+		case WEEKLY:
+			// Add 7 days to the start and end.
+			b = DateUtils.addDays(b, 7);
+			e = DateUtils.addDays(e, 7);
+			break;
+		case BI_WEEKLY:
+			// Add 14 days to the start and end.
+			b = DateUtils.addDays(b, 14);
+			e = DateUtils.addDays(e, 14);
+			break;
+		case MONTHLY:
+			// The beginning of the next pay period is the day after the
+			// end of this pay period.
+			b = DateUtils.addDays(e, 1);
+
+			// Is the begin date the first day of the month?
+			if ("1".equals(DateFormatUtils.format(b, "d"))) {
+				// Use the last day of the month.
+				Date d = DateUtils.addDays(b, 27);
+				while (!"1".equals(DateFormatUtils.format(d, "d")))
+					d = DateUtils.addDays(d, 1);
+				e = DateUtils.addDays(d, -1);
+			} else
+				e = DateUtils.addMonths(getEnd(), 1);
+			break;
+		case SEMI_MONTHLY:
+			// The beginning of the next pay period is the day after the
+			// end of this pay period.
+			b = DateUtils.addDays(e, 1);
+
+			// Use the original begin date to calculate the end end date.
+			Date prevEnd = DateUtils.addDays(getBegin(), -1);
+			// Was the previous end date the last day of the month?
+			if ("1".equals(DateFormatUtils.format(
+					DateUtils.addDays(prevEnd, 1), "d"))) {
+				// Use the last day of the month.
+				Date d = DateUtils.addDays(b, 12);
+				while (!"1".equals(DateFormatUtils.format(d, "d")))
+					d = DateUtils.addDays(d, 1);
+				e = DateUtils.addDays(d, -1);
+			} else
+				e = DateUtils.addMonths(prevEnd, 1);
+			break;
+		}
+
+		payPeriod.setBegin(b);
+		payPeriod.setEnd(e);
+		return payPeriod;
+	}
+
+	/**
 	 * @return the unique id of the company for which this pay period applies
 	 */
 	@XmlElement
