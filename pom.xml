@@ -17,6 +17,7 @@
 		<module>arctime-config</module>
 		<module>arctime-model</module>
 		<module>arctime-db</module>
+		<module>arctime-mail</module>
 		<module>arctime-rest</module>
 		<module>arctime-web</module>
 		<module>arctime-server</module>

@@ -68,7 +68,9 @@ public class HolidayDaoTest {
 
 	/**
 	 * @throws DatabaseException
+	 *             if there is a problem with the database
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test
 	public void dbIntegrationTests() throws DatabaseException,

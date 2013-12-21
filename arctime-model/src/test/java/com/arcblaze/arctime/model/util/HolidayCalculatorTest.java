@@ -11,6 +11,7 @@ import org.junit.Test;
 public class HolidayCalculatorTest {
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test(expected = HolidayConfigurationException.class)
 	public void testNullConfig() throws HolidayConfigurationException {
@@ -19,6 +20,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test(expected = HolidayConfigurationException.class)
 	public void testBlankConfig() throws HolidayConfigurationException {
@@ -27,6 +29,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test(expected = HolidayConfigurationException.class)
 	public void testInvalidConfig() throws HolidayConfigurationException {
@@ -35,6 +38,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test(expected = HolidayConfigurationException.class)
 	public void testInvalidYear() throws HolidayConfigurationException {
@@ -43,6 +47,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test
 	public void testSimpleDate() throws HolidayConfigurationException {
@@ -62,6 +67,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test
 	public void testSimpleDateWithObservance()
@@ -88,6 +94,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test
 	public void testSimpleDateWhiteSpaceAndCaseInsensitivity()
@@ -118,6 +125,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test
 	public void testSpecificDayInMonth() throws HolidayConfigurationException {
@@ -143,6 +151,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test
 	public void testSpecificDayInMonthWhiteSpaceAndCaseInsensitive()
@@ -169,6 +178,7 @@ public class HolidayCalculatorTest {
 
 	/**
 	 * @throws HolidayConfigurationException
+	 *             if there is a problem parsing holiday configurations
 	 */
 	@Test
 	public void testSpecificDayInMonthWithModifier()

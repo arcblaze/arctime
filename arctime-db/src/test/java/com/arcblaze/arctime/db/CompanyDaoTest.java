@@ -40,6 +40,7 @@ public class CompanyDaoTest {
 
 	/**
 	 * @throws DatabaseException
+	 *             if there is a problem with the database
 	 */
 	@Test
 	public void dbIntegrationTests() throws DatabaseException {
