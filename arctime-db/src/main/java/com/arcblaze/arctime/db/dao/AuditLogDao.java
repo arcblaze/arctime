@@ -41,7 +41,38 @@ public interface AuditLogDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Integer companyId, AuditLog... auditLogs)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which audit logs will be
+	 *            added
+	 * @param auditLogs
+	 *            the new audit logs to be added
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Integer companyId, Collection<AuditLog> auditLogs)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which audit logs will be
+	 *            deleted
+	 * @param timesheetIds
+	 *            the unique ids of the timesheets for which audit logs will be
+	 *            deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided ids are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void delete(Integer companyId, Integer... timesheetIds)
 			throws DatabaseException;
 
 	/**

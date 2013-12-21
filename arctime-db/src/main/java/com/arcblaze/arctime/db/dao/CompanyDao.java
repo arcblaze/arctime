@@ -38,6 +38,15 @@ public interface CompanyDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Company... companies) throws DatabaseException;
+
+	/**
+	 * @param companies
+	 *            the new companies to be added
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Collection<Company> companies) throws DatabaseException;
 
 	/**
@@ -47,7 +56,25 @@ public interface CompanyDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void update(Company... companies) throws DatabaseException;
+
+	/**
+	 * @param companies
+	 *            the companies to be updated
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void update(Collection<Company> companies) throws DatabaseException;
+
+	/**
+	 * @param companyIds
+	 *            the unique ids of the companies to be deleted
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void delete(Integer... companyIds) throws DatabaseException;
 
 	/**
 	 * @param companyIds

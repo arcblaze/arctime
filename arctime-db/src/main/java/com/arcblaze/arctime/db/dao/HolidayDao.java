@@ -85,6 +85,21 @@ public interface HolidayDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Integer companyId, Holiday... holidays)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the holidays should be
+	 *            added
+	 * @param holidays
+	 *            the new holidays to be added
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Integer companyId, Collection<Holiday> holidays)
 			throws DatabaseException;
 
@@ -100,7 +115,37 @@ public interface HolidayDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void update(Integer companyId, Holiday... holidays)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the holidays should be
+	 *            updated
+	 * @param holidays
+	 *            the holidays to be updated
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void update(Integer companyId, Collection<Holiday> holidays)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the holidays should be
+	 *            deleted
+	 * @param holidayIds
+	 *            the unique ids of the holidays to be deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void delete(Integer companyId, Integer... holidayIds)
 			throws DatabaseException;
 
 	/**

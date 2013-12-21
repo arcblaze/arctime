@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -227,6 +228,14 @@ public class JdbcTaskDao implements TaskDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Integer companyId, Task... tasks) throws DatabaseException {
+		this.add(companyId, tasks == null ? null : Arrays.asList(tasks));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Integer companyId, Collection<Task> tasks)
 			throws DatabaseException {
 		if (tasks == null || tasks.isEmpty())
@@ -264,6 +273,15 @@ public class JdbcTaskDao implements TaskDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void update(Integer companyId, Task... tasks)
+			throws DatabaseException {
+		this.update(companyId, tasks == null ? null : Arrays.asList(tasks));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void update(Integer companyId, Collection<Task> tasks)
 			throws DatabaseException {
 		if (tasks == null || tasks.isEmpty())
@@ -290,6 +308,15 @@ public class JdbcTaskDao implements TaskDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Integer companyId, Integer... ids)
+			throws DatabaseException {
+		this.delete(companyId, ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**

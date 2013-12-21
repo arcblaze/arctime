@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -76,7 +75,7 @@ public class HolidayDaoTest {
 	public void dbIntegrationTests() throws DatabaseException,
 			HolidayConfigurationException {
 		Company company = new Company().setName("Company").setActive(true);
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		DaoFactory.getCompanyDao().add(company);
 
 		HolidayDao dao = DaoFactory.getHolidayDao();
 		Set<Holiday> holidays = dao.getAll(company.getId());
@@ -99,11 +98,11 @@ public class HolidayDaoTest {
 		assertEquals(first, getHoliday);
 
 		first.setDescription("New Description");
-		dao.update(company.getId(), Collections.singleton(first));
+		dao.update(company.getId(), first);
 		getHoliday = dao.get(company.getId(), first.getId());
 		assertEquals(first, getHoliday);
 
-		dao.delete(company.getId(), Collections.singleton(first.getId()));
+		dao.delete(company.getId(), first.getId());
 		getHoliday = dao.get(company.getId(), first.getId());
 		assertNull(getHoliday);
 

@@ -109,7 +109,46 @@ public interface UserDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Integer companyId, User... users)
+			throws DatabaseUniqueConstraintException, DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the users will be added
+	 * @param users
+	 *            the new users to be added
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseUniqueConstraintException
+	 *             if there is a problem adding the user due to a unique
+	 *             constraint violation
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Integer companyId, Collection<User> users)
+			throws DatabaseUniqueConstraintException, DatabaseException;
+
+	/**
+	 * Save property updates within the provided users to the database. Note
+	 * that this does not save any password changes, the
+	 * {@link #setPassword(Integer, String)} method is used for that.
+	 * 
+	 * @param companyId
+	 *            the unique id of the company for which the users will be
+	 *            updated
+	 * @param users
+	 *            the users to be updated
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseUniqueConstraintException
+	 *             if there is a problem adding the user due to a unique
+	 *             constraint violation
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void update(Integer companyId, User... users)
 			throws DatabaseUniqueConstraintException, DatabaseException;
 
 	/**
@@ -163,6 +202,21 @@ public interface UserDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void delete(Integer companyId, Integer... userIds)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the users will be
+	 *            deleted
+	 * @param userIds
+	 *            the unique ids of the users to be deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void delete(Integer companyId, Collection<Integer> userIds)
 			throws DatabaseException;
 
@@ -192,10 +246,10 @@ public interface UserDao {
 	 *            added
 	 * @param userId
 	 *            the unique id of the user who will gain the new supervisors
-	 * @param supervisorIds
-	 *            the unique ids of the users that are to become supervisors
 	 * @param primary
 	 *            whether the supervisors are to be added as primary supervisors
+	 * @param supervisorIds
+	 *            the unique ids of the users that are to become supervisors
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided ids are invalid
@@ -203,8 +257,46 @@ public interface UserDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public void addSupervisors(Integer companyId, Integer userId,
-			Collection<Integer> supervisorIds, boolean primary)
+			boolean primary, Integer... supervisorIds) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which supervisors are being
+	 *            added
+	 * @param userId
+	 *            the unique id of the user who will gain the new supervisors
+	 * @param primary
+	 *            whether the supervisors are to be added as primary supervisors
+	 * @param supervisorIds
+	 *            the unique ids of the users that are to become supervisors
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided ids are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void addSupervisors(Integer companyId, Integer userId,
+			boolean primary, Collection<Integer> supervisorIds)
 			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which supervisors are being
+	 *            removed
+	 * @param userId
+	 *            the unique id of the user who will lose the specified
+	 *            supervisors
+	 * @param supervisorIds
+	 *            the unique ids of the users that are to be removed as
+	 *            supervisors
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided ids are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void deleteSupervisors(Integer companyId, Integer userId,
+			Integer... supervisorIds) throws DatabaseException;
 
 	/**
 	 * @param companyId

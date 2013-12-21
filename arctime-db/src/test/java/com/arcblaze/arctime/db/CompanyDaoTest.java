@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.Collections;
 import java.util.Set;
 
 import org.junit.AfterClass;
@@ -53,7 +52,7 @@ public class CompanyDaoTest {
 		company.setName("Company");
 		company.setActive(true);
 
-		dao.add(Collections.singleton(company));
+		dao.add(company);
 		assertNotNull(company.getId());
 
 		companies = dao.getAll();
@@ -66,11 +65,11 @@ public class CompanyDaoTest {
 		assertEquals(company, getCompany);
 
 		company.setName("New Name");
-		dao.update(Collections.singleton(company));
+		dao.update(company);
 		getCompany = dao.get(company.getId());
 		assertEquals(company, getCompany);
 
-		dao.delete(Collections.singleton(company.getId()));
+		dao.delete(company.getId());
 		getCompany = dao.get(company.getId());
 		assertNull(getCompany);
 

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -116,6 +117,15 @@ public class JdbcHolidayDao implements HolidayDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Integer companyId, Holiday... holidays)
+			throws DatabaseException {
+		this.add(companyId, holidays == null ? null : Arrays.asList(holidays));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Integer companyId, Collection<Holiday> holidays)
 			throws DatabaseException {
 		if (holidays == null || holidays.isEmpty())
@@ -151,6 +161,16 @@ public class JdbcHolidayDao implements HolidayDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void update(Integer companyId, Holiday... holidays)
+			throws DatabaseException {
+		this.update(companyId,
+				holidays == null ? null : Arrays.asList(holidays));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void update(Integer companyId, Collection<Holiday> holidays)
 			throws DatabaseException {
 		if (holidays == null || holidays.isEmpty())
@@ -175,6 +195,15 @@ public class JdbcHolidayDao implements HolidayDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Integer companyId, Integer... ids)
+			throws DatabaseException {
+		this.delete(companyId, ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**

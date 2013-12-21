@@ -2,8 +2,6 @@ package com.arcblaze.arctime.rest.login;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collections;
-
 import javax.mail.MessagingException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
@@ -87,7 +85,7 @@ public class ResetPasswordResourceTest {
 		company.setName("company");
 		company.setActive(true);
 
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		DaoFactory.getCompanyDao().add(company);
 
 		User user = new User();
 		user.setLogin("user");
@@ -98,7 +96,7 @@ public class ResetPasswordResourceTest {
 		user.setActive(true);
 
 		UserDao userDao = DaoFactory.getUserDao();
-		userDao.add(company.getId(), Collections.singleton(user));
+		userDao.add(company.getId(), user);
 
 		SendResetPasswordEmail mockEmailSender = Mockito
 				.mock(SendResetPasswordEmail.class);
@@ -125,11 +123,8 @@ public class ResetPasswordResourceTest {
 	 */
 	@Test
 	public void testExistingUserByEmail() throws DatabaseException {
-		Company company = new Company();
-		company.setName("company");
-		company.setActive(true);
-
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		Company company = new Company().setName("company").setActive(true);
+		DaoFactory.getCompanyDao().add(company);
 
 		User user = new User();
 		user.setLogin("user");
@@ -140,7 +135,7 @@ public class ResetPasswordResourceTest {
 		user.setActive(true);
 
 		UserDao userDao = DaoFactory.getUserDao();
-		userDao.add(company.getId(), Collections.singleton(user));
+		userDao.add(company.getId(), user);
 
 		SendResetPasswordEmail mockEmailSender = Mockito
 				.mock(SendResetPasswordEmail.class);
@@ -169,11 +164,8 @@ public class ResetPasswordResourceTest {
 	@Test
 	public void testExistingUserEmailError() throws DatabaseException,
 			MessagingException {
-		Company company = new Company();
-		company.setName("company");
-		company.setActive(true);
-
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		Company company = new Company().setName("company").setActive(true);
+		DaoFactory.getCompanyDao().add(company);
 
 		User user = new User();
 		user.setLogin("user");
@@ -184,7 +176,7 @@ public class ResetPasswordResourceTest {
 		user.setActive(true);
 
 		UserDao userDao = DaoFactory.getUserDao();
-		userDao.add(company.getId(), Collections.singleton(user));
+		userDao.add(company.getId(), user);
 
 		SendResetPasswordEmail emailSender = new SendResetPasswordEmail();
 		SendResetPasswordEmail mockEmailSender = Mockito.spy(emailSender);

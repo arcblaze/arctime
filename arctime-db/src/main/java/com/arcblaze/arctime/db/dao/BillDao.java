@@ -46,6 +46,15 @@ public interface BillDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Bill... bills) throws DatabaseException;
+
+	/**
+	 * @param bills
+	 *            the new bills to be added
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Collection<Bill> bills) throws DatabaseException;
 
 	/**
@@ -55,7 +64,25 @@ public interface BillDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void update(Bill... bills) throws DatabaseException;
+
+	/**
+	 * @param bills
+	 *            the bills to be updated
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void update(Collection<Bill> bills) throws DatabaseException;
+
+	/**
+	 * @param billIds
+	 *            the unique ids of the bills to be deleted
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void delete(Integer... billIds) throws DatabaseException;
 
 	/**
 	 * @param billIds

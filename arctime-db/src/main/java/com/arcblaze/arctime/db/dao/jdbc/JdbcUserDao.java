@@ -196,6 +196,15 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Integer companyId, User... users)
+			throws DatabaseUniqueConstraintException, DatabaseException {
+		this.add(companyId, users == null ? null : Arrays.asList(users));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Integer companyId, Collection<User> users)
 			throws DatabaseUniqueConstraintException, DatabaseException {
 		if (users == null || users.isEmpty())
@@ -232,6 +241,15 @@ public class JdbcUserDao implements UserDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void update(Integer companyId, User... users)
+			throws DatabaseUniqueConstraintException, DatabaseException {
+		this.update(companyId, users == null ? null : Arrays.asList(users));
 	}
 
 	/**
@@ -298,6 +316,15 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void delete(Integer companyId, Integer... ids)
+			throws DatabaseException {
+		this.delete(companyId, ids == null ? null : Arrays.asList(ids));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void delete(Integer companyId, Collection<Integer> ids)
 			throws DatabaseException {
 		if (ids == null || ids.isEmpty())
@@ -356,7 +383,17 @@ public class JdbcUserDao implements UserDao {
 	 */
 	@Override
 	public void addSupervisors(Integer companyId, Integer userId,
-			Collection<Integer> supervisorIds, boolean primary)
+			boolean primary, Integer... supervisorIds) throws DatabaseException {
+		this.addSupervisors(companyId, userId, primary,
+				supervisorIds == null ? null : Arrays.asList(supervisorIds));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addSupervisors(Integer companyId, Integer userId,
+			boolean primary, Collection<Integer> supervisorIds)
 			throws DatabaseException {
 		if (supervisorIds == null || supervisorIds.isEmpty())
 			return;
@@ -380,6 +417,16 @@ public class JdbcUserDao implements UserDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteSupervisors(Integer companyId, Integer userId,
+			Integer... supervisorIds) throws DatabaseException {
+		this.deleteSupervisors(companyId, userId, supervisorIds == null ? null
+				: Arrays.asList(supervisorIds));
 	}
 
 	/**

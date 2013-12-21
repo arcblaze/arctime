@@ -195,6 +195,19 @@ public interface TimesheetDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Integer companyId, Timesheet... timesheets)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be added
+	 * @param timesheets
+	 *            the new timesheets to be added
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Integer companyId, Collection<Timesheet> timesheets)
 			throws DatabaseException;
 
@@ -202,55 +215,122 @@ public interface TimesheetDao {
 	 * @param companyId
 	 *            the unique id of the company for which timesheet information
 	 *            will be updated
+	 * @param approved
+	 *            the new value for the approved status
+	 * @param approver
+	 *            the supervisor user that approved the timesheets
 	 * @param timesheetIds
 	 *            the unique ids of the timesheets for which approval status
 	 *            will be updated
-	 * @param approver
-	 *            the supervisor user that approved the timesheets
-	 * @param approved
-	 *            the new value for the approved status
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void approve(Integer companyId, Collection<Integer> timesheetIds,
-			boolean approved, User approver) throws DatabaseException;
+	public void approve(Integer companyId, boolean approved, User approver,
+			Integer... timesheetIds) throws DatabaseException;
 
 	/**
 	 * @param companyId
 	 *            the unique id of the company for which timesheet information
 	 *            will be updated
+	 * @param approved
+	 *            the new value for the approved status
+	 * @param approver
+	 *            the supervisor user that approved the timesheets
+	 * @param timesheetIds
+	 *            the unique ids of the timesheets for which approval status
+	 *            will be updated
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void approve(Integer companyId, boolean approved, User approver,
+			Collection<Integer> timesheetIds) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be updated
+	 * @param verified
+	 *            the new value for the verified status
+	 * @param verifier
+	 *            the payroll user that verified the timesheets
 	 * @param timesheetIds
 	 *            the unique ids of the timesheets for which verification status
 	 *            will be updated
-	 * @param verifier
-	 *            the payroll user that verified the timesheets
-	 * @param verified
-	 *            the new value for the verified status
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void verify(Integer companyId, Collection<Integer> timesheetIds,
-			boolean verified, User verifier) throws DatabaseException;
+	public void verify(Integer companyId, boolean verified, User verifier,
+			Integer... timesheetIds) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be updated
+	 * @param verified
+	 *            the new value for the verified status
+	 * @param verifier
+	 *            the payroll user that verified the timesheets
+	 * @param timesheetIds
+	 *            the unique ids of the timesheets for which verification status
+	 *            will be updated
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void verify(Integer companyId, boolean verified, User verifier,
+			Collection<Integer> timesheetIds) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be updated
+	 * @param exported
+	 *            the new value for the export status
+	 * @param exporter
+	 *            the payroll user that exported the timesheets
+	 * @param timesheetIds
+	 *            the unique ids of the timesheets for which export status will
+	 *            be updated
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void export(Integer companyId, boolean exported, User exporter,
+			Integer... timesheetIds) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which timesheet information
+	 *            will be updated
+	 * @param exported
+	 *            the new value for the export status
+	 * @param exporter
+	 *            the payroll user that exported the timesheets
+	 * @param timesheetIds
+	 *            the unique ids of the timesheets for which export status will
+	 *            be updated
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void export(Integer companyId, boolean exported, User exporter,
+			Collection<Integer> timesheetIds) throws DatabaseException;
 
 	/**
 	 * @param companyId
 	 *            the unique id of the company for which timesheet information
 	 *            will be updated
 	 * @param timesheetIds
-	 *            the unique ids of the timesheets for which export status will
-	 *            be updated
-	 * @param exporter
-	 *            the payroll user that exported the timesheets
-	 * @param exported
-	 *            the new value for the export status
+	 *            the unique ids of the timesheets to be deleted
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void export(Integer companyId, Collection<Integer> timesheetIds,
-			boolean exported, User exporter) throws DatabaseException;
+	public void delete(Integer companyId, Integer... timesheetIds)
+			throws DatabaseException;
 
 	/**
 	 * @param companyId

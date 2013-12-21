@@ -93,6 +93,19 @@ public interface TaskDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Integer companyId, Task... tasks) throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the tasks will be added
+	 * @param tasks
+	 *            the new tasks to be added
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Integer companyId, Collection<Task> tasks)
 			throws DatabaseException;
 
@@ -108,7 +121,37 @@ public interface TaskDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void update(Integer companyId, Task... tasks)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the tasks will be
+	 *            updated
+	 * @param tasks
+	 *            the tasks to be updated
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void update(Integer companyId, Collection<Task> tasks)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the tasks will be
+	 *            deleted
+	 * @param taskIds
+	 *            the unique ids of the tasks to be deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void delete(Integer companyId, Integer... taskIds)
 			throws DatabaseException;
 
 	/**

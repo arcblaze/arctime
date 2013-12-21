@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
@@ -52,7 +51,7 @@ public class AssignmentDaoTest {
 	@Test
 	public void dbIntegrationTests() throws DatabaseException {
 		Company company = new Company().setName("Company").setActive(true);
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		DaoFactory.getCompanyDao().add(company);
 
 		Task task = new Task();
 		task.setCompanyId(company.getId());
@@ -60,8 +59,7 @@ public class AssignmentDaoTest {
 		task.setJobCode("job code");
 		task.setAdministrative(false);
 		task.setActive(true);
-		DaoFactory.getTaskDao().add(company.getId(),
-				Collections.singleton(task));
+		DaoFactory.getTaskDao().add(company.getId(), task);
 
 		User user = new User();
 		user.setLogin("user");
@@ -69,8 +67,7 @@ public class AssignmentDaoTest {
 		user.setEmail("email");
 		user.setFirstName("first");
 		user.setLastName("last");
-		DaoFactory.getUserDao().add(company.getId(),
-				Collections.singleton(user));
+		DaoFactory.getUserDao().add(company.getId(), user);
 
 		AssignmentDao dao = DaoFactory.getAssignmentDao();
 		Set<Assignment> assignments = dao.getForUser(company.getId(),
@@ -89,7 +86,7 @@ public class AssignmentDaoTest {
 		assignment.setEnd(DateUtils.truncate(DateUtils.addDays(new Date(), 10),
 				Calendar.DATE));
 
-		dao.add(company.getId(), Collections.singleton(assignment));
+		dao.add(company.getId(), assignment);
 		assertNotNull(assignment.getId());
 		assertEquals(company.getId(), assignment.getCompanyId());
 
@@ -117,11 +114,11 @@ public class AssignmentDaoTest {
 		assertEquals(assignment, getAssignment);
 
 		assignment.setItemName("New Item Name");
-		dao.update(company.getId(), Collections.singleton(assignment));
+		dao.update(company.getId(), assignment);
 		getAssignment = dao.get(company.getId(), assignment.getId());
 		assertEquals(assignment, getAssignment);
 
-		dao.delete(company.getId(), Collections.singleton(assignment.getId()));
+		dao.delete(company.getId(), assignment.getId());
 		getAssignment = dao.get(company.getId(), assignment.getId());
 		assertNull(getAssignment);
 

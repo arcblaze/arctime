@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -100,6 +101,15 @@ public class JdbcAuditLogDao implements AuditLogDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Integer companyId, AuditLog... auditLogs)
+			throws DatabaseException {
+		this.add(companyId, auditLogs == null ? null : Arrays.asList(auditLogs));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Integer companyId, Collection<AuditLog> auditLogs)
 			throws DatabaseException {
 		if (auditLogs == null || auditLogs.isEmpty())
@@ -125,6 +135,16 @@ public class JdbcAuditLogDao implements AuditLogDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Integer companyId, Integer... timesheetIds)
+			throws DatabaseException {
+		this.delete(companyId,
+				timesheetIds == null ? null : Arrays.asList(timesheetIds));
 	}
 
 	/**

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -95,6 +96,16 @@ public class JdbcPayPeriodDao implements PayPeriodDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void add(Integer companyId, PayPeriod... payPeriods)
+			throws DatabaseException {
+		this.add(companyId,
+				payPeriods == null ? null : Arrays.asList(payPeriods));
 	}
 
 	/**

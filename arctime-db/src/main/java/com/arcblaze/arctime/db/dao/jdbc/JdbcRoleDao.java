@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -84,6 +85,14 @@ public class JdbcRoleDao implements RoleDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Integer userId, Role... roles) throws DatabaseException {
+		this.add(userId, roles == null ? null : Arrays.asList(roles));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Integer userId, Collection<Role> roles)
 			throws DatabaseException {
 		if (roles == null || roles.isEmpty())
@@ -103,6 +112,14 @@ public class JdbcRoleDao implements RoleDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Integer userId, Role... roles) throws DatabaseException {
+		this.delete(userId, roles == null ? null : Arrays.asList(roles));
 	}
 
 	/**

@@ -3,7 +3,6 @@ package com.arcblaze.arctime.rest.user;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.SecurityContext;
@@ -99,11 +98,8 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test
 	public void testValidBlankPassword() throws DatabaseException {
-		Company company = new Company();
-		company.setName("company");
-		company.setActive(true);
-
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		Company company = new Company().setName("company").setActive(true);
+		DaoFactory.getCompanyDao().add(company);
 
 		User user = new User();
 		user.setLogin("user");
@@ -114,7 +110,7 @@ public class ProfileUpdateResourceTest {
 		user.setActive(true);
 
 		UserDao userDao = DaoFactory.getUserDao();
-		userDao.add(company.getId(), Collections.singleton(user));
+		userDao.add(company.getId(), user);
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
 		Mockito.when(security.getUserPrincipal()).thenReturn(user);
@@ -139,12 +135,9 @@ public class ProfileUpdateResourceTest {
 	 *             if there is a database issue
 	 */
 	@Test
-	public void testValidNoSuffix() throws DatabaseException {
-		Company company = new Company();
-		company.setName("company");
-		company.setActive(true);
-
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+	public void testValidWithPassword() throws DatabaseException {
+		Company company = new Company().setName("company").setActive(true);
+		DaoFactory.getCompanyDao().add(company);
 
 		User user = new User();
 		user.setLogin("user");
@@ -155,7 +148,7 @@ public class ProfileUpdateResourceTest {
 		user.setActive(true);
 
 		UserDao userDao = DaoFactory.getUserDao();
-		userDao.add(company.getId(), Collections.singleton(user));
+		userDao.add(company.getId(), user);
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
 		Mockito.when(security.getUserPrincipal()).thenReturn(user);
@@ -184,11 +177,8 @@ public class ProfileUpdateResourceTest {
 	 */
 	@Test(expected = BadRequestException.class)
 	public void testLoginAlreadyExists() throws DatabaseException {
-		Company company = new Company();
-		company.setName("company");
-		company.setActive(true);
-
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		Company company = new Company().setName("company").setActive(true);
+		DaoFactory.getCompanyDao().add(company);
 
 		User existing = new User();
 		existing.setLogin("existing");

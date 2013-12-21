@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
@@ -53,7 +52,7 @@ public class TaskDaoTest {
 	@Test
 	public void dbIntegrationTests() throws DatabaseException {
 		Company company = new Company().setName("Company").setActive(true);
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		DaoFactory.getCompanyDao().add(company);
 
 		TaskDao dao = DaoFactory.getTaskDao();
 		Set<Task> tasks = dao.getAll(company.getId());
@@ -66,7 +65,7 @@ public class TaskDaoTest {
 		task.setAdministrative(false);
 		task.setActive(true);
 
-		dao.add(company.getId(), Collections.singleton(task));
+		dao.add(company.getId(), task);
 		assertNotNull(task.getId());
 		assertEquals(company.getId(), task.getCompanyId());
 
@@ -78,11 +77,11 @@ public class TaskDaoTest {
 		assertEquals(task, getTask);
 
 		task.setDescription("New Description");
-		dao.update(company.getId(), Collections.singleton(task));
+		dao.update(company.getId(), task);
 		getTask = dao.get(company.getId(), task.getId());
 		assertEquals(task, getTask);
 
-		dao.delete(company.getId(), Collections.singleton(task.getId()));
+		dao.delete(company.getId(), task.getId());
 		getTask = dao.get(company.getId(), task.getId());
 		assertNull(getTask);
 
@@ -106,8 +105,7 @@ public class TaskDaoTest {
 		user.setEmail("email");
 		user.setFirstName("first");
 		user.setLastName("last");
-		DaoFactory.getUserDao().add(company.getId(),
-				Collections.singleton(user));
+		DaoFactory.getUserDao().add(company.getId(), user);
 
 		Assignment assignment = new Assignment();
 		assignment.setCompanyId(company.getId());
@@ -119,8 +117,7 @@ public class TaskDaoTest {
 				DateUtils.addDays(new Date(), -10), Calendar.DATE));
 		assignment.setEnd(DateUtils.truncate(DateUtils.addDays(new Date(), 10),
 				Calendar.DATE));
-		DaoFactory.getAssignmentDao().add(company.getId(),
-				Collections.singleton(assignment));
+		DaoFactory.getAssignmentDao().add(company.getId(), assignment);
 
 		Set<Task> assignedTasks = dao.getForUser(company.getId(), user.getId(),
 				null, true);

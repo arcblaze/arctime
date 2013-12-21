@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import javax.ws.rs.core.SecurityContext;
 
@@ -53,11 +52,8 @@ public class SupervisorsResourceTest {
 	 */
 	@Test
 	public void testNoSupervisors() throws DatabaseException {
-		Company company = new Company();
-		company.setName("company");
-		company.setActive(true);
-
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		Company company = new Company().setName("company").setActive(true);
+		DaoFactory.getCompanyDao().add(company);
 
 		User user = new User();
 		user.setLogin("user");
@@ -68,7 +64,7 @@ public class SupervisorsResourceTest {
 		user.setActive(true);
 
 		UserDao userDao = DaoFactory.getUserDao();
-		userDao.add(company.getId(), Collections.singleton(user));
+		userDao.add(company.getId(), user);
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
 		Mockito.when(security.getUserPrincipal()).thenReturn(user);
@@ -89,11 +85,8 @@ public class SupervisorsResourceTest {
 	 */
 	@Test
 	public void testMultipleSupervisors() throws DatabaseException {
-		Company company = new Company();
-		company.setName("company");
-		company.setActive(true);
-
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		Company company = new Company().setName("company").setActive(true);
+		DaoFactory.getCompanyDao().add(company);
 
 		User supervisor1 = new User();
 		supervisor1.setLogin("s1");
@@ -123,10 +116,10 @@ public class SupervisorsResourceTest {
 		userDao.add(company.getId(),
 				Arrays.asList(supervisor1, supervisor2, user));
 
-		userDao.addSupervisors(company.getId(), user.getId(),
-				Collections.singleton(supervisor1.getId()), true);
-		userDao.addSupervisors(company.getId(), user.getId(),
-				Collections.singleton(supervisor2.getId()), false);
+		userDao.addSupervisors(company.getId(), user.getId(), true,
+				supervisor1.getId());
+		userDao.addSupervisors(company.getId(), user.getId(), false,
+				supervisor2.getId());
 
 		SecurityContext security = Mockito.mock(SecurityContext.class);
 		Mockito.when(security.getUserPrincipal()).thenReturn(user);

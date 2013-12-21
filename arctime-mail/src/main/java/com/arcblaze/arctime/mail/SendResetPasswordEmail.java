@@ -1,7 +1,5 @@
 package com.arcblaze.arctime.mail;
 
-import java.util.Collections;
-
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +43,6 @@ public class SendResetPasswordEmail {
 				+ "supervisor or ARCTIME support.\n\n";
 		String subject = "Password Change Notification";
 
-		MailSender.send(message, subject, Collections.singleton(user));
+		MailSender.send(message, subject, user);
 	}
 }

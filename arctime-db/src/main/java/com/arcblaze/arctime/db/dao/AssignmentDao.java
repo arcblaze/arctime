@@ -62,6 +62,21 @@ public interface AssignmentDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Integer companyId, Assignment... assignments)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the assignments will be
+	 *            added
+	 * @param assignments
+	 *            the new assignments to be added
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Integer companyId, Collection<Assignment> assignments)
 			throws DatabaseException;
 
@@ -77,7 +92,37 @@ public interface AssignmentDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void update(Integer companyId, Assignment... assignments)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the assignments will be
+	 *            updated
+	 * @param assignments
+	 *            the assignments to be updated
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void update(Integer companyId, Collection<Assignment> assignments)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which the assignments will be
+	 *            deleted
+	 * @param assignmentIds
+	 *            the unique ids of the assignments to be deleted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void delete(Integer companyId, Integer... assignmentIds)
 			throws DatabaseException;
 
 	/**

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,7 +55,7 @@ public class UserDaoTest {
 						Enrichment.SUPERVISED));
 
 		Company company = new Company().setName("Company").setActive(true);
-		DaoFactory.getCompanyDao().add(Collections.singleton(company));
+		DaoFactory.getCompanyDao().add(company);
 
 		UserDao userDao = DaoFactory.getUserDao();
 		Set<User> users = userDao.getAll(company.getId());
@@ -70,7 +69,7 @@ public class UserDaoTest {
 		user.setFirstName("first");
 		user.setLastName("last");
 
-		userDao.add(company.getId(), Collections.singleton(user));
+		userDao.add(company.getId(), user);
 		assertNotNull(user.getId());
 		assertEquals(company.getId(), user.getCompanyId());
 
@@ -84,9 +83,9 @@ public class UserDaoTest {
 		supervisor1.setEmail("supervisor1");
 		supervisor1.setFirstName("first");
 		supervisor1.setLastName("last");
-		userDao.add(company.getId(), Collections.singleton(supervisor1));
-		userDao.addSupervisors(company.getId(), user.getId(),
-				Collections.singleton(supervisor1.getId()), true);
+		userDao.add(company.getId(), supervisor1);
+		userDao.addSupervisors(company.getId(), user.getId(), true,
+				supervisor1.getId());
 
 		User supervisor2 = new User();
 		supervisor2.setLogin("supervisor2");
@@ -94,9 +93,9 @@ public class UserDaoTest {
 		supervisor2.setEmail("supervisor2");
 		supervisor2.setFirstName("first");
 		supervisor2.setLastName("last");
-		userDao.add(company.getId(), Collections.singleton(supervisor2));
-		userDao.addSupervisors(company.getId(), user.getId(),
-				Collections.singleton(supervisor2.getId()), false);
+		userDao.add(company.getId(), supervisor2);
+		userDao.addSupervisors(company.getId(), user.getId(), false,
+				supervisor2.getId());
 
 		try {
 			User user2 = new User();
@@ -105,7 +104,7 @@ public class UserDaoTest {
 			user2.setEmail("email2");
 			user2.setFirstName("first");
 			user2.setLastName("last");
-			userDao.add(company.getId(), Collections.singleton(user2));
+			userDao.add(company.getId(), user2);
 			throw new RuntimeException("No unique constraint was thrown");
 		} catch (DatabaseUniqueConstraintException uniqueConstraint) {
 			// Expected
@@ -118,7 +117,7 @@ public class UserDaoTest {
 			user2.setEmail("EMAIL"); // same as other user
 			user2.setFirstName("first");
 			user2.setLastName("last");
-			userDao.add(company.getId(), Collections.singleton(user2));
+			userDao.add(company.getId(), user2);
 			throw new RuntimeException("No unique constraint was thrown");
 		} catch (DatabaseUniqueConstraintException uniqueConstraint) {
 			// Expected
@@ -187,7 +186,7 @@ public class UserDaoTest {
 		assertEquals(0, loginUser.getRoles().size());
 
 		user.setEmail("New Email");
-		userDao.update(company.getId(), Collections.singleton(user));
+		userDao.update(company.getId(), user);
 		getUser = userDao.get(company.getId(), user.getId());
 		assertEquals(user, getUser);
 		assertEquals(0, getUser.getRoles().size());

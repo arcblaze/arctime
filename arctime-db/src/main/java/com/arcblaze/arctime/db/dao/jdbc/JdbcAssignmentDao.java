@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
@@ -151,6 +152,16 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Integer companyId, Assignment... assignments)
+			throws DatabaseException {
+		this.add(companyId,
+				assignments == null ? null : Arrays.asList(assignments));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Integer companyId, Collection<Assignment> assignments)
 			throws DatabaseException {
 		if (assignments == null || assignments.isEmpty())
@@ -199,6 +210,16 @@ public class JdbcAssignmentDao implements AssignmentDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void update(Integer companyId, Assignment... assignments)
+			throws DatabaseException {
+		this.update(companyId,
+				assignments == null ? null : Arrays.asList(assignments));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void update(Integer companyId, Collection<Assignment> assignments)
 			throws DatabaseException {
 		if (assignments == null || assignments.isEmpty())
@@ -235,6 +256,15 @@ public class JdbcAssignmentDao implements AssignmentDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Integer companyId, Integer... ids)
+			throws DatabaseException {
+		this.delete(companyId, ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**

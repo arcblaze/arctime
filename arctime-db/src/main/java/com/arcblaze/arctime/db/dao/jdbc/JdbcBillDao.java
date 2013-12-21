@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -96,6 +97,14 @@ public class JdbcBillDao implements BillDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Bill... bills) throws DatabaseException {
+		this.add(bills == null ? null : Arrays.asList(bills));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Collection<Bill> bills) throws DatabaseException {
 		if (bills == null || bills.isEmpty())
 			return;
@@ -131,6 +140,14 @@ public class JdbcBillDao implements BillDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void update(Bill... bills) throws DatabaseException {
+		this.update(bills == null ? null : Arrays.asList(bills));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void update(Collection<Bill> bills) throws DatabaseException {
 		if (bills == null || bills.isEmpty())
 			return;
@@ -156,6 +173,14 @@ public class JdbcBillDao implements BillDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Integer... ids) throws DatabaseException {
+		this.delete(ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**

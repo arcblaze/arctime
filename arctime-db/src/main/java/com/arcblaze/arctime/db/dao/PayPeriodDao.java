@@ -40,6 +40,21 @@ public interface PayPeriodDao {
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
+	public void add(Integer companyId, PayPeriod... payPeriods)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which pay period information
+	 *            will be added
+	 * @param payPeriods
+	 *            the new pay periods to be inserted
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided id is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
 	public void add(Integer companyId, Collection<PayPeriod> payPeriods)
 			throws DatabaseException;
 }

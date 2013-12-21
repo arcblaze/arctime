@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -80,6 +81,14 @@ public class JdbcCompanyDao implements CompanyDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Company... companies) throws DatabaseException {
+		this.add(companies == null ? null : Arrays.asList(companies));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Collection<Company> companies) throws DatabaseException {
 		if (companies == null || companies.isEmpty())
 			return;
@@ -109,6 +118,14 @@ public class JdbcCompanyDao implements CompanyDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void update(Company... companies) throws DatabaseException {
+		this.update(companies == null ? null : Arrays.asList(companies));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void update(Collection<Company> companies) throws DatabaseException {
 		if (companies == null || companies.isEmpty())
 			return;
@@ -128,6 +145,14 @@ public class JdbcCompanyDao implements CompanyDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Integer... ids) throws DatabaseException {
+		this.delete(ids == null ? null : Arrays.asList(ids));
 	}
 
 	/**

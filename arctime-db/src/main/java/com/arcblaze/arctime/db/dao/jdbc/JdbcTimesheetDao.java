@@ -307,6 +307,16 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void add(Integer companyId, Timesheet... timesheets)
+			throws DatabaseException {
+		this.add(companyId,
+				timesheets == null ? null : Arrays.asList(timesheets));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void add(Integer companyId, Collection<Timesheet> timesheets)
 			throws DatabaseException {
 		if (timesheets == null || timesheets.isEmpty())
@@ -347,8 +357,18 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void approve(Integer companyId, Collection<Integer> timesheetIds,
-			boolean approved, User approver) throws DatabaseException {
+	public void approve(Integer companyId, boolean approved, User approver,
+			Integer... timesheetIds) throws DatabaseException {
+		this.approve(companyId, approved, approver, timesheetIds == null ? null
+				: Arrays.asList(timesheetIds));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void approve(Integer companyId, boolean approved, User approver,
+			Collection<Integer> timesheetIds) throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
 			return;
 		if (companyId == null)
@@ -381,8 +401,18 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void verify(Integer companyId, Collection<Integer> timesheetIds,
-			boolean verified, User verifier) throws DatabaseException {
+	public void verify(Integer companyId, boolean verified, User verifier,
+			Integer... timesheetIds) throws DatabaseException {
+		this.verify(companyId, verified, verifier, timesheetIds == null ? null
+				: Arrays.asList(timesheetIds));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void verify(Integer companyId, boolean verified, User verifier,
+			Collection<Integer> timesheetIds) throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
 			return;
 		if (companyId == null)
@@ -415,8 +445,18 @@ public class JdbcTimesheetDao implements TimesheetDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void export(Integer companyId, Collection<Integer> timesheetIds,
-			boolean exported, User exporter) throws DatabaseException {
+	public void export(Integer companyId, boolean exported, User exporter,
+			Integer... timesheetIds) throws DatabaseException {
+		this.export(companyId, exported, exporter, timesheetIds == null ? null
+				: Arrays.asList(timesheetIds));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void export(Integer companyId, boolean exported, User exporter,
+			Collection<Integer> timesheetIds) throws DatabaseException {
 		if (timesheetIds == null || timesheetIds.isEmpty())
 			return;
 		if (companyId == null)
@@ -443,6 +483,16 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Integer companyId, Integer... timesheetIds)
+			throws DatabaseException {
+		this.delete(companyId,
+				timesheetIds == null ? null : Arrays.asList(timesheetIds));
 	}
 
 	/**

@@ -1,7 +1,5 @@
 package com.arcblaze.arctime.rest.user;
 
-import java.util.Collections;
-
 import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -125,7 +123,7 @@ public class ProfileUpdateResource extends BaseResource {
 			user.setActive(currentUser.isActive());
 			log.debug("  Modified user: {}", user);
 
-			dao.update(currentUser.getCompanyId(), Collections.singleton(user));
+			dao.update(currentUser.getCompanyId(), user);
 
 			if (StringUtils.isNotBlank(password)) {
 				log.debug("  Updating user password");
