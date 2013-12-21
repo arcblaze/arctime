@@ -18,7 +18,7 @@ public enum Property {
 	/**
 	 * The configuration file used to load the system configuration properties.
 	 */
-	CONFIG_FILE("./conf/arctime.properties") {
+	CONFIG_FILE("./conf/arctime-config.properties") {
 		@Override
 		String getDefaultValue() {
 			String configFile = System.getProperty("arctime.configurationFile");
