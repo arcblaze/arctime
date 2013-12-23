@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.TaskDao;
+import com.arcblaze.arctime.model.Assignment;
 import com.arcblaze.arctime.model.PayPeriod;
 import com.arcblaze.arctime.model.Task;
 
@@ -146,34 +148,51 @@ public class JdbcTaskDao implements TaskDao {
 		if (payPeriod == null)
 			throw new IllegalArgumentException("Invalid null pay period");
 
-		String sql = String.format("SELECT a.user_id, t.company_id, t.id, "
-				+ "description, job_code, admin, active FROM tasks t "
+		String sql = String.format("SELECT t.id AS task_id, t.company_id, "
+				+ "description, job_code, admin, active, a.id AS assmnt_id, "
+				+ "user_id, labor_cat, item_name, begin, end FROM tasks t "
 				+ "LEFT JOIN assignments a ON (a.task_id = t.id) "
 				+ "WHERE t.company_id = ? AND (a.user_id IN (%s) OR "
-				+ "t.admin = true) AND (begin IS NULL OR begin <= ?) AND "
-				+ "(end IS NULL OR end >= ?)", StringUtils.join(userIds, ","));
+				+ "t.admin = TRUE) AND (begin IS NULL OR begin <= ?) AND "
+				+ "(end IS NULL OR end >= ?) AND active = TRUE",
+				StringUtils.join(userIds, ","));
 
-		Map<Integer, Set<Task>> taskMap = new TreeMap<>();
+		Map<Integer, Set<Task>> userTaskMap = new TreeMap<>();
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
 			ps.setDate(2, new java.sql.Date(payPeriod.getEnd().getTime()));
 			ps.setDate(3, new java.sql.Date(payPeriod.getBegin().getTime()));
 
+			Map<Integer, Task> taskMap = new HashMap<>();
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
-					Task task = fromResultSet(rs);
-					int userId = rs.getInt("user_id");
+					int taskId = rs.getInt("task_id");
+					Task task = taskMap.get(taskId);
+					if (task == null) {
+						task = fromResultSet(rs);
+						task.setId(taskId);
+						taskMap.put(taskId, task);
+					}
 
-					Set<Task> tasks = taskMap.get(userId);
+					Assignment assignment = null;
+					int assignmentId = rs.getInt("assmnt_id");
+					if (!rs.wasNull()) {
+						assignment = JdbcAssignmentDao.fromResultSet(rs);
+						assignment.setId(assignmentId);
+						task.addAssignments(assignment);
+					}
+
+					int userId = rs.getInt("user_id");
+					Set<Task> tasks = userTaskMap.get(userId);
 					if (tasks == null) {
 						tasks = new TreeSet<>();
-						taskMap.put(userId, tasks);
+						userTaskMap.put(userId, tasks);
 					}
 					tasks.add(task);
 				}
 			}
 
-			return taskMap;
+			return userTaskMap;
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
 		}

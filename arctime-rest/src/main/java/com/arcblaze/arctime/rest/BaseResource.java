@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arcblaze.arctime.db.DatabaseException;
+import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.servlets.MetricsServlet;
@@ -58,6 +59,21 @@ public class BaseResource {
 	 */
 	protected InternalServerErrorException dbError(DatabaseException exception) {
 		log.error("Database error", exception);
+		return new InternalServerErrorException(Response
+				.status(Status.INTERNAL_SERVER_ERROR)
+				.entity(exception.getMessage()).build());
+	}
+
+	/**
+	 * @param exception
+	 *            the holiday configuration exception
+	 * 
+	 * @return a {@link InternalServerErrorException} with a suitable status
+	 *         code and error message
+	 */
+	protected InternalServerErrorException holidayError(
+			HolidayConfigurationException exception) {
+		log.error("Holiday error", exception);
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
 				.entity(exception.getMessage()).build());

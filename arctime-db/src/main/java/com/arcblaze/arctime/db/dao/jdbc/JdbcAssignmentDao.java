@@ -25,7 +25,7 @@ import com.arcblaze.arctime.model.PayPeriod;
  * Manages assignments within the back-end database.
  */
 public class JdbcAssignmentDao implements AssignmentDao {
-	protected Assignment fromResultSet(ResultSet rs) throws SQLException {
+	protected static Assignment fromResultSet(ResultSet rs) throws SQLException {
 		Assignment assignment = new Assignment();
 		assignment.setId(rs.getInt("id"));
 		assignment.setCompanyId(rs.getInt("company_id"));

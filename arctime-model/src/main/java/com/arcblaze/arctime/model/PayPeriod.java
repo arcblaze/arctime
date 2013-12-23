@@ -323,7 +323,7 @@ public class PayPeriod implements Comparable<PayPeriod> {
 		if (begin == null)
 			throw new IllegalArgumentException("Invalid null begin value");
 
-		this.begin = begin;
+		this.begin = DateUtils.truncate(begin, Calendar.DATE);
 		return this;
 	}
 
@@ -348,7 +348,7 @@ public class PayPeriod implements Comparable<PayPeriod> {
 		if (end == null)
 			throw new IllegalArgumentException("Invalid null end value");
 
-		this.end = end;
+		this.end = DateUtils.truncate(end, Calendar.DATE);
 		return this;
 	}
 

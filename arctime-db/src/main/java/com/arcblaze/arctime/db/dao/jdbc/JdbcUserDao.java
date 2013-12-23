@@ -26,6 +26,7 @@ import com.arcblaze.arctime.db.DatabaseUniqueConstraintException;
 import com.arcblaze.arctime.db.dao.UserDao;
 import com.arcblaze.arctime.model.Enrichment;
 import com.arcblaze.arctime.model.Role;
+import com.arcblaze.arctime.model.Timesheet;
 import com.arcblaze.arctime.model.User;
 
 /**
@@ -161,29 +162,31 @@ public class JdbcUserDao implements UserDao {
 	}
 
 	protected Map<Integer, User> getForTimesheets(Connection conn,
-			Integer companyId, Set<Integer> timesheetIds)
+			Integer companyId, Set<Timesheet> timesheets)
 			throws DatabaseException {
-		if (timesheetIds == null || timesheetIds.isEmpty())
+		if (timesheets == null || timesheets.isEmpty())
 			return Collections.emptyMap();
 		if (conn == null)
 			throw new IllegalArgumentException("Invalid null connection");
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		String sql = String.format("SELECT t.id AS timesheet_id, e.* FROM "
-				+ "timesheets t JOIN users e ON (e.id = t.user_id AND "
-				+ "e.company_id = t.company_id) WHERE e.company_id = %d AND "
-				+ "t.id IN (%s)", companyId,
-				StringUtils.join(timesheetIds, ","));
+		Set<Integer> userIds = new TreeSet<Integer>();
+		for (Timesheet timesheet : timesheets)
+			userIds.addAll(timesheet.getUserIds());
+
+		if (userIds.isEmpty())
+			return Collections.emptyMap();
+
+		String sql = String.format("SELECT * FROM users WHERE id IN (%s)",
+				StringUtils.join(userIds, ","));
 
 		Map<Integer, User> userMap = new TreeMap<>();
 		try (PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				User user = fromResultSet(rs, false);
-				int timesheetId = rs.getInt("timesheet_id");
-
-				userMap.put(timesheetId, user);
+				userMap.put(user.getId(), user);
 			}
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);

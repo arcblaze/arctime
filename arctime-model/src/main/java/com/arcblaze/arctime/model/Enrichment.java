@@ -33,6 +33,12 @@ public enum Enrichment {
 	PAY_PERIODS,
 
 	/**
+	 * Used to enrich timesheet data with the holidays that fall within the
+	 * timesheet pay period.
+	 */
+	HOLIDAYS,
+
+	/**
 	 * Used to enrich timesheet data with audit log information.
 	 */
 	AUDIT_LOGS,

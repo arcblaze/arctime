@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -56,22 +57,22 @@ public class Timesheet implements Comparable<Timesheet> {
 	/**
 	 * Whether this timesheet has been completed by the user.
 	 */
-	private Boolean completed;
+	private Boolean completed = false;
 
 	/**
 	 * Whether this timesheet has been approved by the user's supervisor.
 	 */
-	private Boolean approved;
+	private Boolean approved = false;
 
 	/**
 	 * Whether this timesheet has been verified by payroll.
 	 */
-	private Boolean verified;
+	private Boolean verified = false;
 
 	/**
 	 * Whether this timesheet has been exported by payroll.
 	 */
-	private Boolean exported;
+	private Boolean exported = false;
 
 	/**
 	 * The id of the supervisor that approved this timesheet.
@@ -546,6 +547,24 @@ public class Timesheet implements Comparable<Timesheet> {
 
 		this.exporter = exporter;
 		return this;
+	}
+
+	/**
+	 * @return all of the unique ids of the users (owner, approver, verifier,
+	 *         exporter) associated with this timesheet, if known
+	 */
+	@XmlTransient
+	public Set<Integer> getUserIds() {
+		Set<Integer> ids = new TreeSet<Integer>();
+		if (getUserId() != null)
+			ids.add(getUserId());
+		if (getApproverId() != null)
+			ids.add(getApproverId());
+		if (getVerifierId() != null)
+			ids.add(getVerifierId());
+		if (getExporterId() != null)
+			ids.add(getExporterId());
+		return ids;
 	}
 
 	/**

@@ -49,7 +49,7 @@ public class Task implements Comparable<Task> {
 	 * Whether this task is administrative and available to all users in the
 	 * company.
 	 */
-	private Boolean administrative;
+	private Boolean administrative = false;
 
 	/**
 	 * Whether this task is active and available for users to charge against.
@@ -59,7 +59,7 @@ public class Task implements Comparable<Task> {
 	/**
 	 * Holds the assignments associated with this task.
 	 */
-	private Set<Assignment> assignments = new TreeSet<>();
+	private final Set<Assignment> assignments = new TreeSet<>();
 
 	/**
 	 * Default constructor.
