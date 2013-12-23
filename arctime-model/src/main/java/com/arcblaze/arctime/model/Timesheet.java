@@ -578,11 +578,21 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
-	 * @return {@code this}
+	 * @param taskId
+	 *            the unique id of the task to search for in this timesheet
+	 * 
+	 * @return the requested task if it is available in this timesheet,
+	 *         {@code null} otherwise
 	 */
-	public Timesheet clearTasks() {
-		this.tasks.clear();
-		return this;
+	public Task getTask(Integer taskId) {
+		if (taskId == null)
+			return null;
+
+		for (Task task : getTasks())
+			if (task.getId() == taskId)
+				return task;
+
+		return null;
 	}
 
 	/**
@@ -651,20 +661,20 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
+	 * @return {@code this}
+	 */
+	public Timesheet clearTasks() {
+		this.tasks.clear();
+		return this;
+	}
+
+	/**
 	 * @return all of the auditLogs the user can bill hours to
 	 */
 	@XmlElementWrapper
 	@XmlElement(name = "auditLog")
 	public Set<AuditLog> getAuditLogs() {
 		return Collections.unmodifiableSet(this.auditLogs);
-	}
-
-	/**
-	 * @return {@code this}
-	 */
-	public Timesheet clearAuditLogs() {
-		this.auditLogs.clear();
-		return this;
 	}
 
 	/**
@@ -733,20 +743,20 @@ public class Timesheet implements Comparable<Timesheet> {
 	}
 
 	/**
+	 * @return {@code this}
+	 */
+	public Timesheet clearAuditLogs() {
+		this.auditLogs.clear();
+		return this;
+	}
+
+	/**
 	 * @return all of the holidays the user can bill hours to
 	 */
 	@XmlElementWrapper
 	@XmlElement(name = "holiday")
 	public Set<Holiday> getHolidays() {
 		return Collections.unmodifiableSet(this.holidays);
-	}
-
-	/**
-	 * @return {@code this}
-	 */
-	public Timesheet clearHolidays() {
-		this.holidays.clear();
-		return this;
 	}
 
 	/**
@@ -811,6 +821,14 @@ public class Timesheet implements Comparable<Timesheet> {
 					if (holiday != null)
 						this.holidays.add(holiday);
 		}
+		return this;
+	}
+
+	/**
+	 * @return {@code this}
+	 */
+	public Timesheet clearHolidays() {
+		this.holidays.clear();
 		return this;
 	}
 

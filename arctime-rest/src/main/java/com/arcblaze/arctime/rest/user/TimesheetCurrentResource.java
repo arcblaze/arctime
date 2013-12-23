@@ -1,5 +1,12 @@
 package com.arcblaze.arctime.rest.user;
 
+import static com.arcblaze.arctime.model.Enrichment.AUDIT_LOGS;
+import static com.arcblaze.arctime.model.Enrichment.BILLS;
+import static com.arcblaze.arctime.model.Enrichment.HOLIDAYS;
+import static com.arcblaze.arctime.model.Enrichment.PAY_PERIODS;
+import static com.arcblaze.arctime.model.Enrichment.TASKS;
+import static com.arcblaze.arctime.model.Enrichment.USERS;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -65,9 +72,8 @@ public class TimesheetCurrentResource extends BaseResource {
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/user/timesheet/current")) {
 			Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
-					Arrays.asList(Enrichment.PAY_PERIODS,
-							Enrichment.AUDIT_LOGS, Enrichment.HOLIDAYS,
-							Enrichment.USERS, Enrichment.TASKS));
+					Arrays.asList(PAY_PERIODS, AUDIT_LOGS, HOLIDAYS, USERS,
+							TASKS, BILLS));
 
 			User currentUser = (User) security.getUserPrincipal();
 			TimesheetDao dao = DaoFactory.getTimesheetDao();

@@ -63,6 +63,11 @@ public class Task implements Comparable<Task> {
 	private final Set<Assignment> assignments = new TreeSet<>();
 
 	/**
+	 * The bills applied directly to this task during a pay period.
+	 */
+	private final Set<Bill> bills = new TreeSet<>();
+
+	/**
 	 * Default constructor.
 	 */
 	public Task() {
@@ -236,11 +241,21 @@ public class Task implements Comparable<Task> {
 	}
 
 	/**
-	 * @return {@code this}
+	 * @param assignmentId
+	 *            the unique id of the assignment to search for in this task
+	 * 
+	 * @return the requested assignment if it exists in this task, {@code null}
+	 *         otherwise
 	 */
-	public Task clearAssignments() {
-		this.assignments.clear();
-		return this;
+	public Assignment getAssignment(Integer assignmentId) {
+		if (assignmentId == null)
+			return null;
+
+		for (Assignment assignment : getAssignments())
+			if (assignment.getId() == assignmentId)
+				return assignment;
+
+		return null;
 	}
 
 	/**
@@ -305,6 +320,96 @@ public class Task implements Comparable<Task> {
 					if (assignment != null)
 						this.assignments.add(assignment);
 		}
+		return this;
+	}
+
+	/**
+	 * @return {@code this}
+	 */
+	public Task clearAssignments() {
+		this.assignments.clear();
+		return this;
+	}
+
+	/**
+	 * @return all of the bills assigned to this task
+	 */
+	@XmlElementWrapper
+	@XmlElement(name = "bill")
+	public Set<Bill> getBills() {
+		return Collections.unmodifiableSet(this.bills);
+	}
+
+	/**
+	 * @param newBills
+	 *            the new bill values to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided bills value is invalid
+	 */
+	public Task setBills(Bill... newBills) {
+		if (newBills == null)
+			throw new IllegalArgumentException("Invalid null bills");
+
+		return this.setBills(Arrays.asList(newBills));
+	}
+
+	/**
+	 * @param newBills
+	 *            the new bill values to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 */
+	public Task setBills(Collection<Bill> newBills) {
+		synchronized (this.bills) {
+			this.bills.clear();
+			if (newBills != null)
+				for (Bill bill : newBills)
+					if (bill != null)
+						this.bills.add(bill);
+		}
+		return this;
+	}
+
+	/**
+	 * @param newBills
+	 *            the new bill values to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided bills value is invalid
+	 */
+	public Task addBills(Bill... newBills) {
+		if (newBills == null)
+			throw new IllegalArgumentException("Invalid null bills");
+
+		return this.addBills(Arrays.asList(newBills));
+	}
+
+	/**
+	 * @param newBills
+	 *            the new bill values to be assigned to this account
+	 * 
+	 * @return {@code this}
+	 */
+	public Task addBills(Collection<Bill> newBills) {
+		synchronized (this.bills) {
+			if (newBills != null)
+				for (Bill bill : newBills)
+					if (bill != null)
+						this.bills.add(bill);
+		}
+		return this;
+	}
+
+	/**
+	 * @return {@code this}
+	 */
+	public Task clearBills() {
+		this.bills.clear();
 		return this;
 	}
 

@@ -1,6 +1,7 @@
 package com.arcblaze.arctime.model;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -18,6 +19,7 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  * Represents an assignment of a user to a task.
@@ -75,6 +77,28 @@ public class Assignment implements Comparable<Assignment> {
 	 */
 	public Assignment() {
 		// Nothing to do.
+	}
+
+	/**
+	 * @param time
+	 *            the {@link Date} to check to determine if it falls within this
+	 *            assignment
+	 * 
+	 * @return whether the provided date falls into this assignment
+	 */
+	public boolean contains(Date time) {
+		if (time == null)
+			return false;
+
+		Date b = getBegin();
+		Date e = getEnd();
+
+		if (b == null || e == null)
+			return false;
+
+		Date day = DateUtils.truncate(time, Calendar.DATE);
+
+		return day.getTime() >= b.getTime() && day.getTime() <= e.getTime();
 	}
 
 	/**
@@ -259,7 +283,7 @@ public class Assignment implements Comparable<Assignment> {
 		if (begin == null)
 			throw new IllegalArgumentException("Invalid null begin value");
 
-		this.begin = begin;
+		this.begin = DateUtils.truncate(begin, Calendar.DATE);
 		return this;
 	}
 
@@ -284,7 +308,7 @@ public class Assignment implements Comparable<Assignment> {
 		if (end == null)
 			throw new IllegalArgumentException("Invalid null end value");
 
-		this.end = end;
+		this.end = DateUtils.truncate(end, Calendar.DATE);
 		return this;
 	}
 
@@ -295,14 +319,6 @@ public class Assignment implements Comparable<Assignment> {
 	@XmlElement(name = "bill")
 	public Set<Bill> getBills() {
 		return Collections.unmodifiableSet(this.bills);
-	}
-
-	/**
-	 * @return {@code this}
-	 */
-	public Assignment clearBills() {
-		this.bills.clear();
-		return this;
 	}
 
 	/**
@@ -367,6 +383,14 @@ public class Assignment implements Comparable<Assignment> {
 					if (bill != null)
 						this.bills.add(bill);
 		}
+		return this;
+	}
+
+	/**
+	 * @return {@code this}
+	 */
+	public Assignment clearBills() {
+		this.bills.clear();
 		return this;
 	}
 

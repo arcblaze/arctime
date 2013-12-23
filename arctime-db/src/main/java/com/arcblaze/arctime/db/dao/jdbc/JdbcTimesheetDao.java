@@ -24,7 +24,9 @@ import org.apache.commons.lang.StringUtils;
 import com.arcblaze.arctime.db.ConnectionManager;
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.dao.TimesheetDao;
+import com.arcblaze.arctime.model.Assignment;
 import com.arcblaze.arctime.model.AuditLog;
+import com.arcblaze.arctime.model.Bill;
 import com.arcblaze.arctime.model.Enrichment;
 import com.arcblaze.arctime.model.Holiday;
 import com.arcblaze.arctime.model.PayPeriod;
@@ -585,6 +587,8 @@ public class JdbcTimesheetDao implements TimesheetDao {
 				enrichWithAuditLogs(conn, companyId, timesheets);
 			else if (enrichment == Enrichment.TASKS)
 				enrichWithTasks(conn, companyId, timesheets);
+			else if (enrichment == Enrichment.BILLS)
+				enrichWithBills(conn, companyId, timesheets);
 			else
 				throw new DatabaseException("Invalid enrichment specified: "
 						+ enrichment);
@@ -706,6 +710,41 @@ public class JdbcTimesheetDao implements TimesheetDao {
 				}
 			}
 		}
+
+		userGroups.clear();
+	}
+
+	protected void enrichWithBills(Connection conn, Integer companyId,
+			Set<Timesheet> timesheets) throws DatabaseException {
+		Set<Integer> ids = getTimesheetIds(timesheets);
+		if (ids.isEmpty())
+			return;
+
+		Map<Integer, Timesheet> timesheetMap = getTimesheetMap(timesheets);
+		Map<Integer, Set<Bill>> billMap = new JdbcBillDao().getForTimesheets(
+				conn, ids);
+
+		for (Entry<Integer, Set<Bill>> billEntry : billMap.entrySet()) {
+			Timesheet timesheet = timesheetMap.get(billEntry.getKey());
+
+			for (Bill bill : billEntry.getValue()) {
+				Task task = timesheet.getTask(bill.getTaskId());
+				if (task != null) {
+					if (bill.getAssignmentId() != null) {
+						Assignment assignment = task.getAssignment(bill
+								.getAssignmentId());
+						if (assignment != null
+								&& assignment.contains(bill.getDay()))
+							assignment.addBills(bill);
+					} else
+						task.addBills(bill);
+				}
+			}
+		}
+
+		ids.clear();
+		timesheetMap.clear();
+		billMap.clear();
 	}
 
 	protected SortedSet<Integer> getTimesheetIds(Set<Timesheet> timesheets) {

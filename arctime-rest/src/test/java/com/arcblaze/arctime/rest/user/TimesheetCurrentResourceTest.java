@@ -26,6 +26,7 @@ import com.arcblaze.arctime.db.dao.TimesheetDao;
 import com.arcblaze.arctime.db.util.TestDatabase;
 import com.arcblaze.arctime.model.Assignment;
 import com.arcblaze.arctime.model.AuditLog;
+import com.arcblaze.arctime.model.Bill;
 import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Holiday;
 import com.arcblaze.arctime.model.PayPeriod;
@@ -497,6 +498,43 @@ public class TimesheetCurrentResourceTest {
 		DaoFactory.getAssignmentDao().add(company.getId(), a1, a2, a3, a4, a5,
 				a6);
 
+		// Bill against the admin task.
+		Bill b1 = new Bill().setUserId(user.getId()).setTaskId(t1.getId())
+				.setDay(payPeriod.getBegin()).setHours(8f)
+				.setTimestamp(new Date());
+
+		// Bill against LCAT 1 on task 2
+		Bill b2 = new Bill().setUserId(user.getId()).setTaskId(t2.getId())
+				.setAssignmentId(a1.getId()).setDay(payPeriod.getBegin())
+				.setHours(8f).setTimestamp(new Date());
+
+		// Bill against LCAT 2 on task 2
+		Bill b3 = new Bill().setUserId(user.getId()).setTaskId(t2.getId())
+				.setAssignmentId(a2.getId()).setDay(payPeriod.getBegin())
+				.setHours(2.25f).setTimestamp(new Date());
+
+		// Bill against LCAT 3 on task 2, but outside the assignment dates
+		Bill b4 = new Bill().setUserId(user.getId()).setTaskId(t2.getId())
+				.setAssignmentId(a3.getId()).setDay(payPeriod.getBegin())
+				.setHours(8.5f).setTimestamp(new Date());
+
+		// Bill against task 3, before the timesheet pay period
+		Bill b5 = new Bill().setUserId(user.getId()).setTaskId(t3.getId())
+				.setAssignmentId(a4.getId()).setDay(a4.getBegin())
+				.setHours(3.5f).setTimestamp(new Date());
+
+		// Bill against task 3, after the timesheet pay period
+		Bill b6 = new Bill().setUserId(user.getId()).setTaskId(t3.getId())
+				.setAssignmentId(a5.getId()).setDay(a5.getBegin())
+				.setHours(3.5f).setTimestamp(new Date());
+
+		// Bill against task 4, which is inactive
+		Bill b7 = new Bill().setUserId(user.getId()).setTaskId(t4.getId())
+				.setAssignmentId(a6.getId()).setDay(payPeriod.getEnd())
+				.setHours(3.5f).setTimestamp(new Date());
+
+		DaoFactory.getBillDao().add(b1, b2, b3, b4, b5, b6, b7);
+
 		TimesheetCurrentResource resource = new TimesheetCurrentResource();
 		TimesheetResponse response = resource.current(security);
 
@@ -523,13 +561,27 @@ public class TimesheetCurrentResourceTest {
 		assertTrue(tasks.contains(t1));
 		assertTrue(tasks.contains(t2));
 		for (Task t : tasks) {
-			if (t.getId() == 1)
+			if (t.getId() == 1) {
 				assertTrue(t.getAssignments().isEmpty());
-			else {
+				assertEquals(1, t.getBills().size());
+				assertEquals(b1, t.getBills().iterator().next());
+			} else {
 				assertEquals(3, t.getAssignments().size());
 				assertTrue(t.getAssignments().contains(a1));
 				assertTrue(t.getAssignments().contains(a2));
 				assertTrue(t.getAssignments().contains(a3));
+
+				for (Assignment a : t.getAssignments()) {
+					if (a.getId() == a1.getId()) {
+						assertEquals(1, a.getBills().size());
+						assertEquals(b2, a.getBills().iterator().next());
+					} else if (a.getId() == a2.getId()) {
+						assertEquals(1, a.getBills().size());
+						assertEquals(b3, a.getBills().iterator().next());
+					} else if (a.getId() == a3.getId()) {
+						assertTrue(a.getBills().isEmpty());
+					}
+				}
 			}
 		}
 	}

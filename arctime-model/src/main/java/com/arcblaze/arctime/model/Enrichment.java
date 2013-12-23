@@ -49,6 +49,12 @@ public enum Enrichment {
 	 */
 	TASKS,
 
+	/**
+	 * Used to enrich timesheet data with the hours billed to the timesheet
+	 * during the pay period.
+	 */
+	BILLS,
+
 	;
 
 	/**
