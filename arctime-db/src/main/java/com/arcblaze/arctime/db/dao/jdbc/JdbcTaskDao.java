@@ -148,12 +148,13 @@ public class JdbcTaskDao implements TaskDao {
 		if (payPeriod == null)
 			throw new IllegalArgumentException("Invalid null pay period");
 
-		String sql = String.format("SELECT t.id AS task_id, t.company_id, "
-				+ "description, job_code, admin, active, a.id AS assmnt_id, "
-				+ "user_id, labor_cat, item_name, begin, end FROM tasks t "
-				+ "LEFT JOIN assignments a ON (a.task_id = t.id) "
-				+ "WHERE t.company_id = ? AND (a.user_id IN (%s) OR "
-				+ "t.admin = TRUE) AND (begin IS NULL OR begin <= ?) AND "
+		String sql = String.format("SELECT t.id, t.id AS task_id, "
+				+ "t.company_id, description, job_code, admin, active, "
+				+ "a.id AS assmnt_id, user_id, labor_cat, item_name, begin, "
+				+ "end FROM tasks t LEFT JOIN assignments a "
+				+ "ON (a.task_id = t.id) WHERE t.company_id = ? AND "
+				+ "(a.user_id IN (%s) OR t.admin = TRUE) AND "
+				+ "(begin IS NULL OR begin <= ?) AND "
 				+ "(end IS NULL OR end >= ?) AND active = TRUE",
 				StringUtils.join(userIds, ","));
 
