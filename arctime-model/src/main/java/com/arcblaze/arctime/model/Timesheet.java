@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -570,7 +571,8 @@ public class Timesheet implements Comparable<Timesheet> {
 	/**
 	 * @return all of the tasks the user can bill hours to
 	 */
-	@XmlElement
+	@XmlElementWrapper
+	@XmlElement(name = "task")
 	public Set<Task> getTasks() {
 		return Collections.unmodifiableSet(this.tasks);
 	}
@@ -651,7 +653,8 @@ public class Timesheet implements Comparable<Timesheet> {
 	/**
 	 * @return all of the auditLogs the user can bill hours to
 	 */
-	@XmlElement
+	@XmlElementWrapper
+	@XmlElement(name = "auditLog")
 	public Set<AuditLog> getAuditLogs() {
 		return Collections.unmodifiableSet(this.auditLogs);
 	}
@@ -732,7 +735,8 @@ public class Timesheet implements Comparable<Timesheet> {
 	/**
 	 * @return all of the holidays the user can bill hours to
 	 */
-	@XmlElement
+	@XmlElementWrapper
+	@XmlElement(name = "holiday")
 	public Set<Holiday> getHolidays() {
 		return Collections.unmodifiableSet(this.holidays);
 	}

@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -333,17 +334,10 @@ public class User implements Comparable<User>, Principal {
 	/**
 	 * @return all of the roles authorized for this account
 	 */
-	@XmlElement
+	@XmlElementWrapper
+	@XmlElement(name = "role")
 	public Set<Role> getRoles() {
 		return Collections.unmodifiableSet(this.roles);
-	}
-
-	/**
-	 * @return {@code this}
-	 */
-	public User clearRoles() {
-		this.roles.clear();
-		return this;
 	}
 
 	/**
@@ -412,6 +406,14 @@ public class User implements Comparable<User>, Principal {
 	}
 
 	/**
+	 * @return {@code this}
+	 */
+	public User clearRoles() {
+		this.roles.clear();
+		return this;
+	}
+
+	/**
 	 * @return whether this user is a system administrator
 	 */
 	@XmlElement
@@ -438,6 +440,7 @@ public class User implements Comparable<User>, Principal {
 	/**
 	 * @return all of the users being supervised by this account
 	 */
+	@XmlElementWrapper
 	@XmlElement
 	public Set<User> getSupervised() {
 		return Collections.unmodifiableSet(this.supervised);
@@ -553,7 +556,8 @@ public class User implements Comparable<User>, Principal {
 	/**
 	 * @return all of the supervisors for this user
 	 */
-	@XmlElement
+	@XmlElementWrapper
+	@XmlElement(name = "supervisor")
 	public Set<User> getSupervisors() {
 		return Collections.unmodifiableSet(this.supervisors);
 	}

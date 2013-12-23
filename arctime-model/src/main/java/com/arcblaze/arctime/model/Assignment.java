@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
@@ -290,7 +291,8 @@ public class Assignment implements Comparable<Assignment> {
 	/**
 	 * @return all of the bills authorized for this account
 	 */
-	@XmlElement
+	@XmlElementWrapper
+	@XmlElement(name = "bill")
 	public Set<Bill> getBills() {
 		return Collections.unmodifiableSet(this.bills);
 	}
