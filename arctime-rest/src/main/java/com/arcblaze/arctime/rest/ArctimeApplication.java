@@ -10,7 +10,7 @@ import java.util.TreeSet;
 import javax.ws.rs.core.Application;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class ArctimeApplication extends Application {
 				log.info("Found resource: {}", className);
 				this.classes.add(Class.forName(className));
 			}
-			this.classes.add(JacksonJsonProvider.class);
+			this.classes.add(JacksonJaxbJsonProvider.class);
 		} catch (ClassNotFoundException badClass) {
 			log.error("Failed to add jersey resource class", badClass);
 		}

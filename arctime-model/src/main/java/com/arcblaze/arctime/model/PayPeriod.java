@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -146,6 +147,7 @@ public class PayPeriod implements Comparable<PayPeriod> {
 	 * @return a calculation of what the previous pay period is based on the
 	 *         configuration of this pay period
 	 */
+	@XmlTransient
 	public PayPeriod getPrevious() {
 		PayPeriod payPeriod = new PayPeriod();
 		payPeriod.setCompanyId(getCompanyId());
@@ -190,6 +192,7 @@ public class PayPeriod implements Comparable<PayPeriod> {
 	 * @return a calculation of what the next pay period is based on the
 	 *         configuration of this pay period
 	 */
+	@XmlTransient
 	public PayPeriod getNext() {
 		PayPeriod payPeriod = new PayPeriod();
 		payPeriod.setCompanyId(getCompanyId());
