@@ -4,14 +4,14 @@
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{HH:mm:ss} %-5level %-24C{0} %-4line %msg%n</pattern>
+			<pattern>%d{HH:mm:ss} %-5level %-30C{0} %-4line %msg%n</pattern>
 		</encoder>
 	</appender>
 
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 		<file>logs/arctime.log</file>
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %-24C{0} %-4line %msg%n
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %-30C{0} %-4line %msg%n
 			</pattern>
 		</encoder>
 	</appender>
