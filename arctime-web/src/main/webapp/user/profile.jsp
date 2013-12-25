@@ -11,7 +11,7 @@
 
 
 	<!-- This is where the profile information will be rendered. -->
-	<table width="100%">
+	<table id="profile-table">
 	  <tr>
 		<td valign="top">
 		  <div id="profile-update-panel"></div>
@@ -33,17 +33,6 @@
 	<script>
 	  // Invoked when the page is ready.
 	  Ext.onReady(function() {
-		  // Create the user.
-		  <% User user = (User) request.getUserPrincipal(); %>
-		  var user = {
-			  data: {
-				  id: <%= user.getId() %>,
-				  firstName: '<%= StringEscapeUtils.escapeJavaScript(user.getFirstName()) %>',
-				  lastName: '<%= StringEscapeUtils.escapeJavaScript(user.getLastName()) %>',
-				  login: '<%= StringEscapeUtils.escapeJavaScript(user.getLogin()) %>',
-				  email: '<%= StringEscapeUtils.escapeJavaScript(user.getEmail()) %>'
-			  }
-		  }
 
 		  // Create the panel.
 		  new ui.panel.user.ProfileUpdatePanel({
@@ -51,7 +40,7 @@
 			  renderTo: 'profile-update-panel',
 
 			  // Provide the user data.
-			  user: user
+			  user: { data: user }
 		  });
 
 		  // Create the supervisor grid.
@@ -66,7 +55,7 @@
 			  height: 140,
 
 			  // Provide the user data.
-			  user: user
+			  user: { data: user }
 		  });
 	  });
 	</script>

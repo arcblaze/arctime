@@ -30,7 +30,7 @@ html, body {
     margin:0px auto;
     overflow:auto;
     padding:70px 0px 40px 0px;
-    width:940px;
+    width:100%;
 }
 
 #content {
@@ -52,5 +52,10 @@ html, body {
     margin:0px auto;
     width:940px;
     text-align:center;
+}
+
+#profile-table {
+	border-collapse:collapse;
+	margin:0px auto;
 }
 

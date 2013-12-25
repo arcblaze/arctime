@@ -1,3 +1,5 @@
+<%@ page import="com.arcblaze.arctime.model.*" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 
 <div id="header-container">
   <div id="header">
@@ -9,5 +11,19 @@
 	<% } %>
   </div>
 </div>
+
+<script>
+	<% User user = (User) request.getUserPrincipal(); %>
+	<% if (user != null) { %>
+	// Create the user.
+	var user = {
+		id: <%= user.getId() %>,
+		firstName: '<%= StringEscapeUtils.escapeJavaScript(user.getFirstName()) %>',
+		lastName: '<%= StringEscapeUtils.escapeJavaScript(user.getLastName()) %>',
+		login: '<%= StringEscapeUtils.escapeJavaScript(user.getLogin()) %>',
+		email: '<%= StringEscapeUtils.escapeJavaScript(user.getEmail()) %>'
+	}
+	<% } %>
+</script>
 
 <div id="container">

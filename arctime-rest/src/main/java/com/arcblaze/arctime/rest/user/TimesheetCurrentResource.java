@@ -50,12 +50,6 @@ public class TimesheetCurrentResource extends BaseResource {
 	@XmlRootElement
 	static class TimesheetResponse {
 		@XmlElement
-		public final boolean success = true;
-
-		@XmlElement
-		public final String msg = "Your timesheet was retrieved successfully.";
-
-		@XmlElement
 		public Timesheet timesheet = null;
 	}
 

@@ -5,62 +5,103 @@ var needsSaved = { };
 // Keep track of any reasons specified for changing values.
 var reasons = { };
 
+// The timesheets under management.
+var timesheets = { };
+
 // Initialize the cell management for all available timesheets.
-function initCellManagement() {
+function initCellManagement(ts) {
 	// Iterate over all the available timesheets.
-	for (var t = 0; t < timesheetIds.length; t++) {
+	for (var t = 0; t < ts.length; t++) {
+		timesheets[ts[t].id] = ts[t];
+
 		// Iterate over all the available days.
-		for (var d = 0; d < days.length; d++) {
-			// Iterate over all the available contracts.
-			for (var c = 0; c < assignmentIds.length; c++) {
-				// Build the id for this contract/day.
-				var id = 'cell' + timesheetIds[t] + '_' + assignmentIds[c] + '_' + days[d];
+		var date = ts[t].payPeriod.begin;
+		var end = ts[t].payPeriod.end;
+		while (date < end) {
+			var day = Ext.Date.format(new Date(date), 'Ymd');
 
-				// Get the cell.
+			// Iterate over all the available tasks.
+			for (var c = 0; c < ts[t].tasks.length; c++) {
+				var task = ts[t].tasks[c];
+
+				// Build the id for this task/day.
+				var id = 'cell' + ts[t].id + '_' +
+					task.id + '__' + day;
 				var cell = document.getElementById(id);
-
-				// Make sure the cell was found.
 				if (cell) {
-					// Add the focus and blur listeners.
 					cell.onfocus = cellFocus;
 					cell.onblur = cellBlur;
+					formatCell(cell);
+					updateTaskTotal(ts[t].id, task.id, '');
+				}
+
+				for (var a = 0; a < task.assignments.length; a++) {
+					var assignment = task.assignments[a];
+					// Build the id for this assignment/day.
+					var id = 'cell' + ts[t].id + '_' + task.id + '_' +
+						assignment.id + '_' + day;
+					var cell = document.getElementById(id);
+					if (cell) {
+						cell.onfocus = cellFocus;
+						cell.onblur = cellBlur;
+						formatCell(cell);
+						updateTaskTotal(ts[t].id, task.id, assignment.id);
+					}
 				}
 			}
+
+			updateDayTotal(ts[t].id, day);
+			updateWeekTotal(ts[t].id, day);
+			date += 24 * 60 * 60 * 1000;
 		}
+
+		updateTotal(ts[t].id);
 	}
 }
 
 // Retrieve all the data contained in this timesheet.
 function getCellData(timesheetId) {
-	if (typeof(timesheetId) == "undefined")
-		alert("timesheet cell management: getCellData needs a timesheet id.");
+	var ts = timesheets[timesheetId];
 
 	// This array will hold all the data.
 	var data = [ ];
 
 	// Iterate over all the available days.
-	for (var d = 0; d < days.length; d++) {
-		// Iterate over all the available contracts.
-		for (var c = 0; c < assignmentIds.length; c++) {
-			// Build the id for this contract/day.
-			var id = 'cell' + timesheetId + '_' + assignmentIds[c] + '_' + days[d];
+	var date = ts.payPeriod.begin;
+	var end = ts.payPeriod.end;
+	while (date < end) {
+		var day = Ext.Date.format(new Date(date), 'Ymd');
 
-			// Get the cell.
+		// Iterate over all the available tasks.
+		for (var c = 0; c < ts.tasks.length; c++) {
+			var task = ts.tasks[c];
+
+			// Build the id for this task/day.
+			var id = 'cell' + ts.id + '_' + task.id + '__' + day;
 			var cell = document.getElementById(id);
-
-			var contractId = getContractIdFromCellId(id);
-			var assignmentId = getAssignmentIdFromCellId(id);
-
-			// Make sure the cell was found.
 			if (cell && !isNaN(parseFloat(cell.value))) {
-				// Get the associated reason.
-				var reason = reasons[timesheetId + ':' + contractId + ':' + assignmentId + ':' + days[d]];
-
-				// Add this data item to the array.
-				data.push(assignmentIds[c] + ':' + days[d] + ':' + cell.value +
+				var reason = reasons[ts.id + ':' + task.id + '::' + day];
+				data.push(task.id + '_:' + day + ':' + cell.value +
 						(reason ? ':' + reason : ''));
 			}
+
+			for (var a = 0; a < task.assignments.length; a++) {
+				var assignment = task.assignments[a];
+
+				// Build the id for this task/day.
+				var id = 'cell' + ts.id + '_' + task.id + '_' +
+					assignment.id + '_' + day;
+				var cell = document.getElementById(id);
+				if (cell && !isNaN(parseFloat(cell.value))) {
+					var reason = reasons[ts.id + ':' + task.id + ':' +
+						assignment.id + ':' + day];
+					data.push(task.id + '_' + assignment.id + ':' + day +
+							':' + cell.value + (reason ? ':' + reason : ''));
+				}
+			}
 		}
+
+		date += 24 * 60 * 60 * 1000;
 	}
 
 	// Return the identified cell data all joined together.
@@ -94,33 +135,20 @@ function cellBlur(event) {
 	if (!validateCell(cell))
 		return false;
 
-	// Determine what to do based on the value.
-	if (cell.value.match(/^\s*$/)) {
-		// Blank out zero values.
-		cell.value = "";
-	} else {
-		// Make sure the cell value is to the quarter-hour.
-		cell.value = Math.round(cell.value * 20) / 20;
-
-		// Make sure the correct number of decimals is displayed.
-		var pieces = ("" + cell.value).split(/\./);
-		if (pieces.length == 1)
-			cell.value += ".00";
-		else if (pieces[1].length == 1)
-			cell.value += "0";
-	}
+	formatCell(cell);
 
 	// Update all the totals.
 	var timesheetId = getTimesheetIdFromCellId(cell.id);
-	updateContractTotal(timesheetId, getContractIdFromCellId(cell.id), getAssignmentIdFromCellId(cell.id));
+	updateTaskTotal(timesheetId, getTaskIdFromCellId(cell.id),
+			getAssignmentIdFromCellId(cell.id));
 	updateDayTotal(timesheetId, getDayFromCellId(cell.id));
 	updateWeekTotal(timesheetId, getDayFromCellId(cell.id));
 	updateTotal(timesheetId);
 
 	// Check to see if the value was modified.
-	if (previousValue != cell.value) {
+	if (previousValue != cell.value && !cell.style.backgroundImage) {
 		// Update the cell's class to show that it is dirty.
-		cell.style.backgroundImage = 'url(/images/icons/dirty.gif)';
+		cell.style.backgroundImage = 'url(/img/dirty.gif)';
 		cell.style.backgroundRepeat = 'no-repeat';
 		cell.style.backgroundPosition = 'left top';
 
@@ -131,10 +159,10 @@ function cellBlur(event) {
 		var cellDay = getDayFromCellId(cell.id);
 
 		// Get today.
-		var today = new Date().format('Ymd');
+		var today = Ext.Date.format(new Date(), 'Ymd');
 
-		// Get the contract id for the cell.
-		var contractId = getContractIdFromCellId(cell.id);
+		// Get the task id for the cell.
+		var taskId = getTaskIdFromCellId(cell.id);
 		// Get the assignment id for the cell.
 		var assignmentId = getAssignmentIdFromCellId(cell.id);
 
@@ -144,14 +172,14 @@ function cellBlur(event) {
 			var reasonField = new Ext.form.TextField({
 				name: 'reason',
 				fieldLabel: 'Reason',
-				width: 282
+				width: 320
 			});
 
 			// Create the reason panel.
 			var pnl = new Ext.form.FormPanel({
 				border: false,
 				frame: false,
-				labelWidth: 55,
+				labelWidth: 40,
 				bodyStyle: 'padding: 10px;',
 				items: [
 					new Ext.Panel({
@@ -188,14 +216,17 @@ function cellBlur(event) {
 							// Make sure the reason is valid.
 							if (!rsn || rsn.match(/^\s*$/)) {
 								// Display the error message.
-								reasonField.markInvalid('A reason must be provided.');
+								reasonField.markInvalid(
+									'A reason must be provided.');
 							} else {
-								// Remove all colons and semi-colons from the reason.
+								// Remove all colons and semi-colons
+								// from the reason.
 								rsn = rsn.replace(/:/g, ' ');
 								rsn = rsn.replace(/;/g, ' ');
 
 								// Save the reason.
-								reasons[timesheetId + ':' + contractId + ':' + assignmentId + ':' + cellDay] = rsn;
+								reasons[timesheetId + ':' + taskId + ':' +
+									assignmentId + ':' + cellDay] = rsn;
 
 								// Close the window.
 								win.close();
@@ -209,12 +240,33 @@ function cellBlur(event) {
 	}
 }
 
+// Make sure the number in the cell is correct.
+function formatCell(cell) {
+	if (!cell)
+		return;
+
+	// Determine what to do based on the value.
+	if (cell.value.match(/^\s*$/)) {
+		// Blank out zero values.
+		cell.value = "";
+	} else {
+		// Make sure the cell value is rounded appropriately.
+		cell.value = Math.round(cell.value * 20) / 20;
+
+		// Make sure the correct number of decimals is displayed.
+		var pieces = ("" + cell.value).split(/\./);
+		if (pieces.length == 1)
+			cell.value += ".00";
+		else if (pieces[1].length == 1)
+			cell.value += "0";
+	}
+}
+
 // Clear the dirty flag on all the cells.
 function clearDirtyFlags(timesheetId) {
-	if (typeof(timesheetId) == "undefined")
-		alert("timesheet cell management: clearDirtyFlags needs a timesheet id.");
+	var ts = timesheets[timesheetId];
 
-	// Iterate over the contracts and days.
+	// Iterate over the tasks and days.
 	for (var c = 0; c < assignmentIds.length; c++)
 		for (var d = 0; d < days.length; d++) {
 			// Define the id of the cell we are going to update.
@@ -232,32 +284,30 @@ function clearDirtyFlags(timesheetId) {
 	needsSaved[timesheetId] = false;
 }
 
-// Update the contract total column.
-function updateContractTotal(timesheetId, contractId, assignmentId) {
-	if (typeof(timesheetId) == "undefined" || typeof(contractId) == "undefined" || typeof(assignmentId) == "undefined")
-		alert("timesheet cell management: updateContractTotal needs timesheet, contract, and assignment ids.");
+// Update the task total column.
+function updateTaskTotal(timesheetId, taskId, assignmentId) {
+	var ts = timesheets[timesheetId];
 
 	// This will keep track of the total.
 	var total = 0;
 
-	// Iterate over the available days.
-	for (var d = 0; d < days.length; d++) {
-		// Build the id for this contract/day.
-		var id = 'cell' + timesheetId + '_' + contractId + '_' + assignmentId + '_' + days[d];
+	// Iterate over all the available days.
+	var date = ts.payPeriod.begin;
+	var end = ts.payPeriod.end;
+	while (date < end) {
+		var day = Ext.Date.format(new Date(date), 'Ymd');
 
-		// Get the cell.
+		// Build the id for the requested assignment/day.
+		var id = 'cell' + ts.id + '_' + taskId + '_' +
+			assignmentId + '_' + day;
 		var cell = document.getElementById(id);
-
-		// Make sure the cell was found.
 		if (cell) {
-			// Get the cell value.
 			var cellVal = parseFloat(cell.value);
-
-			// Make sure it was a valid float value.
 			if (!isNaN(cellVal))
-				// Add to the running total.
 				total += cellVal;
 		}
+
+		date += 24 * 60 * 60 * 1000;
 	}
 
 	// Make sure the correct number of decimals is displayed.
@@ -268,39 +318,46 @@ function updateContractTotal(timesheetId, contractId, assignmentId) {
 	else if (pieces[1].length == 1)
 		total += "0";
 
-	// Get the contract total element to update.
-	var contot = document.getElementById(
-			'contot' + timesheetId + '_' + contractId + '_' + assignmentId);
+	// Get the task total element to update.
+	var tsktot = document.getElementById(
+			'tsktot' + timesheetId + '_' + taskId + '_' + assignmentId);
 
 	// Set the new value.
-	contot.innerHTML = total;
+	tsktot.innerHTML = total;
 }
 
 // Update the day total column.
 function updateDayTotal(timesheetId, day) {
-	if (typeof(timesheetId) == "undefined" || typeof(day) == "undefined")
-		alert("timesheet cell management: updateDayTotal needs timesheet id and day.");
+	var ts = timesheets[timesheetId];
 
 	// This will keep track of the total.
 	var total = 0;
 
-	// Iterate over the available contracts.
-	for (var c = 0; c < assignmentIds.length; c++) {
-		// Build the id for this contract/day.
-		var id = 'cell' + timesheetId + '_' + assignmentIds[c] + '_' + day;
+	// Iterate over the available tasks.
+	for (var c = 0; c < ts.tasks.length; c++) {
+		var task = ts.tasks[c];
 
-		// Get the cell.
+		// Build the id for this task/day.
+		var id = 'cell' + timesheetId + '_' + task.id + '__' + day;
 		var cell = document.getElementById(id);
-
-		// Make sure the cell was found.
 		if (cell) {
-			// Get the cell value.
 			var cellVal = parseFloat(cell.value);
-
-			// Make sure it was a valid float value.
 			if (!isNaN(cellVal))
-				// Add to the running total.
 				total += cellVal;
+		}
+
+		for (var a = 0; a < task.assignments.length; a++) {
+			var assignment = task.assignments[a];
+
+			// Build the id for this assignment/day.
+			var id = 'cell' + timesheetId + '_' + task.id + '_' +
+				assignment.id + '_' + day;
+			var cell = document.getElementById(id);
+			if (cell) {
+				var cellVal = parseFloat(cell.value);
+				if (!isNaN(cellVal))
+					total += cellVal;
+			}
 		}
 	}
 
@@ -331,13 +388,20 @@ function dayToDate(day) {
 
 // Update the weekly total cell.
 function updateWeekTotal(timesheetId, day) {
-	if (typeof(timesheetId) == "undefined" || typeof(day) == "undefined")
-		alert("timesheet cell management: updateWeekTotal needs timesheet id and day.");
+	var ts = timesheets[timesheetId];
 
 	// Make sure we aren't on a weekend.
 	var dayDate = dayToDate(day);
 	if (dayDate.getDay() == 0 || dayDate.getDay() == 6)
 		return;
+
+	var days = [ ];
+	var date = ts.payPeriod.begin;
+	var end = ts.payPeriod.end;
+	while (date < end) {
+		days.push(Ext.Date.format(new Date(date), 'Ymd'));
+		date += 24 * 60 * 60 * 1000;
+	}
 
 	// Iterate over all the available days to find which one changed.
 	var idx = -1;
@@ -358,7 +422,7 @@ function updateWeekTotal(timesheetId, day) {
 	// Determine the total hours for the week.
 	total = 0;
 	for (var d = beginIdx; d <= endIdx; d++) {
-		val = document.getElementById('daytot' + timesheetId + '_' + days[d]).innerHTML;
+		val = document.getElementById('daytot' + ts.id + '_' + days[d]).innerHTML;
 		total += parseFloat(val);
 	}
 
@@ -371,7 +435,7 @@ function updateWeekTotal(timesheetId, day) {
 		total += "0";
 
 	// Get the day total element to update.
-	var weektot = document.getElementById('weektot' + timesheetId + '_' + days[endIdx]);
+	var weektot = document.getElementById('weektot' + ts.id + '_' + days[endIdx]);
 
 	// Set the new value.
 	if (weektot)
@@ -380,29 +444,36 @@ function updateWeekTotal(timesheetId, day) {
 
 // Update the total cell.
 function updateTotal(timesheetId) {
-	if (typeof(timesheetId) == "undefined")
-		alert("timesheet cell management: updateTotal needs a timesheet id.");
+	// Find the timesheet.
+	var ts = timesheets[timesheetId];
 
 	// This will keep track of the total.
 	var total = 0;
 
-	// Iterate over the available contracts.
-	for (var c = 0; c < assignmentIds.length; c++) {
-		// Build the id for this contract total.
-		var id = 'contot' + timesheetId + '_' + assignmentIds[c];
+	// Iterate over the available tasks.
+	for (var c = 0; c < ts.tasks.length; c++) {
+		var task = ts.tasks[c];
 
-		// Get the total element.
-		var contot = document.getElementById(id);
+		// Build the id for this task total.
+		var id = 'tsktot' + timesheetId + '_' + task.id + '_';
+		var tsktot = document.getElementById(id);
+		if (tsktot) {
+			var tsktotVal = parseFloat(tsktot.innerHTML);
+			if (!isNaN(tsktotVal))
+				total += tsktotVal;
+		}
 
-		// Make sure the cell was found.
-		if (contot) {
-			// Get the contract total value.
-			var contotVal = parseFloat(contot.innerHTML);
-
-			// Make sure it was a valid float value.
-			if (!isNaN(contotVal))
-				// Add to the running total.
-				total += contotVal;
+		for (var a = 0; a < task.assignments.length; a++) {
+			var assignment = task.assignments[a];
+			// Build the id for this task total.
+			var id = 'tsktot' + timesheetId + '_' + task.id +
+				'_' + assignment.id;
+			var tsktot = document.getElementById(id);
+			if (tsktot) {
+				var tsktotVal = parseFloat(tsktot.innerHTML);
+				if (!isNaN(tsktotVal))
+					total += tsktotVal;
+			}
 		}
 	}
 
@@ -425,8 +496,12 @@ function updateTotal(timesheetId) {
 function validateCell(cell) {
 	// Make sure the cell value is numeric.
 	if (isNaN(cell.value)) {
-		ui.util.ErrorMessage("Invalid Value",
-				"You must enter a numeric value.");
+		Ext.Msg.show({
+			title: "Invalid Value",
+			msg: "You must enter a numeric value.",
+			buttons: Ext.Msg.OK,
+			icon: Ext.MessageBox.ERROR
+		});
 		cell.focus();
 		cell.value = previousValue;
 		return false;
@@ -434,8 +509,12 @@ function validateCell(cell) {
 
 	// Make sure the cell value is numeric.
 	if (parseFloat(cell.value) > 24) {
-		ui.util.ErrorMessage("Invalid Value",
-				"The maximum number of hours for one day is 24.");
+		Ext.Msg.show({
+			title: "Invalid Value",
+			msg: "The maximum number of hours for one day is 24.",
+			buttons: Ext.Msg.OK,
+			icon: Ext.MessageBox.ERROR
+		});
 		cell.focus();
 		cell.value = previousValue;
 		return false;
@@ -461,8 +540,8 @@ function getTimesheetIdFromCellId(cellId) {
 	return undefined;
 }
 
-// Parse the contract id from the provided cell id.
-function getContractIdFromCellId(cellId) {
+// Parse the task id from the provided cell id.
+function getTaskIdFromCellId(cellId) {
 	// Find the underscore character.
 	var us = cellId.indexOf('_');
 
@@ -471,14 +550,14 @@ function getContractIdFromCellId(cellId) {
 		return undefined;
 
 	// Start after the underscore.
-	contractId = cellId.substring(us + 1);
+	taskId = cellId.substring(us + 1);
 
 	// Find the next underscore character.
-	var us = contractId.indexOf('_');
+	var us = taskId.indexOf('_');
 
 	// Use only up to the underscore.
 	if (us > 0)
-		return contractId.substring(0, us);
+		return taskId.substring(0, us);
 
 	// Could not find it.
 	return undefined;

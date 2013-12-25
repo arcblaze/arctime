@@ -27,14 +27,18 @@ INSERT INTO `tasks` (`id`, `company_id`, `description`, `job_code`, `admin`, `ac
 (7, 1, 'Jury Duty', 'ArcBlaze:JURY', 1, 1),
 (8, 1, 'Bereavement', 'ArcBlaze:BER', 1, 1),
 (9, 1, 'Example Task', 'Example:TASK1', 0, 1),
-(10, 1, 'Inactive Task', 'Example:INACTIVE', 0, 0);
+(10, 1, 'Another Task', 'Another:TASK2', 0, 1),
+(11, 1, 'Third Task', 'Third:TASK3', 0, 1),
+(12, 1, 'Inactive Task', 'Example:INACTIVE', 0, 0);
 
 
 INSERT INTO `assignments` (`id`, `company_id`, `task_id`, `user_id`, `labor_cat`, `item_name`, `begin`, `end`) VALUES
 (1, 1, 9, 1, 'LCAT1', 'Mike Day:Mike - TASK1 LCAT1', '2013-12-01', '2014-12-31'),
 (2, 1, 9, 1, 'LCAT2', 'Mike Day:Mike - TASK1 LCAT2', '2013-12-01', '2014-12-31'),
 (3, 1, 10, 1, 'LCAT', 'Mike Day:Mike - TASK2 LCAT', '2013-12-01', '2014-12-31'),
-(4, 1, 9, 2, 'LCAT1', 'Example Last:Example - TASK1 LCAT1', '2013-12-01', '2014-12-31');
+(4, 1, 11, 1, 'LCAT', 'Mike Day:Mike - TASK3 LCAT', '2013-12-20', '2013-12-29'),
+(5, 1, 12, 1, 'LCAT', 'Mike Day:Mike - INACTIVE LCAT', '2013-12-01', '2014-12-31'),
+(6, 1, 9, 2, 'LCAT1', 'Example Last:Example - TASK1 LCAT1', '2013-12-01', '2014-12-31');
 
 
 INSERT INTO `pay_periods` (`company_id`, `begin`, `end`, `type`) VALUES
@@ -44,9 +48,13 @@ INSERT INTO `pay_periods` (`company_id`, `begin`, `end`, `type`) VALUES
 
 
 INSERT INTO `bills` (`id`, `assignment_id`, `task_id`, `user_id`, `day`, `hours`, `timestamp`) VALUES
-(1, 1, 9, 1, '2013-12-01', 5.5, '2013-11-01 11:50:19'),
-(2, 2, 9, 1, '2013-12-01', 2.5, '2013-11-01 12:26:06'),
-(3, NULL, 1, 1, '2013-12-02', 8, '2013-11-01 12:37:00');
+(1, 1, 9, 1, '2013-12-20', 5.5, '2013-11-01 11:50:19'),
+(2, 2, 9, 1, '2013-12-21', 2.5, '2013-11-01 12:26:06'),
+(3, 3, 10, 1, '2013-12-22', 2.55, '2013-11-01 12:26:06'),
+(4, 4, 11, 1, '2013-12-23', 5, '2013-11-01 12:26:06'),
+(5, NULL, 11, 1, '2013-12-24', 8, '2013-11-01 12:26:06'),
+(6, NULL, 3, 1, '2013-12-25', 8, '2013-11-01 12:37:00'),
+(7, NULL, 1, 1, '2013-12-26', 8, '2013-11-01 12:37:00');
 
 
 INSERT INTO `timesheets` (`id`, `company_id`, `user_id`, `pp_begin`, `completed`, `approved`, `verified`, `exported`, `approver_id`, `verifier_id`) VALUES
