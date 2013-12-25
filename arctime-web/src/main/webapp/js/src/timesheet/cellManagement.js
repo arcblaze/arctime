@@ -17,7 +17,7 @@ function initCellManagement(ts) {
 		// Iterate over all the available days.
 		var date = ts[t].payPeriod.begin;
 		var end = ts[t].payPeriod.end;
-		while (date < end) {
+		while (date <= end) {
 			var day = Ext.Date.format(new Date(date), 'Ymd');
 
 			// Iterate over all the available tasks.
@@ -69,7 +69,7 @@ function getCellData(timesheetId) {
 	// Iterate over all the available days.
 	var date = ts.payPeriod.begin;
 	var end = ts.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		var day = Ext.Date.format(new Date(date), 'Ymd');
 
 		// Iterate over all the available tasks.
@@ -269,7 +269,7 @@ function clearDirtyFlags(timesheetId) {
 	// Iterate over all the available days.
 	var date = ts.payPeriod.begin;
 	var end = ts.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		var day = Ext.Date.format(new Date(date), 'Ymd');
 
 		// Iterate over all the available tasks.
@@ -309,7 +309,7 @@ function updateTaskTotal(timesheetId, taskId, assignmentId) {
 	// Iterate over all the available days.
 	var date = ts.payPeriod.begin;
 	var end = ts.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		var day = Ext.Date.format(new Date(date), 'Ymd');
 
 		// Build the id for the requested assignment/day.
@@ -413,7 +413,7 @@ function updateWeekTotal(timesheetId, day) {
 	var days = [ ];
 	var date = ts.payPeriod.begin;
 	var end = ts.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		days.push(Ext.Date.format(new Date(date), 'Ymd'));
 		date += 24 * 60 * 60 * 1000;
 	}

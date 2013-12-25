@@ -56,7 +56,7 @@ public class SupervisorsResource extends BaseResource {
 			UserDao dao = DaoFactory.getUserDao();
 			Set<User> supervisors = dao.getSupervisors(
 					currentUser.getCompanyId(), currentUser.getId(), null);
-			log.debug("  Found supervisors: {}", supervisors.size());
+			log.debug("Found supervisors: {}", supervisors.size());
 
 			UserSupervisors response = new UserSupervisors();
 			response.supervisors = supervisors;

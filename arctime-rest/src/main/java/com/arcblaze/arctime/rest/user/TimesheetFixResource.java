@@ -60,6 +60,8 @@ public class TimesheetFixResource extends BaseResource {
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/user/timesheet/" + id + "/fix")) {
 			User currentUser = (User) security.getUserPrincipal();
+
+			log.debug("Getting current timesheet");
 			TimesheetDao dao = DaoFactory.getTimesheetDao();
 			Timesheet timesheet = dao.get(currentUser.getCompanyId(), id);
 
@@ -69,6 +71,7 @@ public class TimesheetFixResource extends BaseResource {
 				throw forbidden(currentUser, "Unable to fix timesheet that "
 						+ "you do not own.");
 
+			log.debug("Reopening timesheet");
 			dao.complete(timesheet.getCompanyId(), false, timesheet.getId());
 			DaoFactory.getAuditLogDao().add(
 					timesheet.getCompanyId(),

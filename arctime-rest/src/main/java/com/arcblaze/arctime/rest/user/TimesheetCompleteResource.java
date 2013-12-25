@@ -76,6 +76,8 @@ public class TimesheetCompleteResource extends BaseResource {
 				"/user/timesheet/" + id + "/complete")) {
 			Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
 					Arrays.asList(PAY_PERIODS, TASKS, BILLS));
+
+			log.debug("Retrieving current timesheet");
 			User currentUser = (User) security.getUserPrincipal();
 			TimesheetDao dao = DaoFactory.getTimesheetDao();
 			Timesheet timesheet = dao.get(currentUser.getCompanyId(), id,
@@ -87,14 +89,17 @@ public class TimesheetCompleteResource extends BaseResource {
 				throw forbidden(currentUser, "Unable to save timesheet data "
 						+ "into a timesheet you do not own.");
 
+			log.debug("Saving timesheet data");
 			TimesheetSaveResource.saveTimesheet(timesheet, data);
 
+			log.debug("Marking timesheet as complete");
 			dao.complete(timesheet.getCompanyId(), true, timesheet.getId());
 			DaoFactory.getAuditLogDao().add(
 					timesheet.getCompanyId(),
 					new AuditLog().setTimesheetId(timesheet.getId()).setLog(
 							"Timesheet completed"));
 
+			log.debug("Finding next pay period");
 			PayPeriod nextPayPeriod = timesheet.getPayPeriod().getNext();
 			PayPeriodDao ppdao = DaoFactory.getPayPeriodDao();
 			if (!ppdao.exists(timesheet.getCompanyId(),
@@ -102,12 +107,18 @@ public class TimesheetCompleteResource extends BaseResource {
 				ppdao.add(timesheet.getCompanyId(), nextPayPeriod);
 			}
 
-			Timesheet next = new Timesheet();
-			next.setCompanyId(currentUser.getCompanyId());
-			next.setUserId(currentUser.getId());
-			next.setBegin(nextPayPeriod.getBegin());
-			dao.add(currentUser.getCompanyId(), next);
-			log.debug("  Created next timesheet: {}", next);
+			log.debug("Finding next timesheet");
+			Timesheet next = dao.getForUser(currentUser.getCompanyId(),
+					currentUser.getId(), nextPayPeriod, timesheetEnrichments);
+			if (next == null) {
+				log.debug("Creating next timesheet");
+				next = new Timesheet();
+				next.setCompanyId(currentUser.getCompanyId());
+				next.setUserId(currentUser.getId());
+				next.setBegin(nextPayPeriod.getBegin());
+				dao.add(currentUser.getCompanyId(), next);
+				log.debug("Created next timesheet: {}", next);
+			}
 
 			return new CompleteResponse();
 		} catch (DatabaseException dbException) {

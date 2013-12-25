@@ -72,7 +72,7 @@ public class TimesheetNextResource extends BaseResource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public TimesheetResponse next(@Context SecurityContext security,
 			@PathParam("date") String date) {
-		log.debug("Current timesheet request");
+		log.debug("Next timesheet request");
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/user/timesheet/next/" + date)) {
 			Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
@@ -81,6 +81,7 @@ public class TimesheetNextResource extends BaseResource {
 
 			User currentUser = (User) security.getUserPrincipal();
 
+			log.debug("Getting next pay period");
 			Date begin = DateUtils.parseDate(date, FMT);
 			PayPeriodDao ppdao = DaoFactory.getPayPeriodDao();
 			PayPeriod payPeriod = ppdao.get(currentUser.getCompanyId(), begin);
@@ -91,19 +92,20 @@ public class TimesheetNextResource extends BaseResource {
 			if (!ppdao.exists(currentUser.getCompanyId(), next.getBegin()))
 				ppdao.add(currentUser.getCompanyId(), next);
 
+			log.debug("Getting next timesheet");
 			TimesheetDao dao = DaoFactory.getTimesheetDao();
 			Timesheet timesheet = dao.getForUser(currentUser.getCompanyId(),
 					currentUser.getId(), next, timesheetEnrichments);
-			log.debug("  Found timesheet: {}", timesheet);
+			log.debug("Found timesheet: {}", timesheet);
 
 			if (timesheet == null) {
-				log.debug("  Timesheet not found, creating it...");
+				log.debug("Timesheet not found, creating it...");
 				timesheet = new Timesheet();
 				timesheet.setCompanyId(currentUser.getCompanyId());
 				timesheet.setUserId(currentUser.getId());
 				timesheet.setBegin(next.getBegin());
 				dao.add(currentUser.getCompanyId(), timesheet);
-				log.debug("  Created timesheet: {}", timesheet);
+				log.debug("Created timesheet: {}", timesheet);
 
 				// Retrieve an enriched version of the newly created timesheet.
 				timesheet = dao.getForUser(currentUser.getCompanyId(),

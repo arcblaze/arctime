@@ -81,6 +81,8 @@ public class TimesheetSaveResource extends BaseResource {
 				"/user/timesheet/" + id + "/save")) {
 			Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
 					Arrays.asList(PAY_PERIODS, TASKS, BILLS));
+
+			log.debug("Retrieving current timesheet");
 			User currentUser = (User) security.getUserPrincipal();
 			TimesheetDao dao = DaoFactory.getTimesheetDao();
 			Timesheet timesheet = dao.get(currentUser.getCompanyId(), id,
@@ -92,6 +94,7 @@ public class TimesheetSaveResource extends BaseResource {
 				throw forbidden(currentUser, "Unable to save timesheet data "
 						+ "into a timesheet you do not own.");
 
+			log.debug("Saving timesheet data");
 			saveTimesheet(timesheet, data);
 
 			return new SaveResponse();

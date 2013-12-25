@@ -231,7 +231,7 @@ function getDateHeaders(user, timesheet) {
 
 	var date = timesheet.payPeriod.begin;
 	var end = timesheet.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		var clazz = 'header-' +
 			(isWeekend(date) ? "weekend" :
 			(isHoliday(timesheet, date) ? "holiday" : "day"));
@@ -254,7 +254,7 @@ function getDayOfWeekHeaders(user, timesheet) {
 
 	var date = timesheet.payPeriod.begin;
 	var end = timesheet.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		var clazz = 'header-day-' +
 			(isWeekend(date) ? "weekend" :
 			(isHoliday(timesheet, date) ? "holiday" : "day"));
@@ -296,7 +296,7 @@ function getAdminTaskSeparator(user, timesheet) {
 	var cols = 3;
 	var date = timesheet.payPeriod.begin;
 	var end = timesheet.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		cols++;
 		date += 24 * 60 * 60 * 1000;
 	}
@@ -321,7 +321,7 @@ function addTimesheetRow(user, timesheet, task, assignmentIndex) {
 
 	var date = timesheet.payPeriod.begin;
 	var end = timesheet.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		var clazz =
 			(isWeekend(date) ? "weekend" :
 			(isHoliday(timesheet, date) ? "holiday" : "day"));
@@ -336,22 +336,25 @@ function addTimesheetRow(user, timesheet, task, assignmentIndex) {
 		var expired = isExpired(task, assignment, date);
 		var editable = canEdit(task, date);
 
+		var id = 'cell' + timesheet.id + '_' + task.id + '_' +
+			(assignment ? assignment.id : '') + '_' +
+			Ext.Date.format(new Date(date), 'Ymd');
+
 		if (expired) {
 			html += '<td class="' + clazz + '-unavailable">';
 			html += '<img src="/img/bullet_red.png" border="0" ';
 			html += 'alt="Task unavailable" title="Task unavailable"/>';
 			html += '</td>';
 		} else if (edit && editable) {
-			var id = 'cell' + timesheet.id + '_' + task.id + '_' +
-				(assignment ? assignment.id : '') + '_' +
-				Ext.Date.format(new Date(date), 'Ymd');
-
 			html += '<td id="' + id + 'td" class="' + clazz + '">';
 			html += '<input id="' + id + '" type="text" ';
 			html += 'class="' + clazz + '-input" value="' + hours + '">';
 			html += '</td>';
 		} else {
-			html += '<td class="' + clazz + '">' + hours + '</td>';
+			html += '<td id="' + id + 'td" class="' + clazz + '">';
+			html += '<input id="' + id + '" type="text" ';
+			html += 'class="' + clazz + '-input" value="' + hours + '" readonly>';
+			html += '</td>';
 		}
 
 		date += 24 * 60 * 60 * 1000;
@@ -389,7 +392,7 @@ function getDailyTotals(user, timesheet) {
 
 	var date = timesheet.payPeriod.begin;
 	var end = timesheet.payPeriod.end;
-	while (date < end) {
+	while (date <= end) {
 		html += '<td id="daytot' + timesheet.id + '_' +
 			Ext.Date.format(new Date(date), 'Ymd') + '" ';
 		html += 'class="daily-total">&nbsp;</td>';
@@ -409,7 +412,7 @@ function getWeeklyTotals(user, timesheet) {
 	var end = timesheet.payPeriod.end;
 	var colspan = 0;
 
-	while (date < end) {
+	while (date <= end) {
 		var day = Ext.Date.format(new Date(date), 'D');
 
 		if (day == 'Fri') {

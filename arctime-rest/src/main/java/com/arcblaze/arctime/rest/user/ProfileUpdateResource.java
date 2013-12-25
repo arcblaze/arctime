@@ -73,8 +73,6 @@ public class ProfileUpdateResource extends BaseResource {
 		if (StringUtils.isBlank(email))
 			throw badRequest("The email parameter must be specified.");
 
-		// NOTE: The suffix and password values can be blank.
-
 		// NOTE: No attempt at validating the email address is intentional.
 	}
 
@@ -111,7 +109,7 @@ public class ProfileUpdateResource extends BaseResource {
 			UserDao dao = DaoFactory.getUserDao();
 			User user = dao
 					.get(currentUser.getCompanyId(), currentUser.getId());
-			log.debug("  Found user: {}", user);
+			log.debug("Found user: {}", user);
 
 			if (user == null)
 				throw notFound("The current user was not found.");
@@ -121,15 +119,15 @@ public class ProfileUpdateResource extends BaseResource {
 			user.setLogin(login);
 			user.setEmail(email);
 			user.setActive(currentUser.isActive());
-			log.debug("  Modified user: {}", user);
+			log.debug("Modified user: {}", user);
 
 			dao.update(currentUser.getCompanyId(), user);
 
 			if (StringUtils.isNotBlank(password)) {
-				log.debug("  Updating user password");
+				log.debug("Updating user password");
 				String hashedPass = new Password().hash(password);
 				dao.setPassword(currentUser.getId(), hashedPass);
-				log.debug("  Password updated successfully");
+				log.debug("Password updated successfully");
 			}
 
 			return new ProfileUpdate();

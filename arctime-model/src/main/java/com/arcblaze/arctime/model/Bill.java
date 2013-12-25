@@ -103,7 +103,6 @@ public class Bill implements Comparable<Bill> {
 	/**
 	 * @return whether this bill includes an assignment id
 	 */
-	@XmlTransient
 	public boolean hasAssignmentId() {
 		return this.assignmentId != null;
 	}
@@ -325,7 +324,6 @@ public class Bill implements Comparable<Bill> {
 	/**
 	 * @return whether this bill contains a reason why the hours were modified.
 	 */
-	@XmlTransient
 	public boolean hasReason() {
 		return this.reason != null;
 	}

@@ -73,10 +73,10 @@ public class TimesheetCurrentResource extends BaseResource {
 			Timesheet timesheet = dao.getLatestForUser(
 					currentUser.getCompanyId(), currentUser.getId(),
 					timesheetEnrichments);
-			log.debug("  Found timesheet: {}", timesheet);
+			log.debug("Found timesheet: {}", timesheet);
 
 			if (timesheet == null) {
-				log.debug("  Timesheet not found, creating it...");
+				log.debug("Timesheet not found, creating it...");
 				PayPeriod payPeriod = DaoFactory.getPayPeriodDao().getCurrent(
 						currentUser.getCompanyId());
 				if (payPeriod == null)
@@ -87,7 +87,7 @@ public class TimesheetCurrentResource extends BaseResource {
 				timesheet.setUserId(currentUser.getId());
 				timesheet.setBegin(payPeriod.getBegin());
 				dao.add(currentUser.getCompanyId(), timesheet);
-				log.debug("  Created timesheet: {}", timesheet);
+				log.debug("Created timesheet: {}", timesheet);
 
 				// Retrieve an enriched version of the newly created timesheet.
 				timesheet = dao.getLatestForUser(currentUser.getCompanyId(),

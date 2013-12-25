@@ -41,12 +41,13 @@ import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
 /**
- * The REST end-point for retrieving the timesheet for the previous pay period.
+ * The REST end-point for retrieving the timesheet for a custom-specified pay
+ * period.
  */
-@Path("/user/timesheet/previous/{date}")
-public class TimesheetPreviousResource extends BaseResource {
+@Path("/user/timesheet/custom/{date}")
+public class TimesheetCustomResource extends BaseResource {
 	private final static Logger log = LoggerFactory
-			.getLogger(TimesheetPreviousResource.class);
+			.getLogger(TimesheetCustomResource.class);
 
 	private final static String[] FMT = { "yyyyMMdd" };
 
@@ -63,54 +64,40 @@ public class TimesheetPreviousResource extends BaseResource {
 	 * @param security
 	 *            the security information associated with the request
 	 * @param date
-	 *            the date of the current pay period (in yyyyMMdd format), used
-	 *            to find the previous pay period
+	 *            a date within the pay period of interest (in yyyyMMdd format)
 	 * 
-	 * @return the previous timesheet response
+	 * @return the custom timesheet response
 	 */
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public TimesheetResponse previous(@Context SecurityContext security,
 			@PathParam("date") String date) {
-		log.debug("Previous timesheet request");
+		log.debug("Custom timesheet request");
 		try (Timer.Context timer = getTimer(this.servletContext,
-				"/user/timesheet/previous/" + date)) {
+				"/user/timesheet/custom/" + date)) {
 			Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
 					Arrays.asList(PAY_PERIODS, AUDIT_LOGS, HOLIDAYS, USERS,
 							TASKS, BILLS));
 
 			User currentUser = (User) security.getUserPrincipal();
 
-			log.debug("Getting previous pay period");
-			Date begin = DateUtils.parseDate(date, FMT);
+			log.debug("Getting requested pay period");
+			Date day = DateUtils.parseDate(date, FMT);
 			PayPeriodDao ppdao = DaoFactory.getPayPeriodDao();
-			PayPeriod payPeriod = ppdao.get(currentUser.getCompanyId(), begin);
+			PayPeriod payPeriod = ppdao.getContaining(
+					currentUser.getCompanyId(), day);
 			if (payPeriod == null)
 				throw notFound("The specified pay period was not found: "
 						+ date);
-			PayPeriod previous = payPeriod.getPrevious();
-			if (!ppdao.exists(currentUser.getCompanyId(), previous.getBegin()))
-				ppdao.add(currentUser.getCompanyId(), previous);
 
-			log.debug("Getting previous timesheet");
+			log.debug("Getting timesheet");
 			TimesheetDao dao = DaoFactory.getTimesheetDao();
 			Timesheet timesheet = dao.getForUser(currentUser.getCompanyId(),
-					currentUser.getId(), previous, timesheetEnrichments);
+					currentUser.getId(), payPeriod, timesheetEnrichments);
 			log.debug("Found timesheet: {}", timesheet);
 
-			if (timesheet == null) {
-				log.debug("Timesheet not found, creating it...");
-				timesheet = new Timesheet();
-				timesheet.setCompanyId(currentUser.getCompanyId());
-				timesheet.setUserId(currentUser.getId());
-				timesheet.setBegin(previous.getBegin());
-				dao.add(currentUser.getCompanyId(), timesheet);
-				log.debug("Created timesheet: {}", timesheet);
-
-				// Retrieve an enriched version of the newly created timesheet.
-				timesheet = dao.getForUser(currentUser.getCompanyId(),
-						currentUser.getId(), previous, timesheetEnrichments);
-			}
+			if (timesheet == null)
+				throw notFound("The requested timesheet was not found");
 
 			TimesheetResponse response = new TimesheetResponse();
 			response.timesheet = timesheet;

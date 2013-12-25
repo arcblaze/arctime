@@ -12,10 +12,6 @@ function choosePayPeriod(divId) {
 			picker.hide();
 			var date = Ext.Date.format(chosenDate, 'Ymd');
 
-			// Show the progress bar while the timesheet is loaded.
-			Ext.Msg.progress('Loading Timesheet',
-				'Please wait while the specified timesheet is loaded...');
-
 			// Create a new ServerIO object.
 			var io = new util.io.ServerIO();
 
