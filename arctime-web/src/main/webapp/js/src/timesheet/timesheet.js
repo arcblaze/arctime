@@ -11,24 +11,51 @@ function retrieveCurrentTimesheet(divId, user) {
 
 		// Invoked on a successful completion.
 		mysuccess: function(data) {
-			// Build the timesheet UI.
 			displayTimesheet(divId, user, data.timesheet);
-
-			// Start the inactivity timer.
 			startTimer();
-
-			// Initialize the cell management.
 			initCellManagement([data.timesheet]);
 		}
 	});
 }
 
-function showPreviousTimesheet() {
-	alert("TODO");
+function showPreviousTimesheet(divId, currentBegin) {
+	var date = Ext.Date.format(new Date(currentBegin), 'Ymd');
+
+	// Create a new ServerIO object.
+	var io = new util.io.ServerIO();
+
+	// Submit the form.
+	io.doAjaxRequest({
+		// Set the URL.
+		url: '/rest/user/timesheet/previous/' + date,
+
+		// Invoked on a successful completion.
+		mysuccess: function(data) {
+			displayTimesheet(divId, user, data.timesheet);
+			initCellManagement([data.timesheet]);
+			resetTimer();
+		}
+	});
 }
 
-function showNextTimesheet() {
-	alert("TODO");
+function showNextTimesheet(divId, currentBegin) {
+	var date = Ext.Date.format(new Date(currentBegin), 'Ymd');
+
+	// Create a new ServerIO object.
+	var io = new util.io.ServerIO();
+
+	// Submit the form.
+	io.doAjaxRequest({
+		// Set the URL.
+		url: '/rest/user/timesheet/next/' + date,
+
+		// Invoked on a successful completion.
+		mysuccess: function(data) {
+			displayTimesheet(divId, user, data.timesheet);
+			resetTimer();
+			initCellManagement([data.timesheet]);
+		}
+	});
 }
 
 // Display the provided timesheet on the UI.
@@ -47,7 +74,7 @@ function displayTimesheet(divId, user, timesheet) {
 	html += '  </tr>';
 	html += '  <tr>';
 	html += '    <td>';
-	html += getTimesheetData(user, timesheet);
+	html += getTimesheetData(divId, user, timesheet);
 	html += '    </td>';
 	html += '  </tr>';
 	html += '  <tr>';
@@ -136,11 +163,11 @@ function getTimesheetStatus(user, timesheet) {
 	return html;
 }
 
-function getTimesheetData(user, timesheet) {
+function getTimesheetData(divId, user, timesheet) {
 	var html = '';
 	html += '<table id="timesheet-data-table">';
 	html += '  <tr>';
-	html += getPayPeriodNavigation(user, timesheet);
+	html += getPayPeriodNavigation(divId, user, timesheet);
 	html += getDateHeaders(user, timesheet);
 	html += '  </tr>';
 	html += '  <tr>';
@@ -157,16 +184,22 @@ function getTimesheetData(user, timesheet) {
 	return html;
 }
 
-function getPayPeriodNavigation(user, timesheet) {
+function getPayPeriodNavigation(divId, user, timesheet) {
 	var begin = Ext.Date.format(new Date(timesheet.payPeriod.begin), 'M j');
 	var end = Ext.Date.format(new Date(timesheet.payPeriod.end), 'M j');
+
+	var prevLink = 'showPreviousTimesheet(\'' + divId + '\', ' +
+			timesheet.payPeriod.begin + ');';
+	var nextLink = 'showNextTimesheet(\'' + divId + '\', ' +
+			timesheet.payPeriod.begin + ');';
+	var chooseLink = 'choosePayPeriod(\'' + divId + '\');';
 
 	var html = '';
 	html += '<td id="pay-period-nav" colspan="2">';
 	html += '  <table id="nav-table">';
 	html += '    <tr>';
 	html += '      <td id="prev">';
-	html += '        <a href="javascript:showPreviousTimesheet();"';
+	html += '        <a href="javascript:' + prevLink + '"';
 	html += '           title="Show the previous pay period"><img';
 	html += '           src="/img/prev.png" border="0"';
 	html += '           alt="Show the previous pay period"/></a>';
@@ -175,13 +208,13 @@ function getPayPeriodNavigation(user, timesheet) {
 	html += '        ' + begin + ' - ' + end;
 	html += '      </td>';
 	html += '      <td id="next">';
-	html += '        <a href="javascript:showNextTimesheet();"';
+	html += '        <a href="javascript:' + nextLink + '"';
 	html += '           title="Show the next pay period"><img';
 	html += '           src="/img/next.png" border="0"';
 	html += '           alt="Show the next pay period"/></a>';
 	html += '      </td>';
 	html += '      <td id="calendar">';
-	html += '        <a href="javascript:choosePayPeriod();"';
+	html += '        <a href="javascript:' + chooseLink + '"';
 	html += '           title="Choose a pay period to view"><img';
 	html += '           src="/img/calendar.png" border="0"';
 	html += '           alt="Choose a pay period to view"/></a>';

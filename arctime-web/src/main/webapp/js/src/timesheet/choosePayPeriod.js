@@ -1,6 +1,6 @@
 
 // Invoked when the user wants to choose a new timesheet pay period.
-function choosePayPeriod() {
+function choosePayPeriod(divId) {
 	// Create and display the date picker.
 	new Ext.DatePicker({
 		// Where to draw the picker.
@@ -10,14 +10,27 @@ function choosePayPeriod() {
 		handler: function(picker, chosenDate) {
 			// Hide the date picker.
 			picker.hide();
+			var date = Ext.Date.format(chosenDate, 'Ymd');
 
 			// Show the progress bar while the timesheet is loaded.
 			Ext.Msg.progress('Loading Timesheet',
 				'Please wait while the specified timesheet is loaded...');
 
-			// Go show the chosen pay period.
-			document.location = '/user/timesheet/view/' +
-				chosenDate.format('Y-m-d');
+			// Create a new ServerIO object.
+			var io = new util.io.ServerIO();
+
+			// Submit the form.
+			io.doAjaxRequest({
+				// Set the URL.
+				url: '/rest/user/timesheet/custom/' + date,
+
+				// Invoked on a successful completion.
+				mysuccess: function(data) {
+					displayTimesheet(divId, user, data.timesheet);
+					startTimer();
+					initCellManagement([data.timesheet]);
+				}
+			});
 		}
 	}).show();
 }

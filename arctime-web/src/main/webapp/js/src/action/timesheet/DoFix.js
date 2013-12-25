@@ -40,7 +40,7 @@ action.timesheet.DoFix = function(timesheetId) {
 							displayTimesheet('timesheet-div', user, ts);
 
 							// Start the inactivity timer.
-							startTimer();
+							resetTimer();
 
 							// Initialize the cell management.
 							initCellManagement([ts]);

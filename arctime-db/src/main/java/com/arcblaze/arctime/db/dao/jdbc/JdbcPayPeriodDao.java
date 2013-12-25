@@ -41,6 +41,36 @@ public class JdbcPayPeriodDao implements PayPeriodDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public boolean exists(Integer companyId, Date begin)
+			throws DatabaseException {
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+		if (begin == null)
+			throw new IllegalArgumentException("Invalid null begin date");
+
+		String sql = "SELECT COUNT(*) FROM pay_periods WHERE "
+				+ "company_id = ? AND begin = ?";
+
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
+			ps.setDate(2, new java.sql.Date(begin.getTime()));
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return rs.getInt(1) > 0;
+
+				return false;
+			}
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public PayPeriod get(Integer companyId, Date begin)
 			throws DatabaseException {
 		if (companyId == null)

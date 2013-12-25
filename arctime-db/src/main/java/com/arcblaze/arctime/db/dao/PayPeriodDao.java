@@ -13,6 +13,23 @@ public interface PayPeriodDao {
 	/**
 	 * @param companyId
 	 *            the unique id of the company for which pay period information
+	 *            should be searched
+	 * @param begin
+	 *            the begin date of the pay period to be searched
+	 * 
+	 * @return whether the requested pay period exists
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided company or begin date is invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public boolean exists(Integer companyId, Date begin)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which pay period information
 	 *            should be retrieved
 	 * @param begin
 	 *            the begin date of the pay period to be retrieved

@@ -365,11 +365,9 @@ public class TimesheetCurrentResourceTest {
 		dao.add(company.getId(), timesheet);
 
 		AuditLog al1 = new AuditLog().setCompanyId(company.getId())
-				.setTimesheetId(timesheet.getId()).setTimestamp(new Date())
-				.setLog("Log message 1");
+				.setTimesheetId(timesheet.getId()).setLog("Log message 1");
 		AuditLog al2 = new AuditLog().setCompanyId(company.getId())
-				.setTimesheetId(timesheet.getId()).setTimestamp(new Date())
-				.setLog("Log message 2");
+				.setTimesheetId(timesheet.getId()).setLog("Log message 2");
 		DaoFactory.getAuditLogDao().add(company.getId(), al1, al2);
 
 		TimesheetCurrentResource resource = new TimesheetCurrentResource();

@@ -38,7 +38,8 @@ action.timesheet.DoComplete = function(timesheetId) {
 
 						// Invoked on a successful completion.
 						mysuccess: function(data) {
-							alert("TODO");
+							retrieveCurrentTimesheet('timesheet-div', user);
+							resetTimer();
 						}
 					});
 				});

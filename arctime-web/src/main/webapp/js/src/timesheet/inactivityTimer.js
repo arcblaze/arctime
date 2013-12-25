@@ -11,8 +11,13 @@ var timerId = undefined;
 
 // Used to start the timer.
 function startTimer() {
-	// Do the inactivity update.
-	updateInactivity();
+	if (timerId) {
+		// Just update the counter.
+		resetTimer();
+	} else {
+		// Do the inactivity update.
+		updateInactivity();
+	}
 }
 
 // Reset the timer.

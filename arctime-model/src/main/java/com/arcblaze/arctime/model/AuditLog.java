@@ -35,9 +35,9 @@ public class AuditLog implements Comparable<AuditLog> {
 	private String log;
 
 	/**
-	 * The timestamp when the audited activity took place.
+	 * The time stamp when the audited activity took place.
 	 */
-	private Date timestamp;
+	private Date timestamp = new Date();
 
 	/**
 	 * Default constructor.
@@ -128,7 +128,7 @@ public class AuditLog implements Comparable<AuditLog> {
 	}
 
 	/**
-	 * @return the timestamp when the audited activity took place
+	 * @return the time stamp when the audited activity took place
 	 */
 	@XmlElement
 	public Date getTimestamp() {
@@ -143,7 +143,7 @@ public class AuditLog implements Comparable<AuditLog> {
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the provided timestamp value is invalid
+	 *             if the provided time stamp value is invalid
 	 */
 	public AuditLog setTimestamp(Date timestamp) {
 		if (timestamp == null)

@@ -5,7 +5,6 @@ import static com.arcblaze.arctime.model.Enrichment.PAY_PERIODS;
 import static com.arcblaze.arctime.model.Enrichment.TASKS;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -71,7 +70,7 @@ public class TimesheetSaveResource extends BaseResource {
 	 * @param data
 	 *            the updated timesheet data to save
 	 * 
-	 * @return the current timesheet response
+	 * @return the timesheet save response
 	 */
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -79,7 +78,7 @@ public class TimesheetSaveResource extends BaseResource {
 			@PathParam("id") Integer id, @FormParam("data") String data) {
 		log.debug("Timesheet save request");
 		try (Timer.Context timer = getTimer(this.servletContext,
-				"/user/timesheet/save")) {
+				"/user/timesheet/" + id + "/save")) {
 			Set<Enrichment> timesheetEnrichments = new LinkedHashSet<>(
 					Arrays.asList(PAY_PERIODS, TASKS, BILLS));
 			User currentUser = (User) security.getUserPrincipal();
@@ -208,8 +207,7 @@ public class TimesheetSaveResource extends BaseResource {
 
 		return new AuditLog().setLog(log.toString())
 				.setCompanyId(task.getCompanyId())
-				.setTimesheetId(timesheet.getId())
-				.setTimestamp(updated.getTimestamp());
+				.setTimesheetId(timesheet.getId());
 	}
 
 	/**
@@ -245,8 +243,7 @@ public class TimesheetSaveResource extends BaseResource {
 
 		return new AuditLog().setLog(log.toString())
 				.setCompanyId(task.getCompanyId())
-				.setTimesheetId(timesheet.getId())
-				.setTimestamp(bill.getTimestamp());
+				.setTimesheetId(timesheet.getId());
 	}
 
 	/**
@@ -283,6 +280,6 @@ public class TimesheetSaveResource extends BaseResource {
 
 		return new AuditLog().setLog(log.toString())
 				.setCompanyId(task.getCompanyId())
-				.setTimesheetId(timesheet.getId()).setTimestamp(new Date());
+				.setTimesheetId(timesheet.getId());
 	}
 }
