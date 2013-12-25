@@ -3,6 +3,7 @@ package com.arcblaze.arctime.model;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -338,6 +339,22 @@ public class Task implements Comparable<Task> {
 	@XmlElement(name = "bill")
 	public Set<Bill> getBills() {
 		return Collections.unmodifiableSet(this.bills);
+	}
+
+	/**
+	 * @param day
+	 *            the day for which to search for a bill in this task
+	 * 
+	 * @return the requested bill if available, {@code null} otherwise
+	 */
+	public Bill getBill(Date day) {
+		if (day == null)
+			return null;
+
+		for (Bill bill : getBills())
+			if (day.equals(bill.getDay()))
+				return bill;
+		return null;
 	}
 
 	/**

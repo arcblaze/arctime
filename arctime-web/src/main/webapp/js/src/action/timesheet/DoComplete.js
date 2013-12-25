@@ -28,25 +28,17 @@ action.timesheet.DoComplete = function(timesheetId) {
 					// Submit the form.
 					io.doAjaxRequest({
 						// Set the URL.
-						url: '/user/timesheet/complete',
+						url: '/rest/user/timesheet/' + timesheetId + '/complete',
 
 						// Set the request parameters.
 						params: {
-							// Add the current timesheet id.
-							id: timesheetId,
-
 							// Add the timesheet data.
 							data: getCellData(timesheetId)
 						},
 
 						// Invoked on a successful completion.
 						mysuccess: function(data) {
-							// Clear all the dirty flags on the timesheet.
-							clearDirtyFlags(timesheetId);
-
-							// Go to the next pay period.
-							document.location = '/user/timesheet/next/' +
-								data.payPeriod;
+							alert("TODO");
 						}
 					});
 				});

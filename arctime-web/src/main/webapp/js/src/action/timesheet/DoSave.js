@@ -20,13 +20,10 @@ action.timesheet.DoSave = function(timesheetId) {
 			// Submit the form.
 			io.doAjaxRequest({
 				// Set the URL.
-				url: '/rest/user/timesheet/save',
+				url: '/rest/user/timesheet/' + timesheetId + '/save',
 
 				// Set the request parameters.
 				params: {
-					// Add the current timesheet id.
-					id: timesheetId,
-
 					// Add the timesheet data.
 					data: getCellData(timesheetId)
 				},

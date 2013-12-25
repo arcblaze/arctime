@@ -3,6 +3,7 @@ package com.arcblaze.arctime.rest;
 import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arcblaze.arctime.db.DatabaseException;
+import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -47,6 +49,22 @@ public class BaseResource {
 	protected BadRequestException badRequest(String message) {
 		log.error(message);
 		return new BadRequestException(Response.status(Status.BAD_REQUEST)
+				.entity(message).build());
+	}
+
+	/**
+	 * @param user
+	 *            the user account that performed the unauthorized action
+	 * @param message
+	 *            the message to include in the exception
+	 * 
+	 * @return a {@link ForbiddenException} with a suitable status code and
+	 *         error message
+	 */
+	protected ForbiddenException forbidden(User user, String message) {
+		log.error("User attempted to perform an unauthorized action.");
+		log.error(message);
+		return new ForbiddenException(Response.status(Status.FORBIDDEN)
 				.entity(message).build());
 	}
 

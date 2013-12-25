@@ -1,5 +1,6 @@
 package com.arcblaze.arctime.db.dao.jdbc;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -36,7 +37,7 @@ public class JdbcBillDao implements BillDao {
 		bill.setTaskId(rs.getInt("task_id"));
 		bill.setUserId(rs.getInt("user_id"));
 		bill.setDay(rs.getDate("day"));
-		bill.setHours(rs.getFloat("hours"));
+		bill.setHours(new BigDecimal(rs.getString("hours")));
 		bill.setTimestamp(rs.getTimestamp("timestamp"));
 		return bill;
 	}
@@ -157,7 +158,7 @@ public class JdbcBillDao implements BillDao {
 				ps.setInt(index++, bill.getTaskId());
 				ps.setInt(index++, bill.getUserId());
 				ps.setDate(index++, new Date(bill.getDay().getTime()));
-				ps.setFloat(index++, bill.getHours());
+				ps.setString(index++, bill.getHours().toPlainString());
 				ps.setTimestamp(index++, new Timestamp(bill.getTimestamp()
 						.getTime()));
 				ps.executeUpdate();
@@ -196,11 +197,14 @@ public class JdbcBillDao implements BillDao {
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (Bill bill : bills) {
 				int index = 1;
-				ps.setInt(index++, bill.getAssignmentId());
+				if (bill.getAssignmentId() != null)
+					ps.setInt(index++, bill.getAssignmentId());
+				else
+					ps.setNull(index++, Types.INTEGER);
 				ps.setInt(index++, bill.getTaskId());
 				ps.setInt(index++, bill.getUserId());
 				ps.setDate(index++, new Date(bill.getDay().getTime()));
-				ps.setFloat(index++, bill.getHours());
+				ps.setString(index++, bill.getHours().toPlainString());
 				ps.setTimestamp(index++, new Timestamp(bill.getTimestamp()
 						.getTime()));
 				ps.setInt(index++, bill.getId());

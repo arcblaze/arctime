@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS bills (
     `task_id`        INTEGER      NOT NULL,
     `user_id`        INTEGER      NOT NULL,
     `day`            DATE         NOT NULL,
-    `hours`          FLOAT        NOT NULL,
+    `hours`          VARCHAR(6)   NOT NULL,
     `timestamp`      TIMESTAMP    NOT NULL DEFAULT NOW(),
 
     CONSTRAINT unique_bill UNIQUE (`assignment_id`, `task_id`, `user_id`, `day`),

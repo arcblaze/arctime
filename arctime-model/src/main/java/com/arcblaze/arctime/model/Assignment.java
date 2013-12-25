@@ -322,6 +322,22 @@ public class Assignment implements Comparable<Assignment> {
 	}
 
 	/**
+	 * @param day
+	 *            the day for which to search for a bill in this assignment
+	 * 
+	 * @return the requested bill if available, {@code null} otherwise
+	 */
+	public Bill getBill(Date day) {
+		if (day == null)
+			return null;
+
+		for (Bill bill : getBills())
+			if (day.equals(bill.getDay()))
+				return bill;
+		return null;
+	}
+
+	/**
 	 * @param newBills
 	 *            the new bill values to be assigned to this account
 	 * 

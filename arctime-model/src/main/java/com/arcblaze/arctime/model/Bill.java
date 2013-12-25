@@ -1,16 +1,24 @@
 package com.arcblaze.arctime.model;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  * Represents a bill of hours by an user to a task assignment.
@@ -46,12 +54,17 @@ public class Bill implements Comparable<Bill> {
 	/**
 	 * The number of hours being applied to the task assignment.
 	 */
-	private Float hours;
+	private BigDecimal hours;
 
 	/**
-	 * The timestamp when this bill was created.
+	 * The time stamp when this bill was created.
 	 */
 	private Date timestamp;
+
+	/**
+	 * The reason for changing hours from one value to the other.
+	 */
+	private String reason;
 
 	/**
 	 * Default constructor.
@@ -85,6 +98,14 @@ public class Bill implements Comparable<Bill> {
 
 		this.id = id;
 		return this;
+	}
+
+	/**
+	 * @return whether this bill includes an assignment id
+	 */
+	@XmlTransient
+	public boolean hasAssignmentId() {
+		return this.assignmentId != null;
 	}
 
 	/**
@@ -143,6 +164,20 @@ public class Bill implements Comparable<Bill> {
 	}
 
 	/**
+	 * @return a unique id capable of distinguishing this bill in a timesheet
+	 */
+	@XmlTransient
+	public String getUniqueId() {
+		StringBuilder uid = new StringBuilder();
+		uid.append(getTaskId());
+		uid.append(":");
+		uid.append(getAssignmentId());
+		uid.append(":");
+		uid.append(DateFormatUtils.format(getDay(), "yyyyMMdd"));
+		return uid.toString();
+	}
+
+	/**
 	 * @return the unique id of the user billing the hours
 	 */
 	@XmlElement
@@ -198,7 +233,7 @@ public class Bill implements Comparable<Bill> {
 	 * @return the hours being billed to the task assignment
 	 */
 	@XmlElement
-	public Float getHours() {
+	public BigDecimal getHours() {
 		return this.hours;
 	}
 
@@ -216,12 +251,53 @@ public class Bill implements Comparable<Bill> {
 		if (hours == null)
 			throw new IllegalArgumentException("Invalid null hours");
 
-		this.hours = hours;
+		this.hours = new BigDecimal(hours).setScale(2);
 		return this;
 	}
 
 	/**
-	 * @return the timestamp indicating when this bill was created
+	 * @param hours
+	 *            the new value specifying the hours being billed to the task
+	 *            assignment
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided hours value is invalid
+	 */
+	public Bill setHours(String hours) {
+		if (hours == null)
+			throw new IllegalArgumentException("Invalid null hours");
+
+		try {
+			this.hours = new BigDecimal(hours).setScale(2);
+		} catch (NumberFormatException badNumber) {
+			throw new IllegalArgumentException("Invalid number: " + hours,
+					badNumber);
+		}
+		return this;
+	}
+
+	/**
+	 * @param hours
+	 *            the new value specifying the hours being billed to the task
+	 *            assignment
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided hours value is invalid
+	 */
+	public Bill setHours(BigDecimal hours) {
+		if (hours == null)
+			throw new IllegalArgumentException("Invalid null hours");
+
+		this.hours = new BigDecimal(hours.toPlainString()).setScale(2);
+		return this;
+	}
+
+	/**
+	 * @return the time stamp indicating when this bill was created
 	 */
 	@XmlElement
 	public Date getTimestamp() {
@@ -236,7 +312,7 @@ public class Bill implements Comparable<Bill> {
 	 * @return {@code this}
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the provided timestamp value is invalid
+	 *             if the provided time stamp value is invalid
 	 */
 	public Bill setTimestamp(Date timestamp) {
 		if (timestamp == null)
@@ -244,6 +320,99 @@ public class Bill implements Comparable<Bill> {
 
 		this.timestamp = timestamp;
 		return this;
+	}
+
+	/**
+	 * @return whether this bill contains a reason why the hours were modified.
+	 */
+	@XmlTransient
+	public boolean hasReason() {
+		return this.reason != null;
+	}
+
+	/**
+	 * @return the reason indicating why hours were changed from an old value to
+	 *         a new value
+	 */
+	@XmlElement
+	public String getReason() {
+		return this.reason;
+	}
+
+	/**
+	 * @param reason
+	 *            the new reason value indicating why hours were changed from an
+	 *            old value to a new value
+	 * 
+	 * @return {@code this}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided reason value is invalid
+	 */
+	public Bill setReason(String reason) {
+		if (StringUtils.isBlank(reason))
+			throw new IllegalArgumentException("Invalid blank reason value");
+
+		this.reason = reason;
+		return this;
+	}
+
+	/**
+	 * @param data
+	 *            the raw encoded data sent from the time sheet user interface
+	 *            to be parsed into the individual bills
+	 * 
+	 * @return the parsed data in the form of bills
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided data value could not be parsed successfully
+	 */
+	public static Set<Bill> fromTimesheetData(String data) {
+		Set<Bill> bills = new TreeSet<Bill>();
+
+		if (StringUtils.isBlank(data))
+			return bills;
+
+		// data looks like: "8_57:20100602:5.00:reason;8_56:20100605:8.00"
+		String[] dataParts = data.split(";");
+		for (String dataPart : dataParts) {
+			if (StringUtils.isBlank(dataPart))
+				continue;
+
+			String[] pieces = dataPart.split(":", 4);
+
+			try {
+				Bill bill = new Bill();
+
+				String[] taskAssignmentId = pieces[0].split("_", 2);
+				bill.setTaskId(Integer.parseInt(taskAssignmentId[0]));
+
+				Integer assignmentId = (taskAssignmentId.length == 2 && StringUtils
+						.isNotBlank(taskAssignmentId[1])) ? Integer
+						.parseInt(taskAssignmentId[1]) : null;
+				if (assignmentId != null)
+					bill.setAssignmentId(assignmentId);
+
+				bill.setDay(DateUtils.parseDate(pieces[1],
+						new String[] { "yyyyMMdd" }));
+				bill.setHours(new BigDecimal(pieces[2]));
+
+				String reason = pieces.length == 4 ? pieces[3] : null;
+				if (StringUtils.isNotBlank(reason))
+					bill.setReason(reason);
+
+				bill.setTimestamp(new Date());
+				bills.add(bill);
+			} catch (NumberFormatException badNumber) {
+				throw new IllegalArgumentException("Invalid numeric value.",
+						badNumber);
+			} catch (ParseException badDate) {
+				throw new IllegalArgumentException("Invalid date value.",
+						badDate);
+			}
+		}
+
+		return bills;
 	}
 
 	/**
@@ -258,6 +427,7 @@ public class Bill implements Comparable<Bill> {
 		builder.append("userId", getUserId());
 		builder.append("day", getDay());
 		builder.append("hours", getHours());
+		builder.append("reason", getReason());
 		builder.append("timestamp", getTimestamp());
 		return builder.toString();
 	}
@@ -277,6 +447,7 @@ public class Bill implements Comparable<Bill> {
 			builder.append(getDay(), other.getDay());
 			builder.append(getHours(), other.getHours());
 			builder.append(getTimestamp(), other.getTimestamp());
+			builder.append(getReason(), other.getReason());
 			return builder.isEquals();
 		}
 
@@ -296,6 +467,7 @@ public class Bill implements Comparable<Bill> {
 		builder.append(getDay());
 		builder.append(getHours());
 		builder.append(getTimestamp());
+		builder.append(getReason());
 		return builder.toHashCode();
 	}
 
@@ -311,6 +483,7 @@ public class Bill implements Comparable<Bill> {
 		builder.append(getDay(), other.getDay());
 		builder.append(other.getTimestamp(), getTimestamp());
 		builder.append(getHours(), other.getHours());
+		builder.append(getReason(), other.getReason());
 		return builder.toComparison();
 	}
 }

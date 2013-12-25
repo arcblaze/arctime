@@ -29,13 +29,7 @@ action.timesheet.DoFix = function(timesheetId) {
 					// Submit the form.
 					io.doAjaxRequest({
 						// Set the URL.
-						url: '/rest/user/timesheet/fix',
-
-						// Set the request parameters.
-						params: {
-							// Add the current timesheet id.
-							id: timesheetId
-						},
+						url: '/rest/user/timesheet/' + timesheetId + '/fix',
 
 						// Invoked on a successful fix.
 						mysuccess: function(data) {

@@ -266,19 +266,34 @@ function formatCell(cell) {
 function clearDirtyFlags(timesheetId) {
 	var ts = timesheets[timesheetId];
 
-	// Iterate over the tasks and days.
-	for (var c = 0; c < assignmentIds.length; c++)
-		for (var d = 0; d < days.length; d++) {
-			// Define the id of the cell we are going to update.
-			var id = 'cell' + timesheetId + '_' + assignmentIds[c] + '_' + days[d];
+	// Iterate over all the available days.
+	var date = ts.payPeriod.begin;
+	var end = ts.payPeriod.end;
+	while (date < end) {
+		var day = Ext.Date.format(new Date(date), 'Ymd');
 
-			// Get the cell to update.
+		// Iterate over all the available tasks.
+		for (var c = 0; c < ts.tasks.length; c++) {
+			var task = ts.tasks[c];
+
+			var id = 'cell' + ts.id + '_' + task.id + '__' + day;
 			var cell = document.getElementById(id);
-
-			// Clear the dirty flag.
 			if (cell && cell.style.backgroundImage)
 				cell.style.backgroundImage = '';
+
+			for (var a = 0; a < task.assignments.length; a++) {
+				var assignment = task.assignments[a];
+
+				var id = 'cell' + ts.id + '_' + task.id + '_' +
+					assignment.id + '_' + day;
+				var cell = document.getElementById(id);
+				if (cell && cell.style.backgroundImage)
+					cell.style.backgroundImage = '';
+			}
 		}
+
+		date += 24 * 60 * 60 * 1000;
+	}
 
 	// Update the save flag.
 	needsSaved[timesheetId] = false;
