@@ -7,8 +7,7 @@
     <%@ include file="/ssi/header.jspf" %>
     <%@ include file="/ssi/scripts.jspf" %>
 
-
-    <center>
+    <div id="container">
       <table id="login-table">
         <tr>
           <td valign="top">
@@ -18,20 +17,20 @@
           </td>
         </tr>
       </table>
-    </center>
     
-    <script src="/js/src/action/login/DoLogin.js"></script>
-    <script src="/js/src/action/login/ResetPassword.js"></script>
-    <script src="/js/src/util/io/ServerIO.js"></script>
-    <script src="/js/src/ui/panel/login/LoginPanel.js"></script>
-    <script>
-      Ext.onReady(function() {
-          // Create the login panel.
-          var loginPanel = new ui.panel.login.LoginPanel();
-          loginPanel.render('login-form');
-          loginPanel.setInitialFocus();
-      });
-    </script>
+      <script src="/js/src/action/login/DoLogin.js"></script>
+      <script src="/js/src/action/login/ResetPassword.js"></script>
+      <script src="/js/src/util/io/ServerIO.js"></script>
+      <script src="/js/src/ui/panel/login/LoginPanel.js"></script>
+      <script>
+        Ext.onReady(function() {
+            // Create the login panel.
+            var loginPanel = new ui.panel.login.LoginPanel();
+            loginPanel.render('login-form');
+            loginPanel.setInitialFocus();
+        });
+      </script>
+    </div>
 
     <%@ include file="/ssi/footer.jspf" %>
   </body>

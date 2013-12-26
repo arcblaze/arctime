@@ -52,6 +52,11 @@ html, body {
     text-align:center;
 }
 
+#login-table {
+	border-collapse:collapse;
+	margin:0px auto;
+}
+
 #profile-table {
 	border-collapse:collapse;
 	margin:0px auto;
