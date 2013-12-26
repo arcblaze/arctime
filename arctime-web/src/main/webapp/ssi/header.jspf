@@ -4,8 +4,8 @@
 <div id="header-container">
   <div id="header">
     Header Content
-	<%= request.getRemoteUser() %>
 	<% if (request.getRemoteUser() != null) { %>
+		<a href="/user/timesheet.jsp">Home</a>
 		<a href="/user/profile.jsp">Profile</a>
 		<a href="/logout.jsp">Logout</a>
 	<% } %>

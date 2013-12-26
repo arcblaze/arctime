@@ -9,8 +9,8 @@ html, body {
 }
 
 #header-container {
-    background:#eee;
-    border:1px solid #666;
+    background:#cbddf3;
+    border:1px solid #99bce8;
     height:60px;
     left:0px;
     position:fixed;
@@ -19,7 +19,6 @@ html, body {
 }
 
 #header {
-    background-color:cyan;
     line-height:60px;
     margin:0px auto;
     text-align:center;
@@ -37,8 +36,8 @@ html, body {
 }
  
 #footer-container {
-    background:#eee;
-    border:1px solid #666;
+    background:#cbddf3;
+    border:1px solid #99bce8;
     bottom:0px;
     height:30px;
     left:0px;
@@ -47,7 +46,6 @@ html, body {
 }
 
 #footer {
-    background-color:cyan;
     line-height:30px;
     margin:0px auto;
     width:940px;

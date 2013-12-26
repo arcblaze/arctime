@@ -42,9 +42,9 @@
 }
 
 #timesheet-table #timesheet-user-table {
-	border-left:1px solid #ccc3b9;
-	border-right:1px solid #ccc3b9;
-	border-top:1px solid #ccc3b9;
+	border-left:1px solid #99bce8;
+	border-right:1px solid #99bce8;
+	border-top:1px solid #99bce8;
 	width:100%;
 }
 
@@ -90,14 +90,14 @@
 
 #timesheet-table #timesheet-data-table {
 	border-collapse:collapse;
-	border-bottom:1px solid #ccc3b9;
-	border-left:1px solid #ccc3b9;
-	border-right:1px solid #ccc3b9;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
+	border-right:1px solid #99bce8;
 	width:100%;
 }
 
 #timesheet-table #timesheet-data-table #pay-period-nav {
-	border-top:1px solid #b5c595;
+	border-top:1px solid #99bce8;
 	text-align:center;
 	vertical-align:middle;
 }
@@ -134,26 +134,26 @@
 /* Regular day styles */
 
 #timesheet-table #timesheet-data-table .header-day {
-	background-color:#f5f4eb;
-	border-left:1px solid #b5c595;
-	border-top:1px solid #b5c595;
+	background-color:#deecfd;
+	border-left:1px solid #99bce8;
+	border-top:1px solid #99bce8;
 	padding:0px 1px 0px 1px;
 	text-align:center;
 	vertical-align:middle;
 }
 
 #timesheet-table #timesheet-data-table .header-day-day {
-	background-color:#f5f4eb;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#deecfd;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	text-align:center;
 	vertical-align:middle;
 }
 
 #timesheet-table #timesheet-data-table .day {
-	background-color:#f5f4eb;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#deecfd;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	text-align:center;
@@ -161,9 +161,9 @@
 }
 
 #timesheet-table #timesheet-data-table .day-unavailable {
-	background-color:#f5f4eb;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#deecfd;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	text-align:center;
@@ -171,9 +171,9 @@
 }
 
 #timesheet-table #timesheet-data-table .day-today {
-	background-color:#f5f4eb;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#deecfd;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	border-right:2px solid #ee2020;
 	font-family:monospace;
 	font-size:9pt;
@@ -182,9 +182,9 @@
 }
 
 #timesheet-table #timesheet-data-table .day-today-unavailable {
-	background-color:#f5f4eb;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#deecfd;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	border-right:1px solid #ee2020;
 	font-family:monospace;
 	font-size:9pt;
@@ -193,7 +193,7 @@
 }
 
 #timesheet-table #timesheet-data-table .day-input {
-	background-color:#f5f4eb;
+	background-color:#deecfd;
 	border:0px;
 	font-family:monospace;
 	font-size:8pt;
@@ -203,7 +203,7 @@
 }
 
 #timesheet-table #timesheet-data-table .day-today-input {
-	background-color:#f5f4eb;
+	background-color:#deecfd;
 	border:0px;
 	font-family:monospace;
 	font-size:8pt;
@@ -215,26 +215,26 @@
 /* Weekend styles */
 
 #timesheet-table #timesheet-data-table .header-weekend {
-	background-color:#e5e4db;
-	border-left:1px solid #b5c595;
-	border-top:1px solid #b5c595;
+	background-color:#c3daf9;
+	border-left:1px solid #99bce8;
+	border-top:1px solid #99bce8;
 	padding:0px 1px 0px 1px;
 	text-align:center;
 	vertical-align:middle;
 }
 
 #timesheet-table #timesheet-data-table .header-day-weekend {
-	background-color:#e5e4db;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#c3daf9;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	text-align:center;
 	vertical-align:middle;
 }
 
 #timesheet-table #timesheet-data-table .weekend {
-	background-color:#e5e4db;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#c3daf9;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	text-align:center;
@@ -242,9 +242,9 @@
 }
 
 #timesheet-table #timesheet-data-table .weekend-unavailable {
-	background-color:#e5e4db;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#c3daf9;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	text-align:center;
@@ -252,9 +252,9 @@
 }
 
 #timesheet-table #timesheet-data-table .weekend-today {
-	background-color:#e5e4db;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#c3daf9;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	border-right:1px solid #ee2020;
 	font-family:monospace;
 	font-size:9pt;
@@ -263,9 +263,9 @@
 }
 
 #timesheet-table #timesheet-data-table .weekend-today-unavailable {
-	background-color:#e5e4db;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	background-color:#c3daf9;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	border-right:1px solid #ee2020;
 	font-family:monospace;
 	font-size:9pt;
@@ -274,7 +274,7 @@
 }
 
 #timesheet-table #timesheet-data-table .weekend-input {
-	background-color:#e5e4db;
+	background-color:#c3daf9;
 	border:0px;
 	font-family:monospace;
 	font-size:8pt;
@@ -284,7 +284,7 @@
 }
 
 #timesheet-table #timesheet-data-table .weekend-today-input {
-	background-color:#e5e4db;
+	background-color:#c3daf9;
 	border:0px;
 	font-family:monospace;
 	font-size:8pt;
@@ -297,8 +297,8 @@
 
 #timesheet-table #timesheet-data-table .header-holiday {
 	background-color:#fefbd5;
-	border-left:1px solid #b5c595;
-	border-top:1px solid #b5c595;
+	border-left:1px solid #99bce8;
+	border-top:1px solid #99bce8;
 	padding:0px 1px 0px 1px;
 	text-align:center;
 	vertical-align:middle;
@@ -306,16 +306,16 @@
 
 #timesheet-table #timesheet-data-table .header-day-holiday {
 	background-color:#fefbd5;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	text-align:center;
 	vertical-align:middle;
 }
 
 #timesheet-table #timesheet-data-table .holiday {
 	background-color:#fefbd5;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	text-align:center;
@@ -324,8 +324,8 @@
 
 #timesheet-table #timesheet-data-table .holiday-unavailable {
 	background-color:#fefbd5;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	text-align:center;
@@ -334,8 +334,8 @@
 
 #timesheet-table #timesheet-data-table .holiday-today {
 	background-color:#fefbd5;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	border-right:1px solid #ee2020;
 	font-family:monospace;
 	font-size:9pt;
@@ -345,8 +345,8 @@
 
 #timesheet-table #timesheet-data-table .holiday-today-unavailable {
 	background-color:#fefbd5;
-	border-bottom:1px solid #b5c595;
-	border-left:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
+	border-left:1px solid #99bce8;
 	border-right:1px solid #ee2020;
 	font-family:monospace;
 	font-size:9pt;
@@ -378,9 +378,9 @@
 
 #timesheet-table #timesheet-data-table #header-task-total {
 	background-color:#ffffff;
-	border-left:1px solid #b5c595;
-	border-top:1px solid #b5c595;
-	border-bottom:1px solid #b5c595;
+	border-left:1px solid #99bce8;
+	border-top:1px solid #99bce8;
+	border-bottom:1px solid #99bce8;
 	font-weight:bold;
 	padding:0px 10px 0px 14px;
 	text-align:center;
@@ -389,8 +389,8 @@
 
 #timesheet-table #timesheet-data-table .task-total {
 	background-color:#ffffff;
-	border-left:1px solid #b5c595;
-	border-bottom:1px solid #b5c595;
+	border-left:1px solid #99bce8;
+	border-bottom:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	padding:0px 5px 0px 5px;
@@ -407,7 +407,7 @@
 
 #timesheet-table #timesheet-data-table .daily-total {
 	background-color:#ffffff;
-	border-left:1px solid #b5c595;
+	border-left:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	padding:0px 1px 0px 1px;
@@ -417,7 +417,7 @@
 
 #timesheet-table #timesheet-data-table .total {
 	background-color:#ffffff;
-	border-left:1px solid #b5c595;
+	border-left:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	padding:0px 5px 0px 5px;
@@ -434,8 +434,8 @@
 
 #timesheet-table #timesheet-data-table .weekly-total {
 	background-color:#ffffff;
-	border-left:1px solid #b5c595;
-	border-top:1px solid #b5c595;
+	border-left:1px solid #99bce8;
+	border-top:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	padding:0px 4px 0px 2px;
@@ -444,9 +444,9 @@
 }
 
 #timesheet-table #timesheet-data-table .weekly-total-weekend {
-	background-color:#e5e4db;
-	border-left:1px solid #b5c595;
-	border-top:1px solid #b5c595;
+	background-color:#c3daf9;
+	border-left:1px solid #99bce8;
+	border-top:1px solid #99bce8;
 	font-family:monospace;
 	font-size:9pt;
 	padding:0px 4px 0px 2px;
@@ -456,13 +456,13 @@
 
 #timesheet-table #timesheet-data-table .weekly-total-total {
 	background-color:#ffffff;
-	border-left:1px solid #b5c595;
+	border-left:1px solid #99bce8;
 }
 
 /* Task styles */
 
 #timesheet-table #timesheet-data-table #task-header {
-	border-bottom:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
 	font-weight:bold;
 	padding:0px 10px 0px 10px;
 	text-align:center;
@@ -470,28 +470,28 @@
 }
 
 #timesheet-table #timesheet-data-table .task-label {
-	border-bottom:1px solid #b5c595;
-	border-right:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
+	border-right:1px solid #99bce8;
 	padding:0px 10px 0px 10px;
 	vertical-align:middle;
 }
 
 #timesheet-table #timesheet-data-table .task-name {
-	border-bottom:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
 	padding:0px 10px 0px 10px;
 	vertical-align:middle;
 }
 
 #timesheet-table #timesheet-data-table .task-lcat {
-	border-bottom:1px solid #b5c595;
-	border-right:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
+	border-right:1px solid #99bce8;
 	padding:0px 10px 0px 0px;
 	vertical-align:middle;
 }
 
 #timesheet-table #timesheet-data-table #task-separator {
 	background-color:#ffffff;
-	border-bottom:1px solid #b5c595;
+	border-bottom:1px solid #99bce8;
 	font-size:4pt;
 	padding:0px;
 }
