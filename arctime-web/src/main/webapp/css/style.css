@@ -1,64 +1,105 @@
 
 html, body {
-    background-color:white;
-    color:#101010;
-    font-family:'Trebuchet MS', Verdana, sans-serif;
-    font-size:11pt;
-    margin:0px;
-    padding:0px;
+ background-color:white;
+ color:#101010;
+ font-family:'Trebuchet MS', Verdana, sans-serif;
+ font-size:11pt;
+ margin:0px;
+ padding:0px;
 }
 
 #header-container {
-    background:#cbddf3;
-    border:1px solid #99bce8;
-    height:60px;
-    left:0px;
-    position:fixed;
-    top:0px;
-    width:100%;
+ background-color:#cbddf3;
+ border:1px solid #99bce8;
+ height:60px;
+ left:0px;
+ position:fixed;
+ top:0px;
+ width:100%;
 }
 
-#header {
-    line-height:60px;
-    margin:0px auto;
-    text-align:center;
-    width:940px;
+#header-container #header {
+ line-height:60px;
+ text-align:left;
+ margin:0px auto;
+ width:940px;
+}
+
+#header-container #header #header-logo {
+ float:left;
+ line-height:60px;
+ margin:0px auto;
+ text-align:left;
+ width:300px;
+}
+
+#header-container #header #header-logo img {
+ height:60px;
+}
+
+#header-container #header #header-navigation {
+ float:right;
+ line-height:60px;
+ margin:0px auto;
+ text-align:right;
+ width:640px;
 }
  
 #container {
-    margin:0px auto;
-    overflow:auto;
-    padding:70px 0px 40px 0px;
-    width:100%;
+ margin:0px auto;
+ overflow:auto;
+ padding:70px 0px 40px 0px;
+ width:100%;
 }
 
 #content {
 }
  
 #footer-container {
-    background:#cbddf3;
-    border:1px solid #99bce8;
-    bottom:0px;
-    height:30px;
-    left:0px;
-    position:fixed;
-    width:100%;
+ background-color:#cbddf3;
+ border:1px solid #99bce8;
+ bottom:0px;
+ height:30px;
+ left:0px;
+ position:fixed;
+ width:100%;
 }
 
-#footer {
-    line-height:30px;
-    margin:0px auto;
-    width:940px;
-    text-align:center;
+#footer-container #footer {
+ line-height:30px;
+ margin:0px auto;
+ width:940px;
+ text-align:left;
+}
+
+#footer-container #footer #footer-copyright {
+ float:left;
+ line-height:30px;
+ width:500px;
+ text-align:left;
+}
+
+#footer-container #footer #footer-legal {
+ float:right;
+ line-height:30px;
+ width:440px;
+ text-align:right;
+}
+
+#footer-container #footer #footer-legal a {
+ text-decoration:none;
+}
+#footer-container #footer #footer-legal a:hover {
+ text-decoration:underline;
 }
 
 #login-table {
-	border-collapse:collapse;
-	margin:0px auto;
+ border-collapse:collapse;
+ margin:0px auto;
 }
 
 #profile-table {
-	border-collapse:collapse;
-	margin:0px auto;
+ border-collapse:collapse;
+ margin:0px auto;
 }
 

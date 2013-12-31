@@ -1,8 +1,13 @@
-</div> <!-- /container -->
 
 <div id="footer-container">
   <div id="footer">
-    Footer Content
+    <div id="footer-copyright">
+      Copyright &copy; 2014 ArcBlaze, Inc. All rights reserved.
+    </div>
+    <div id="footer-legal">
+      <a href="/legal.jsp">
+         Privacy Policy and Terms of Service</a>
+    </div>
   </div>
 </div>
 

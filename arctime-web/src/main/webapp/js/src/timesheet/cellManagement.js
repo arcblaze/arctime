@@ -517,7 +517,6 @@ function validateCell(cell) {
 			buttons: Ext.Msg.OK,
 			icon: Ext.MessageBox.ERROR
 		});
-		cell.focus();
 		cell.value = previousValue;
 		return false;
 	}
@@ -530,7 +529,6 @@ function validateCell(cell) {
 			buttons: Ext.Msg.OK,
 			icon: Ext.MessageBox.ERROR
 		});
-		cell.focus();
 		cell.value = previousValue;
 		return false;
 	}

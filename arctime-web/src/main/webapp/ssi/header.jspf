@@ -1,11 +1,21 @@
 
 <div id="header-container">
   <div id="header">
-	<% if (request.getRemoteUser() != null) { %>
-		<a href="/user/timesheet.jsp">Home</a>
-		<a href="/user/profile.jsp">Profile</a>
-		<a href="/logout.jsp">Logout</a>
-	<% } %>
+    <div id="header-logo">
+      <a href="/user/timesheet.jsp">
+        <img src="/img/logo.png" border="0"
+             alt="ARCTIME" title="ARCTIME"/></a>
+    </div>
+
+    <div id="header-navigation">
+      <% if (request.getRemoteUser() != null) { %>
+        <a href="/user/timesheet.jsp">Home</a>
+        <a href="/user/profile.jsp">Profile</a>
+        <a href="/logout.jsp">Logout</a>
+      <% } else { %>
+        &nbsp;
+      <% } %>
+    </div>
   </div>
 </div>
 
