@@ -36,9 +36,32 @@ import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 
 /**
- * Manages users within the back-end database.
+ * Manages timesheets within the back-end database.
  */
 public class JdbcTimesheetDao implements TimesheetDao {
+	protected Timesheet fromResultSet(ResultSet rs) throws SQLException {
+		Timesheet timesheet = new Timesheet();
+		timesheet.setId(rs.getInt("id"));
+		timesheet.setCompanyId(rs.getInt("company_id"));
+		timesheet.setUserId(rs.getInt("user_id"));
+		timesheet.setBegin(rs.getDate("pp_begin"));
+		timesheet.setCompleted(rs.getBoolean("completed"));
+		timesheet.setApproved(rs.getBoolean("approved"));
+		timesheet.setVerified(rs.getBoolean("verified"));
+		timesheet.setExported(rs.getBoolean("exported"));
+
+		int approverId = rs.getInt("approver_id");
+		if (!rs.wasNull())
+			timesheet.setApproverId(approverId);
+		int verifierId = rs.getInt("verifier_id");
+		if (!rs.wasNull())
+			timesheet.setVerifierId(verifierId);
+		int exporterId = rs.getInt("exporter_id");
+		if (!rs.wasNull())
+			timesheet.setExporterId(exporterId);
+		return timesheet;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -73,25 +96,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 
 			try (ResultSet rs = ps.executeQuery();) {
 				if (rs.next()) {
-					Timesheet timesheet = new Timesheet();
-					timesheet.setId(rs.getInt("id"));
-					timesheet.setCompanyId(rs.getInt("company_id"));
-					timesheet.setUserId(rs.getInt("user_id"));
-					timesheet.setBegin(rs.getDate("pp_begin"));
-					timesheet.setCompleted(rs.getBoolean("completed"));
-					timesheet.setApproved(rs.getBoolean("approved"));
-					timesheet.setVerified(rs.getBoolean("verified"));
-					timesheet.setExported(rs.getBoolean("exported"));
-
-					int approverId = rs.getInt("approver_id");
-					if (!rs.wasNull())
-						timesheet.setApproverId(approverId);
-					int verifierId = rs.getInt("verifier_id");
-					if (!rs.wasNull())
-						timesheet.setVerifierId(verifierId);
-					int exporterId = rs.getInt("exporter_id");
-					if (!rs.wasNull())
-						timesheet.setExporterId(exporterId);
+					Timesheet timesheet = fromResultSet(rs);
 
 					enrich(conn, companyId, Collections.singleton(timesheet),
 							enrichments);
@@ -139,29 +144,8 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
-			while (rs.next()) {
-				Timesheet timesheet = new Timesheet();
-				timesheet.setId(rs.getInt("id"));
-				timesheet.setCompanyId(rs.getInt("company_id"));
-				timesheet.setUserId(rs.getInt("user_id"));
-				timesheet.setBegin(rs.getDate("pp_begin"));
-				timesheet.setCompleted(rs.getBoolean("completed"));
-				timesheet.setApproved(rs.getBoolean("approved"));
-				timesheet.setVerified(rs.getBoolean("verified"));
-				timesheet.setExported(rs.getBoolean("exported"));
-
-				int approverId = rs.getInt("approver_id");
-				if (!rs.wasNull())
-					timesheet.setApproverId(approverId);
-				int verifierId = rs.getInt("verifier_id");
-				if (!rs.wasNull())
-					timesheet.setVerifierId(verifierId);
-				int exporterId = rs.getInt("exporter_id");
-				if (!rs.wasNull())
-					timesheet.setExporterId(exporterId);
-
-				timesheets.add(timesheet);
-			}
+			while (rs.next())
+				timesheets.add(fromResultSet(rs));
 
 			enrich(conn, companyId, timesheets, enrichments);
 
@@ -209,25 +193,7 @@ public class JdbcTimesheetDao implements TimesheetDao {
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					Timesheet timesheet = new Timesheet();
-					timesheet.setId(rs.getInt("id"));
-					timesheet.setCompanyId(rs.getInt("company_id"));
-					timesheet.setUserId(rs.getInt("user_id"));
-					timesheet.setBegin(rs.getDate("pp_begin"));
-					timesheet.setCompleted(rs.getBoolean("completed"));
-					timesheet.setApproved(rs.getBoolean("approved"));
-					timesheet.setVerified(rs.getBoolean("verified"));
-					timesheet.setExported(rs.getBoolean("exported"));
-
-					int approverId = rs.getInt("approver_id");
-					if (!rs.wasNull())
-						timesheet.setApproverId(approverId);
-					int verifierId = rs.getInt("verifier_id");
-					if (!rs.wasNull())
-						timesheet.setVerifierId(verifierId);
-					int exporterId = rs.getInt("exporter_id");
-					if (!rs.wasNull())
-						timesheet.setExporterId(exporterId);
+					Timesheet timesheet = fromResultSet(rs);
 
 					enrich(conn, companyId, Collections.singleton(timesheet),
 							enrichments);
@@ -266,35 +232,25 @@ public class JdbcTimesheetDao implements TimesheetDao {
 		if (userId == null)
 			throw new IllegalArgumentException("Invalid null user id");
 
-		String sql = "SELECT * FROM timesheets WHERE company_id = ? AND "
-				+ "user_id = ? ORDER BY completed, pp_begin DESC LIMIT 1";
+		String sql = "(SELECT t.* FROM timesheets t JOIN pay_periods p ON "
+				+ "(t.pp_begin = p.begin AND t.company_id = p.company_id) "
+				+ "JOIN bills b ON (b.day >= p.begin AND b.day <= p.end "
+				+ "AND b.user_id = t.user_id) WHERE t.company_id = ? AND "
+				+ "t.user_id = ? GROUP BY t.id ORDER BY completed, "
+				+ "pp_begin DESC LIMIT 1) UNION (SELECT * FROM timesheets "
+				+ "WHERE company_id = ? AND user_id = ? "
+				+ "ORDER BY completed, pp_begin DESC LIMIT 1)";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, companyId);
 			ps.setInt(2, userId);
+			ps.setInt(3, companyId);
+			ps.setInt(4, userId);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					Timesheet timesheet = new Timesheet();
-					timesheet.setId(rs.getInt("id"));
-					timesheet.setCompanyId(rs.getInt("company_id"));
-					timesheet.setUserId(rs.getInt("user_id"));
-					timesheet.setBegin(rs.getDate("pp_begin"));
-					timesheet.setCompleted(rs.getBoolean("completed"));
-					timesheet.setApproved(rs.getBoolean("approved"));
-					timesheet.setVerified(rs.getBoolean("verified"));
-					timesheet.setExported(rs.getBoolean("exported"));
-
-					int approverId = rs.getInt("approver_id");
-					if (!rs.wasNull())
-						timesheet.setApproverId(approverId);
-					int verifierId = rs.getInt("verifier_id");
-					if (!rs.wasNull())
-						timesheet.setVerifierId(verifierId);
-					int exporterId = rs.getInt("exporter_id");
-					if (!rs.wasNull())
-						timesheet.setExporterId(exporterId);
+					Timesheet timesheet = fromResultSet(rs);
 
 					enrich(conn, companyId, Collections.singleton(timesheet),
 							enrichments);
@@ -306,10 +262,13 @@ public class JdbcTimesheetDao implements TimesheetDao {
 			return null;
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);
-		} catch (Throwable th) {
-			th.printStackTrace();
-			return null;
 		}
+	}
+
+	protected Set<Timesheet> getIncompleteTimesheetsWithBills(
+			Integer companyId, Integer userId, Set<Enrichment> enrichments)
+			throws DatabaseException, HolidayConfigurationException {
+		return null;
 	}
 
 	/**
