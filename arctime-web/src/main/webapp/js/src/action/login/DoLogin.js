@@ -18,14 +18,6 @@ action.login.DoLogin = function() {
 				return;
 			}
 
-			// Save the login info again.
-			var saveLogin = ('' + Ext.state.Manager.get('saveLogin')) == 'true';
-			if (saveLogin) {
-				var vals = formPanel.getForm().getValues();
-				Ext.state.Manager.set('loginValue', vals.j_username);
-				Ext.state.Manager.set('passwordValue', vals.j_password);
-			}
-
 			// Show the progress bar while the login happens.
 			Ext.Msg.progress('Verifying Login',
 				'Please wait while your login information is processed...');
@@ -36,7 +28,7 @@ action.login.DoLogin = function() {
 			// Submit the form.
 			io.doFormRequest(formPanel, {
 				// Set the URL.
-				url: 'j_security_check'
+				url: '/rest/login'
 			});
 		}
 	});

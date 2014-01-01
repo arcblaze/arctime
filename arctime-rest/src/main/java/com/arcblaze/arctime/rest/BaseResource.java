@@ -62,7 +62,7 @@ public class BaseResource {
 	 *         error message
 	 */
 	protected ForbiddenException forbidden(User user, String message) {
-		log.error("User attempted to perform an unauthorized action.");
+		log.error("User attempted to perform an unauthorized action: " + user);
 		log.error(message);
 		return new ForbiddenException(Response.status(Status.FORBIDDEN)
 				.entity(message).build());
