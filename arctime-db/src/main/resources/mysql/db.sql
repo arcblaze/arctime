@@ -1,4 +1,5 @@
 
+DROP TABLE IF EXISTS transactions;
 DROP TABLE IF EXISTS holidays;
 DROP TABLE IF EXISTS audit_logs;
 DROP TABLE IF EXISTS timesheets;
@@ -206,5 +207,23 @@ CREATE TABLE IF NOT EXISTS holidays (
 
     CONSTRAINT fk_holidays_company_id FOREIGN KEY (`company_id`)
         REFERENCES companies(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE IF NOT EXISTS transactions (
+    `id`             BIGINT       NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `company_id`     BIGINT       NOT NULL,
+    `user_id`        INTEGER      NOT NULL,
+    `timestamp`      TIMESTAMP    NOT NULL DEFAULT NOW(),
+    `type`           VARCHAR(80)  NOT NULL,
+    `description`    VARCHAR(200) NOT NULL,
+    `amount`         VARCHAR(10)  NOT NULL,
+    `notes`          LONGTEXT,
+
+    CONSTRAINT fk_transactions_company_id FOREIGN KEY (`company_id`)
+        REFERENCES companies(`id`) ON DELETE CASCADE,
+    CONSTRAINT fk_transactions_user_id FOREIGN KEY (`user_id`)
+        REFERENCES users(`id`) ON DELETE CASCADE,
+
+    INDEX idx_transactions_type USING HASH (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

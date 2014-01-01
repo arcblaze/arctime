@@ -82,10 +82,12 @@ public class JdbcBillDao implements BillDao {
 
 		Set<Bill> bills = new TreeSet<>();
 		try (Connection conn = ConnectionManager.getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery()) {
-			while (rs.next())
-				bills.add(fromResultSet(rs));
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, timesheetId);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					bills.add(fromResultSet(rs));
+			}
 
 			return bills;
 		} catch (SQLException sqlException) {
