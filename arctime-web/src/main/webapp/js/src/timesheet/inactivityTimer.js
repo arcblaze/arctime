@@ -72,7 +72,7 @@ function updateInactivity() {
 // Invoked when the inactivity timeout happens.
 function inactivityTimeout() {
 	// Go to the logout page.
-	document.location = "/logout.jsp";
+	document.location = "/rest/logout";
 }
 
 

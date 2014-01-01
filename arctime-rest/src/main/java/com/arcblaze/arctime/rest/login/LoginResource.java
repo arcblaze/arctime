@@ -65,8 +65,7 @@ public class LoginResource extends BaseResource {
 
 			String baseUri = uriInfo.getBaseUri().toString();
 			baseUri = baseUri.substring(0, baseUri.indexOf("/rest"));
-			return Response.seeOther(new URI(baseUri + "/user/timesheet.jsp"))
-					.build();
+			return Response.seeOther(new URI(baseUri + "/user/")).build();
 		} catch (ServletException loginFailed) {
 			log.error("User login failed.", loginFailed);
 			throw new NotAuthorizedException("Login failed.", loginFailed);

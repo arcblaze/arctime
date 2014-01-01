@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<%@ page import="com.arcblaze.arctime.model.*" %>
 <html>
   <head>
     <%@ include file="/ssi/meta.jspf" %>

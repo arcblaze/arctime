@@ -39,10 +39,24 @@ html, body {
 
 #header-container #header #header-navigation {
  float:right;
+ font-size:12pt;
  line-height:60px;
  margin:0px auto;
  text-align:right;
  width:640px;
+}
+
+#header-container #header #header-navigation li {
+ display:inline;
+ list-style-type:none;
+ padding-left:30px;
+}
+#header-container #header #header-navigation a {
+ color:blue;
+ text-decoration:none;
+}
+#header-container #header #header-navigation a:hover {
+ text-decoration:underline;
 }
  
 #container {
@@ -52,7 +66,11 @@ html, body {
  width:100%;
 }
 
-#content {
+#container-maxwidth {
+ margin:0px auto;
+ overflow:auto;
+ padding:70px 0px 40px 0px;
+ width:940px;
 }
  
 #footer-container {
@@ -66,6 +84,7 @@ html, body {
 }
 
 #footer-container #footer {
+ font-size:12pt;
  line-height:30px;
  margin:0px auto;
  width:940px;
@@ -75,18 +94,25 @@ html, body {
 #footer-container #footer #footer-copyright {
  float:left;
  line-height:30px;
- width:500px;
+ width:460px;
  text-align:left;
 }
 
 #footer-container #footer #footer-legal {
  float:right;
  line-height:30px;
- width:440px;
+ width:480px;
  text-align:right;
 }
 
+#footer-container #footer #footer-legal li {
+ display:inline;
+ list-style-type:none;
+ padding-left:30px;
+}
+
 #footer-container #footer #footer-legal a {
+ color:blue;
  text-decoration:none;
 }
 #footer-container #footer #footer-legal a:hover {

@@ -5,8 +5,8 @@
       Copyright &copy; 2014 ArcBlaze, Inc. All rights reserved.
     </div>
     <div id="footer-legal">
-      <a href="/legal.jsp">
-         Privacy Policy and Terms of Service</a>
+      <li><a href="/legal/">Privacy Policy and Terms of Service</a></li>
+      <li><a href="/feedback/">Provide Feedback</a></li>
     </div>
   </div>
 </div>
