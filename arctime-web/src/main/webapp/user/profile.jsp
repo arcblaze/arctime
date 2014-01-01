@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>ArcTime: Profile</title>
     <%@ include file="/ssi/meta.jspf" %>
   </head>
   <body>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>ArcTime: Privacy Policy and Terms of Service</title>
     <%@ include file="/ssi/meta.jspf" %>
     <link rel="stylesheet" href="/css/timesheet.css"/>
   </head>

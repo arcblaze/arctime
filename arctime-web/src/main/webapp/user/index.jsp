@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>ArcTime: Timesheets</title>
     <%@ include file="/ssi/meta.jspf" %>
     <link rel="stylesheet" href="/css/timesheet.css"/>
   </head>
