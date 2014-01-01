@@ -3,7 +3,8 @@ package com.arcblaze.arctime.model;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Describes the personnel category type of an account in this system.
+ * Describes the types of enrichment to support when retrieving model objects in
+ * this system.
  */
 public enum Enrichment {
 	/**
@@ -58,8 +59,8 @@ public enum Enrichment {
 	;
 
 	/**
-	 * Attempt to convert the provided value back into a role with more
-	 * flexibility than what the {@link #valueOf(String)} method provides.
+	 * Attempt to convert the provided value into an {@link Enrichment} with
+	 * more flexibility than what the {@link #valueOf(String)} method provides.
 	 * 
 	 * @param value
 	 *            the value to attempt conversion into a {@link Enrichment}
@@ -68,9 +69,9 @@ public enum Enrichment {
 	 *         conversion fails
 	 */
 	public static Enrichment parse(String value) {
-		for (Enrichment role : values())
-			if (StringUtils.equalsIgnoreCase(role.name(), value))
-				return role;
+		for (Enrichment enrichment : values())
+			if (StringUtils.equalsIgnoreCase(enrichment.name(), value))
+				return enrichment;
 
 		try {
 			return Enrichment.valueOf(value);

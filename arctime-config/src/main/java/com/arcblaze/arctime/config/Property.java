@@ -79,12 +79,12 @@ public enum Property {
 	/**
 	 * The server host name published from the web server.
 	 */
-	SERVER_HOSTNAME("arctime.com"),
+	SERVER_HOSTNAME("arctime.arcblaze.com"),
 
 	/**
 	 * The name of the certificate alias in the key store.
 	 */
-	SERVER_CERTIFICATE_KEY_ALIAS("arctime.com"),
+	SERVER_CERTIFICATE_KEY_ALIAS("arctime.arcblaze.com"),
 
 	/**
 	 * The key store file containing the server certificate.
