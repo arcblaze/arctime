@@ -1,5 +1,6 @@
 package com.arcblaze.arctime.db.dao.jdbc;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,6 +40,66 @@ public class JdbcTransactionDao implements TransactionDao {
 		if (StringUtils.isNotBlank(notes))
 			transaction.setNotes(notes);
 		return transaction;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BigDecimal amountBetween(Integer companyId, Date begin, Date end)
+			throws DatabaseException {
+		if (companyId == null)
+			throw new IllegalArgumentException("Invalid null company id");
+		if (begin == null)
+			throw new IllegalArgumentException("Invalid null begin");
+		if (end == null)
+			throw new IllegalArgumentException("Invalid null end");
+
+		String sql = "SELECT amount FROM transactions WHERE company_id = ? AND "
+				+ "timestamp >= ? AND timestamp < ?";
+
+		BigDecimal sum = new BigDecimal(0).setScale(2);
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, companyId);
+			ps.setTimestamp(2, new Timestamp(begin.getTime()));
+			ps.setTimestamp(3, new Timestamp(end.getTime()));
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					sum.add(new BigDecimal(rs.getString(1)).setScale(2));
+			}
+
+			return sum;
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	@Override
+	public BigDecimal amountBetween(Date begin, Date end)
+			throws DatabaseException {
+		if (begin == null)
+			throw new IllegalArgumentException("Invalid null begin");
+		if (end == null)
+			throw new IllegalArgumentException("Invalid null end");
+
+		String sql = "SELECT amount FROM transactions WHERE "
+				+ "timestamp >= ? AND timestamp < ?";
+
+		BigDecimal sum = new BigDecimal(0).setScale(2);
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setTimestamp(1, new Timestamp(begin.getTime()));
+			ps.setTimestamp(2, new Timestamp(end.getTime()));
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					sum.add(new BigDecimal(rs.getString(1)).setScale(2));
+			}
+
+			return sum;
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
 	}
 
 	/**

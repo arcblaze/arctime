@@ -21,6 +21,33 @@ import com.arcblaze.arctime.model.Company;
  * Manages companies within the back-end database.
  */
 public class JdbcCompanyDao implements CompanyDao {
+	protected Company fromResultSet(ResultSet rs) throws SQLException {
+		Company company = new Company();
+		company.setId(rs.getInt("id"));
+		company.setName(rs.getString("name"));
+		company.setActive(rs.getBoolean("active"));
+		return company;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int count(boolean includeInactive) throws DatabaseException {
+		String sql = "SELECT COUNT(*) FROM companies"
+				+ (includeInactive ? "" : " WHERE active = TRUE");
+
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+			if (rs.next())
+				return rs.getInt(1);
+			return 0;
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -35,15 +62,9 @@ public class JdbcCompanyDao implements CompanyDao {
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, id);
 
-			try (ResultSet rs = ps.executeQuery();) {
-				if (rs.next()) {
-					Company company = new Company();
-					company.setId(rs.getInt("id"));
-					company.setName(rs.getString("name"));
-					company.setActive(rs.getBoolean("active"));
-
-					return company;
-				}
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					return fromResultSet(rs);
 			}
 
 			return null;
@@ -63,13 +84,8 @@ public class JdbcCompanyDao implements CompanyDao {
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
-			while (rs.next()) {
-				Company company = new Company();
-				company.setId(rs.getInt("id"));
-				company.setName(rs.getString("name"));
-				company.setActive(rs.getBoolean("active"));
-				companies.add(company);
-			}
+			while (rs.next())
+				companies.add(fromResultSet(rs));
 
 			return companies;
 		} catch (SQLException sqlException) {

@@ -54,6 +54,25 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public int count(boolean includeInactive) throws DatabaseException {
+		String sql = "SELECT COUNT(*) FROM users"
+				+ (includeInactive ? "" : " WHERE active = TRUE");
+
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+			if (rs.next())
+				return rs.getInt(1);
+			return 0;
+		} catch (SQLException sqlException) {
+			throw new DatabaseException(sqlException);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public User getLogin(String login) throws DatabaseException {
 		if (StringUtils.isBlank(login))
 			throw new IllegalArgumentException("Invalid blank login");
@@ -66,7 +85,7 @@ public class JdbcUserDao implements UserDao {
 			ps.setString(1, login);
 			ps.setString(2, login);
 
-			try (ResultSet rs = ps.executeQuery();) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					return fromResultSet(rs, true);
 			}
@@ -106,7 +125,7 @@ public class JdbcUserDao implements UserDao {
 			ps.setInt(1, companyId);
 			ps.setInt(2, userId);
 
-			try (ResultSet rs = ps.executeQuery();) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					User user = fromResultSet(rs, false);
 

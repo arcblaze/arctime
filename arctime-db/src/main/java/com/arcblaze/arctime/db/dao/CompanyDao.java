@@ -11,6 +11,17 @@ import com.arcblaze.arctime.model.Company;
  */
 public interface CompanyDao {
 	/**
+	 * @param includeInactive
+	 *            whether inactive companies should be included
+	 * 
+	 * @return the total number of companies in the system
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public int count(boolean includeInactive) throws DatabaseException;
+
+	/**
 	 * @param id
 	 *            the unique id of the company to be retrieved
 	 * 
