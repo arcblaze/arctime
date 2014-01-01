@@ -108,19 +108,21 @@ public class ResetPasswordResource extends BaseResource {
 			if (user == null)
 				throw notFound("A user with the specified login was not found.");
 
+			String salt = this.password.random(10);
 			String newPassword = this.password.random();
-			String hashedPass = this.password.hash(newPassword);
+			String hashedPass = this.password.hash(newPassword, salt);
 			log.debug("  New password will be: {}", newPassword);
 			log.debug("  Hashed password will be: {}", hashedPass);
 
-			dao.setPassword(user.getId(), hashedPass);
+			dao.setPassword(user.getId(), hashedPass, salt);
 			log.debug("  Password updated successfully");
 
 			try {
 				this.emailSender.send(user, newPassword);
 			} catch (MessagingException mailException) {
 				log.debug("  Failed to send email, setting password back");
-				dao.setPassword(user.getId(), user.getHashedPass());
+				dao.setPassword(user.getId(), user.getHashedPass(),
+						user.getSalt());
 				throw mailError(mailException);
 			}
 

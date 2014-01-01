@@ -16,14 +16,17 @@ public class Password {
 	/**
 	 * @param password
 	 *            the new password for which a hash will be generated
+	 * @param salt
+	 *            the salt value to use when hashing the password
 	 * 
 	 * @return the hashed value in the form of a hex string
 	 */
-	public String hash(String password) {
+	public String hash(String password, String salt) {
 		try {
 			MessageDigest messageDigest = MessageDigest
 					.getInstance(HASH_ALGORITHM);
-			return toHexString(messageDigest.digest(password.getBytes()));
+			return toHexString(messageDigest.digest((salt + password)
+					.getBytes()));
 		} catch (NoSuchAlgorithmException badHashAlgorithm) {
 			// Not expecting this to happen.
 			return password;
@@ -42,15 +45,25 @@ public class Password {
 	}
 
 	/**
-	 * @return a randomly generated password
+	 * @param length
+	 *            the length of the password to generate
+	 * 
+	 * @return a randomly generated password of the specified length
 	 */
-	public String random() {
+	public String random(int length) {
 		final String chars = "aeuAEU23456789bdghjmnpqrstvzBDGHJLMNPQRSTVWXZ";
 
 		Random random = new Random();
 		StringBuilder password = new StringBuilder();
-		for (int i = 0; i < 14; i++)
+		for (int i = 0; i < length; i++)
 			password.append(chars.charAt(random.nextInt(chars.length())));
 		return password.toString();
+	}
+
+	/**
+	 * @return a randomly generated password
+	 */
+	public String random() {
+		return random(14);
 	}
 }

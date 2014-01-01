@@ -76,6 +76,7 @@ public class TimesheetCurrentResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -113,6 +114,7 @@ public class TimesheetCurrentResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -177,6 +179,7 @@ public class TimesheetCurrentResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -249,6 +252,7 @@ public class TimesheetCurrentResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -257,6 +261,7 @@ public class TimesheetCurrentResourceTest {
 		User approver = new User();
 		approver.setLogin("approver");
 		approver.setHashedPass("hashed");
+		approver.setSalt("salt");
 		approver.setEmail("approver@whatever.com");
 		approver.setFirstName("first");
 		approver.setLastName("last");
@@ -265,6 +270,7 @@ public class TimesheetCurrentResourceTest {
 		User verifier = new User();
 		verifier.setLogin("verifier");
 		verifier.setHashedPass("hashed");
+		verifier.setSalt("salt");
 		verifier.setEmail("verifier@whatever.com");
 		verifier.setFirstName("first");
 		verifier.setLastName("last");
@@ -273,6 +279,7 @@ public class TimesheetCurrentResourceTest {
 		User exporter = new User();
 		exporter.setLogin("exporter");
 		exporter.setHashedPass("hashed");
+		exporter.setSalt("salt");
 		exporter.setEmail("exporter@whatever.com");
 		exporter.setFirstName("first");
 		exporter.setLastName("last");
@@ -348,6 +355,7 @@ public class TimesheetCurrentResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -421,6 +429,7 @@ public class TimesheetCurrentResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");

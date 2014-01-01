@@ -90,6 +90,7 @@ public class ResetPasswordResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -102,7 +103,8 @@ public class ResetPasswordResourceTest {
 				.mock(SendResetPasswordEmail.class);
 		Password mockPassword = Mockito.mock(Password.class);
 		Mockito.when(mockPassword.random()).thenReturn("new-password");
-		Mockito.when(mockPassword.hash("new-password")).thenReturn(
+		Mockito.when(mockPassword.random(10)).thenReturn("new-salt");
+		Mockito.when(mockPassword.hash("new-password", "new-salt")).thenReturn(
 				"hashed-password");
 
 		ResetPasswordResource resource = new ResetPasswordResource(
@@ -112,6 +114,7 @@ public class ResetPasswordResourceTest {
 		// Make sure the password was updated.
 		User updated = userDao.getLogin(user.getLogin());
 		assertEquals("hashed-password", updated.getHashedPass());
+		assertEquals("new-salt", updated.getSalt());
 	}
 
 	/**
@@ -129,6 +132,7 @@ public class ResetPasswordResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -141,7 +145,8 @@ public class ResetPasswordResourceTest {
 				.mock(SendResetPasswordEmail.class);
 		Password mockPassword = Mockito.mock(Password.class);
 		Mockito.when(mockPassword.random()).thenReturn("new-password");
-		Mockito.when(mockPassword.hash("new-password")).thenReturn(
+		Mockito.when(mockPassword.random(10)).thenReturn("new-salt");
+		Mockito.when(mockPassword.hash("new-password", "new-salt")).thenReturn(
 				"hashed-password");
 
 		ResetPasswordResource resource = new ResetPasswordResource(
@@ -151,6 +156,7 @@ public class ResetPasswordResourceTest {
 		// Make sure the password was updated.
 		User updated = userDao.getLogin(user.getLogin());
 		assertEquals("hashed-password", updated.getHashedPass());
+		assertEquals("new-salt", updated.getSalt());
 	}
 
 	/**
@@ -170,6 +176,7 @@ public class ResetPasswordResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -185,7 +192,8 @@ public class ResetPasswordResourceTest {
 
 		Password mockPassword = Mockito.mock(Password.class);
 		Mockito.when(mockPassword.random()).thenReturn("new-password");
-		Mockito.when(mockPassword.hash("new-password")).thenReturn(
+		Mockito.when(mockPassword.random(10)).thenReturn("new-salt");
+		Mockito.when(mockPassword.hash("new-password", "new-salt")).thenReturn(
 				"hashed-password");
 
 		try {
@@ -197,8 +205,10 @@ public class ResetPasswordResourceTest {
 			// This is expected.
 		}
 
-		// Make sure the password was reverted back to the original.
+		// Make sure the password and salt values were reverted back to the
+		// original.
 		User updated = userDao.getLogin(user.getLogin());
 		assertEquals("hashed", updated.getHashedPass());
+		assertEquals("salt", updated.getSalt());
 	}
 }

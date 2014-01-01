@@ -104,6 +104,7 @@ public class ProfileUpdateResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -142,6 +143,7 @@ public class ProfileUpdateResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -153,7 +155,12 @@ public class ProfileUpdateResourceTest {
 		SecurityContext security = Mockito.mock(SecurityContext.class);
 		Mockito.when(security.getUserPrincipal()).thenReturn(user);
 
-		ProfileUpdateResource resource = new ProfileUpdateResource();
+		Password mockPassword = Mockito.mock(Password.class);
+		Mockito.when(mockPassword.random(10)).thenReturn("new-salt");
+		Mockito.when(mockPassword.hash("password", "new-salt")).thenReturn(
+				"hashed-password");
+
+		ProfileUpdateResource resource = new ProfileUpdateResource(mockPassword);
 		resource.update(security, "a", "b", "c", "d", "password");
 
 		User updated = userDao.getLogin("c");
@@ -165,7 +172,7 @@ public class ProfileUpdateResourceTest {
 		assertEquals("b", updated.getLastName());
 
 		// Password should be an updated value.
-		assertEquals(new Password().hash("password"), updated.getHashedPass());
+		assertEquals("hashed-password", updated.getHashedPass());
 	}
 
 	/**
@@ -183,6 +190,7 @@ public class ProfileUpdateResourceTest {
 		User existing = new User();
 		existing.setLogin("existing");
 		existing.setHashedPass("hashed");
+		existing.setSalt("salt");
 		existing.setEmail("existing@whatever.com");
 		existing.setFirstName("first");
 		existing.setLastName("last");
@@ -191,6 +199,7 @@ public class ProfileUpdateResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");

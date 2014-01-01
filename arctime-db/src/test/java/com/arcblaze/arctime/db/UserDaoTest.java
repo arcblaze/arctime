@@ -65,6 +65,7 @@ public class UserDaoTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -80,6 +81,7 @@ public class UserDaoTest {
 		User supervisor1 = new User();
 		supervisor1.setLogin("supervisor1");
 		supervisor1.setHashedPass("hashed");
+		supervisor1.setSalt("salt");
 		supervisor1.setEmail("supervisor1");
 		supervisor1.setFirstName("first");
 		supervisor1.setLastName("last");
@@ -90,6 +92,7 @@ public class UserDaoTest {
 		User supervisor2 = new User();
 		supervisor2.setLogin("supervisor2");
 		supervisor2.setHashedPass("hashed");
+		supervisor2.setSalt("salt");
 		supervisor2.setEmail("supervisor2");
 		supervisor2.setFirstName("first");
 		supervisor2.setLastName("last");
@@ -101,6 +104,7 @@ public class UserDaoTest {
 			User user2 = new User();
 			user2.setLogin("user"); // same as other user
 			user2.setHashedPass("hashed");
+			user2.setSalt("salt");
 			user2.setEmail("email2");
 			user2.setFirstName("first");
 			user2.setLastName("last");
@@ -114,6 +118,7 @@ public class UserDaoTest {
 			User user2 = new User();
 			user2.setLogin("user2");
 			user2.setHashedPass("hashed");
+			user2.setSalt("salt");
 			user2.setEmail("EMAIL"); // same as other user
 			user2.setFirstName("first");
 			user2.setLastName("last");

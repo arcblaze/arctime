@@ -39,8 +39,10 @@ public class JdbcUserDao implements UserDao {
 		user.setId(rs.getInt("id"));
 		user.setCompanyId(rs.getInt("company_id"));
 		user.setLogin(rs.getString("login"));
-		if (includePass)
+		if (includePass) {
 			user.setHashedPass(rs.getString("hashed_pass"));
+			user.setSalt(rs.getString("salt"));
+		}
 		user.setEmail(rs.getString("email"));
 		user.setFirstName(rs.getString("first_name"));
 		user.setLastName(rs.getString("last_name"));
@@ -216,8 +218,8 @@ public class JdbcUserDao implements UserDao {
 			throw new IllegalArgumentException("Invalid null company id");
 
 		String sql = "INSERT INTO users (company_id, login, hashed_pass, "
-				+ "email, first_name, last_name, active) VALUES "
-				+ "(?, ?, ?, ?, ?, ?, ?)";
+				+ "salt, email, first_name, last_name, active) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql,
@@ -228,6 +230,7 @@ public class JdbcUserDao implements UserDao {
 				ps.setInt(index++, user.getCompanyId());
 				ps.setString(index++, user.getLogin());
 				ps.setString(index++, user.getHashedPass());
+				ps.setString(index++, user.getSalt());
 				ps.setString(index++, user.getEmail());
 				ps.setString(index++, user.getFirstName());
 				ps.setString(index++, user.getLastName());
@@ -266,7 +269,7 @@ public class JdbcUserDao implements UserDao {
 		if (companyId == null)
 			throw new IllegalArgumentException("Invalid null company id");
 
-		// NOTE: the hashed_pass value is not updated.
+		// NOTE: the hashed_pass and salt values are not updated.
 
 		String sql = "UPDATE users SET login = ?, email = ?, "
 				+ "first_name = ?, last_name = ?, active = ? "
@@ -296,19 +299,22 @@ public class JdbcUserDao implements UserDao {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setPassword(Integer userId, String hashedPass)
+	public void setPassword(Integer userId, String hashedPass, String salt)
 			throws DatabaseException {
 		if (userId == null)
 			throw new IllegalArgumentException("Invalid null user id");
 		if (StringUtils.isBlank(hashedPass))
 			throw new IllegalArgumentException("Invalid blank password");
+		if (StringUtils.isBlank(salt))
+			throw new IllegalArgumentException("Invalid blank salt");
 
-		String sql = "UPDATE users SET hashed_pass = ? WHERE id = ?";
+		String sql = "UPDATE users SET hashed_pass = ?, salt = ? WHERE id = ?";
 
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, hashedPass);
-			ps.setInt(2, userId);
+			ps.setString(2, salt);
+			ps.setInt(3, userId);
 			ps.executeUpdate();
 		} catch (SQLException sqlException) {
 			throw new DatabaseException(sqlException);

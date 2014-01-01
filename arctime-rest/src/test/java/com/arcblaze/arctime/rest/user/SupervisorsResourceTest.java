@@ -58,6 +58,7 @@ public class SupervisorsResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");
@@ -91,6 +92,7 @@ public class SupervisorsResourceTest {
 		User supervisor1 = new User();
 		supervisor1.setLogin("s1");
 		supervisor1.setHashedPass("hashed");
+		supervisor1.setSalt("salt");
 		supervisor1.setEmail("s1@whatever.com");
 		supervisor1.setFirstName("first");
 		supervisor1.setLastName("last");
@@ -99,6 +101,7 @@ public class SupervisorsResourceTest {
 		User supervisor2 = new User();
 		supervisor2.setLogin("s2");
 		supervisor2.setHashedPass("hashed");
+		supervisor2.setSalt("salt");
 		supervisor2.setEmail("s2@whatever.com");
 		supervisor2.setFirstName("first");
 		supervisor2.setLastName("last");
@@ -107,6 +110,7 @@ public class SupervisorsResourceTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email@whatever.com");
 		user.setFirstName("first");
 		user.setLastName("last");

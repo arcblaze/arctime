@@ -102,6 +102,7 @@ public class TaskDaoTest {
 		User user = new User();
 		user.setLogin("user");
 		user.setHashedPass("hashed");
+		user.setSalt("salt");
 		user.setEmail("email");
 		user.setFirstName("first");
 		user.setLastName("last");

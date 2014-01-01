@@ -3,9 +3,7 @@ package com.arcblaze.arctime.security;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.realm.RealmBase;
@@ -26,10 +24,11 @@ public class SecurityRealm extends RealmBase {
 	/** The configured name of this realm. */
 	private final String realmName;
 
-	/**
-	 * Cache looked-up users for better performance.
-	 */
-	private final Map<String, User> userMap = new ConcurrentHashMap<>();
+	/** Used to perform password hashing. */
+	private final Password password = new Password();
+
+	/** The user object that has been retrieved from the database. */
+	private User user;
 
 	/**
 	 * @param realmName
@@ -55,12 +54,11 @@ public class SecurityRealm extends RealmBase {
 	protected String getPassword(String username) {
 		UserDao dao = DaoFactory.getUserDao();
 		try {
-			User user = dao.getLogin(username);
-			if (user == null)
+			this.user = dao.getLogin(username);
+			if (this.user == null)
 				return null;
 
-			this.userMap.put(username, user);
-			return user.getHashedPass();
+			return this.user.getHashedPass();
 		} catch (DatabaseException databaseException) {
 			databaseException.printStackTrace();
 		}
@@ -72,19 +70,18 @@ public class SecurityRealm extends RealmBase {
 	 */
 	@Override
 	protected Principal getPrincipal(String username) {
-		User user = this.userMap.get(username);
-		if (user != null) {
+		if (this.user != null) {
 			RoleDao dao = DaoFactory.getRoleDao();
 			try {
-				Set<Role> roles = dao.get(user.getId());
+				Set<Role> roles = dao.get(this.user.getId());
 				List<String> roleNames = new ArrayList<>(roles.size() + 1);
 				roleNames.add(Role.USER.name());
 				for (Role role : roles)
 					roleNames.add(role.name());
-				user.setRoles(roles);
+				this.user.setRoles(roles);
 
-				return new GenericPrincipal(user.getLogin(),
-						user.getHashedPass(), roleNames, user);
+				return new GenericPrincipal(this.user.getLogin(),
+						this.user.getHashedPass(), roleNames, this.user);
 			} catch (DatabaseException databaseException) {
 				databaseException.printStackTrace();
 			}
@@ -97,6 +94,6 @@ public class SecurityRealm extends RealmBase {
 	 */
 	@Override
 	protected String digest(String credentials) {
-		return new Password().hash(credentials);
+		return this.password.hash(credentials, this.user.getSalt());
 	}
 }

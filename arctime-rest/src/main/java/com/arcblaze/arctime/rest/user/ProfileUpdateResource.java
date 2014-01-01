@@ -49,6 +49,26 @@ public class ProfileUpdateResource extends BaseResource {
 	}
 
 	/**
+	 * Used to generate new random passwords for users.
+	 */
+	private final Password password;
+
+	/**
+	 * Default constructor.
+	 */
+	public ProfileUpdateResource() {
+		this.password = new Password();
+	}
+
+	/**
+	 * @param password
+	 *            the object used to generate new random passwords for users
+	 */
+	public ProfileUpdateResource(Password password) {
+		this.password = password;
+	}
+
+	/**
 	 * @param security
 	 *            the security information associated with the request
 	 * @param firstName
@@ -87,8 +107,9 @@ public class ProfileUpdateResource extends BaseResource {
 	 *            the updated user login value
 	 * @param email
 	 *            the updated email address for the user
-	 * @param password
-	 *            the updated password for the user
+	 * @param pass
+	 *            the updated password for the user, possibly null if the
+	 *            password should not be updated
 	 * 
 	 * @return the profile update response
 	 */
@@ -98,12 +119,12 @@ public class ProfileUpdateResource extends BaseResource {
 			@FormParam("firstName") String firstName,
 			@FormParam("lastName") String lastName,
 			@FormParam("login") String login, @FormParam("email") String email,
-			@FormParam("password") String password) {
+			@FormParam("password") String pass) {
 		log.debug("Profile update request");
 		try (Timer.Context timer = getTimer(this.servletContext,
 				"/user/profile")) {
 
-			validateParams(firstName, lastName, login, email, password);
+			validateParams(firstName, lastName, login, email, pass);
 
 			User currentUser = (User) security.getUserPrincipal();
 			UserDao dao = DaoFactory.getUserDao();
@@ -123,10 +144,11 @@ public class ProfileUpdateResource extends BaseResource {
 
 			dao.update(currentUser.getCompanyId(), user);
 
-			if (StringUtils.isNotBlank(password)) {
+			if (StringUtils.isNotBlank(pass)) {
 				log.debug("Updating user password");
-				String hashedPass = new Password().hash(password);
-				dao.setPassword(currentUser.getId(), hashedPass);
+				String salt = password.random(10);
+				String hashedPass = password.hash(pass, salt);
+				dao.setPassword(currentUser.getId(), hashedPass, salt);
 				log.debug("Password updated successfully");
 			}
 

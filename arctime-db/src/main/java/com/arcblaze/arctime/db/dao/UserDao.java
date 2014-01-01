@@ -132,7 +132,7 @@ public interface UserDao {
 	/**
 	 * Save property updates within the provided users to the database. Note
 	 * that this does not save any password changes, the
-	 * {@link #setPassword(Integer, String)} method is used for that.
+	 * {@link #setPassword(Integer, String, String)} method is used for that.
 	 * 
 	 * @param companyId
 	 *            the unique id of the company for which the users will be
@@ -154,7 +154,7 @@ public interface UserDao {
 	/**
 	 * Save property updates within the provided users to the database. Note
 	 * that this does not save any password changes, the
-	 * {@link #setPassword(Integer, String)} method is used for that.
+	 * {@link #setPassword(Integer, String, String)} method is used for that.
 	 * 
 	 * @param companyId
 	 *            the unique id of the company for which the users will be
@@ -181,13 +181,15 @@ public interface UserDao {
 	 *            the unique id of the user whose password is being reset
 	 * @param hashedPass
 	 *            the new hashed password value to set for the user
+	 * @param salt
+	 *            the salt value to use when hashing the user's password
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided id is invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
-	public void setPassword(Integer userId, String hashedPass)
+	public void setPassword(Integer userId, String hashedPass, String salt)
 			throws DatabaseException;
 
 	/**

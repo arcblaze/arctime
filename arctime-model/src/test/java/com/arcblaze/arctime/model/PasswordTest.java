@@ -9,15 +9,16 @@ import org.junit.Test;
  */
 public class PasswordTest {
 	/**
-	 * Test the {@link Password#hash(String)} method.
+	 * Test the {@link Password#hash(String, String)} method.
 	 */
 	@Test
 	public void testHash() {
 		final String password = "pass";
-		final String hashedPass = new Password().hash(password);
-		final String correct = "5b722b307fce6c944905d132691d5e4a2214b7fe92b"
-				+ "738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ec"
-				+ "bd93b3280f210578f547f4aed4d25";
+		final String salt = "salt";
+		final String hashedPass = new Password().hash(password, salt);
+		final String correct = "4ab3490b9dd9fbcd6eb9ec6e2078a99c8de5d4d0ae"
+				+ "1371faad97fdc83774dbeeec52c971c41971f71b131587c1becb170"
+				+ "7435b24771d392631298647ba04e37d";
 
 		assertEquals(correct, hashedPass);
 	}
