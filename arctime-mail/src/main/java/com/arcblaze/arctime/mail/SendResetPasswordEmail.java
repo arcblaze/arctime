@@ -32,15 +32,15 @@ public class SendResetPasswordEmail {
 			throw new IllegalArgumentException("Invalid blank password");
 
 		String message = "\nNotice:\n\n"
-				+ "The ARCTIME web site received a password change request\n"
-				+ "for your account.  If you have not requested a password\n"
-				+ "change from the ARCTIME web site by indicating that you\n"
-				+ "forgot your password, please inform your security point of\n"
+				+ "The ArcTime web site received a password change request "
+				+ "for your account.  If you have not requested a password "
+				+ "change from the ArcTime web site by indicating that you "
+				+ "forgot your password, please inform your security point of "
 				+ "contact about the possible security breach attempt.\n\n"
 				+ "Otherwise, here is your new password:\n    " + newPassword
 				+ "\n\n"
-				+ "If you have any problems or questions, contact your\n"
-				+ "supervisor or ARCTIME support.\n\n";
+				+ "If you have any problems or questions, contact your "
+				+ "supervisor or ArcTime support.\n\n";
 		String subject = "Password Change Notification";
 
 		MailSender.send(message, subject, user);
