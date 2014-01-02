@@ -64,8 +64,10 @@ public interface TransactionDao {
 	 *            the ending boundary of the time frame where transactions
 	 *            should be retrieved (exclusive)
 	 * 
-	 * @return a map containing the first day in the month along with the sum of
-	 *         transaction amounts during that month
+	 * @return a map containing the first day of each month along with the sum
+	 *         of transaction amounts during that month, for every month between
+	 *         the begin and end dates, whether data is available for that month
+	 *         or not
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the provided begin or end dates are invalid

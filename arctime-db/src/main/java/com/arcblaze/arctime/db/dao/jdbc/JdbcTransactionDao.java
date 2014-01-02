@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
@@ -143,6 +144,14 @@ public class JdbcTransactionDao implements TransactionDao {
 			} catch (ParseException badDate) {
 				throw new DatabaseException("Unexpected date parse problem.",
 						badDate);
+			}
+
+			// Add any missing months.
+			Date date = DateUtils.truncate(begin, Calendar.MONTH);
+			while (!date.after(end)) {
+				if (!map.containsKey(date))
+					map.put(date, BigDecimal.ZERO.setScale(2));
+				date = DateUtils.addMonths(date, 1);
 			}
 
 			return map;

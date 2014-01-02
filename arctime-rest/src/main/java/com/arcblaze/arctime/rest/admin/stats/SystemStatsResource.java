@@ -1,4 +1,4 @@
-package com.arcblaze.arctime.rest.admin;
+package com.arcblaze.arctime.rest.admin.stats;
 
 import java.util.ArrayList;
 import java.util.Arrays;

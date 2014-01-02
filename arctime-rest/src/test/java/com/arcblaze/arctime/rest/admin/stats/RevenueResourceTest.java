@@ -1,11 +1,11 @@
-package com.arcblaze.arctime.rest.admin;
+package com.arcblaze.arctime.rest.admin.stats;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
-import java.util.Iterator;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,13 +18,11 @@ import com.arcblaze.arctime.model.Company;
 import com.arcblaze.arctime.model.Transaction;
 import com.arcblaze.arctime.model.TransactionType;
 import com.arcblaze.arctime.model.User;
-import com.arcblaze.arctime.rest.admin.SystemStatsResource.Stats;
-import com.arcblaze.arctime.rest.admin.SystemStatsResource.SystemStat;
 
 /**
  * Perform testing of the system statistics.
  */
-public class StatsResourceTest {
+public class RevenueResourceTest {
 	/**
 	 * Perform test setup activities.
 	 * 
@@ -45,46 +43,44 @@ public class StatsResourceTest {
 	}
 
 	/**
-	 * Test how the resource responds with no updated password specified.
+	 * Test how the resource responds with no transaction data available.
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a database issue
 	 */
 	@Test
 	public void testNoData() throws DatabaseException {
-		SystemStatsResource resource = new SystemStatsResource();
-		Stats stats = resource.getStats();
+		StringBuilder correct = new StringBuilder();
+		correct.append("index\tamount\n");
+		correct.append("0\t0.00\n");
+		correct.append("1\t0.00\n");
+		correct.append("2\t0.00\n");
+		correct.append("3\t0.00\n");
+		correct.append("4\t0.00\n");
+		correct.append("5\t0.00\n");
+		correct.append("6\t0.00\n");
+		correct.append("7\t0.00\n");
+		correct.append("8\t0.00\n");
+		correct.append("9\t0.00\n");
+		correct.append("10\t0.00\n");
+		correct.append("11\t0.00\n");
+		correct.append("12\t0.00\n");
 
-		assertNotNull(stats);
-		assertEquals(4, stats.statList.size());
+		RevenueResource resource = new RevenueResource();
+		String data = resource.getRevenue();
 
-		Iterator<SystemStat> iter = stats.statList.iterator();
-
-		SystemStat stat = iter.next();
-		assertEquals("Revenue YTD", stat.name);
-		assertEquals("$0.00", stat.value);
-
-		stat = iter.next();
-		assertEquals("Revenue Year", stat.name);
-		assertEquals("$0.00", stat.value);
-
-		stat = iter.next();
-		assertEquals("Active Users", stat.name);
-		assertEquals("0", stat.value);
-
-		stat = iter.next();
-		assertEquals("Active Companies", stat.name);
-		assertEquals("0", stat.value);
+		assertNotNull(data);
+		assertEquals(correct.toString(), data);
 	}
 
 	/**
-	 * Test how the resource responds with a blank suffix value.
+	 * Test how the resource responds with some transactions available.
 	 * 
 	 * @throws DatabaseException
 	 *             if there is a database issue
 	 */
 	@Test
-	public void testStatsAvailable() throws DatabaseException {
+	public void testTransactionsAvailable() throws DatabaseException {
 		Company company = new Company().setName("company").setActive(true);
 		DaoFactory.getCompanyDao().add(company);
 
@@ -103,7 +99,7 @@ public class StatsResourceTest {
 		Transaction tx1 = new Transaction();
 		tx1.setCompanyId(company.getId());
 		tx1.setUserId(user.getId());
-		tx1.setTimestamp(new Date());
+		tx1.setTimestamp(DateUtils.addMonths(new Date(), -1));
 		tx1.setTransactionType(TransactionType.PAYMENT);
 		tx1.setDescription("payment");
 		tx1.setAmount("50.00");
@@ -120,28 +116,26 @@ public class StatsResourceTest {
 
 		DaoFactory.getTransactionDao().add(tx1, tx2);
 
-		SystemStatsResource resource = new SystemStatsResource();
-		Stats stats = resource.getStats();
+		StringBuilder correct = new StringBuilder();
+		correct.append("index\tamount\n");
+		correct.append("0\t0.00\n");
+		correct.append("1\t0.00\n");
+		correct.append("2\t0.00\n");
+		correct.append("3\t0.00\n");
+		correct.append("4\t0.00\n");
+		correct.append("5\t0.00\n");
+		correct.append("6\t0.00\n");
+		correct.append("7\t0.00\n");
+		correct.append("8\t0.00\n");
+		correct.append("9\t0.00\n");
+		correct.append("10\t0.00\n");
+		correct.append("11\t50.00\n");
+		correct.append("12\t-10.00\n");
 
-		assertNotNull(stats);
-		assertEquals(4, stats.statList.size());
+		RevenueResource resource = new RevenueResource();
+		String data = resource.getRevenue();
 
-		Iterator<SystemStat> iter = stats.statList.iterator();
-
-		SystemStat stat = iter.next();
-		assertEquals("Revenue YTD", stat.name);
-		assertEquals("$40.00", stat.value);
-
-		stat = iter.next();
-		assertEquals("Revenue Year", stat.name);
-		assertEquals("$40.00", stat.value);
-
-		stat = iter.next();
-		assertEquals("Active Users", stat.name);
-		assertEquals("1", stat.value);
-
-		stat = iter.next();
-		assertEquals("Active Companies", stat.name);
-		assertEquals("1", stat.value);
+		assertNotNull(data);
+		assertEquals(correct.toString(), data);
 	}
 }

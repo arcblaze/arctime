@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -96,17 +98,20 @@ public class TransactionDaoTest {
 		assertTrue(transactions.contains(t1));
 		assertTrue(transactions.contains(t2));
 
-		Date beginOfMonth = DateUtils.truncate(new Date(), Calendar.MONTH);
+		Date threeMonthsAgo = DateUtils.addMonths(
+				DateUtils.truncate(new Date(), Calendar.MONTH), -2);
 		Date tomorrow = DateUtils.addDays(new Date(), 1);
-		BigDecimal amount = dao.amountBetween(beginOfMonth, tomorrow);
+		BigDecimal amount = dao.amountBetween(threeMonthsAgo, tomorrow);
 		assertEquals("20.00", amount.toPlainString());
-		amount = dao.amountBetween(company.getId(), beginOfMonth, tomorrow);
+		amount = dao.amountBetween(company.getId(), threeMonthsAgo, tomorrow);
 		assertEquals("20.00", amount.toPlainString());
-		SortedMap<Date, BigDecimal> map = dao.getSumByMonth(beginOfMonth,
+		SortedMap<Date, BigDecimal> map = dao.getSumByMonth(threeMonthsAgo,
 				tomorrow);
-		assertEquals(1, map.size());
-		BigDecimal sum = map.get(beginOfMonth);
-		assertEquals("20.00", sum.toPlainString());
+		assertEquals(3, map.size());
+		Iterator<Entry<Date, BigDecimal>> iter = map.entrySet().iterator();
+		assertEquals("0.00", iter.next().getValue().toPlainString());
+		assertEquals("0.00", iter.next().getValue().toPlainString());
+		assertEquals("20.00", iter.next().getValue().toPlainString());
 
 		Transaction getTransaction = dao.get(t1.getId());
 		assertEquals(t1, getTransaction);
