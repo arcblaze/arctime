@@ -72,11 +72,25 @@ public class BaseResource {
 	 * @param exception
 	 *            the database exception
 	 * 
-	 * @return a {@link InternalServerErrorException} with a suitable status
+	 * @return an {@link InternalServerErrorException} with a suitable status
 	 *         code and error message
 	 */
 	protected InternalServerErrorException dbError(DatabaseException exception) {
 		log.error("Database error", exception);
+		return new InternalServerErrorException(Response
+				.status(Status.INTERNAL_SERVER_ERROR)
+				.entity(exception.getMessage()).build());
+	}
+
+	/**
+	 * @param exception
+	 *            the exception that occurred on the server
+	 * 
+	 * @return an {@link InternalServerErrorException} with a suitable status
+	 *         code and error message
+	 */
+	protected InternalServerErrorException serverError(Exception exception) {
+		log.error("Server error", exception);
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
 				.entity(exception.getMessage()).build());
