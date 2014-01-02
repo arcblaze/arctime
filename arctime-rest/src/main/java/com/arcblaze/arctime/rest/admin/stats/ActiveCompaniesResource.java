@@ -1,6 +1,5 @@
 package com.arcblaze.arctime.rest.admin.stats;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,15 +19,15 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.arcblaze.arctime.db.DaoFactory;
 import com.arcblaze.arctime.db.DatabaseException;
-import com.arcblaze.arctime.db.dao.TransactionDao;
+import com.arcblaze.arctime.db.dao.CompanyDao;
 import com.arcblaze.arctime.rest.BaseResource;
 import com.codahale.metrics.Timer;
 
 /**
- * The REST end-point for retrieving system revenue statistics.
+ * The REST end-point for retrieving active company statistics.
  */
-@Path("/admin/stats/revenue")
-public class RevenueResource extends BaseResource {
+@Path("/admin/stats/companies")
+public class ActiveCompaniesResource extends BaseResource {
 	/** The format used to parse dates passed into this resource. */
 	private final static String[] FMT = { "yyyy-MM-dd" };
 
@@ -48,26 +47,26 @@ public class RevenueResource extends BaseResource {
 	 */
 	@GET
 	@Produces({ MediaType.TEXT_PLAIN })
-	public String getRevenue(@QueryParam("begin") String beginStr,
+	public String activeCompanies(@QueryParam("begin") String beginStr,
 			@QueryParam("end") String endStr) throws DatabaseException {
 		try (Timer.Context timer = getTimer(this.servletContext,
-				"/admin/stats/revenue")) {
+				"/admin/stats/users")) {
 			Date begin = StringUtils.isBlank(beginStr) ? DateUtils.truncate(
 					DateUtils.addDays(new Date(), -365), Calendar.MONTH)
 					: DateUtils.parseDate(beginStr, FMT);
 			Date end = StringUtils.isBlank(endStr) ? DateUtils.addDays(
 					new Date(), 1) : DateUtils.parseDate(endStr, FMT);
 
-			TransactionDao dao = DaoFactory.getTransactionDao();
-			SortedMap<Date, BigDecimal> data = dao.getSumByMonth(begin, end);
+			CompanyDao dao = DaoFactory.getCompanyDao();
+			SortedMap<Date, Integer> data = dao.getActiveByMonth(begin, end);
 
 			StringBuilder ret = new StringBuilder();
-			ret.append("index\tamount\n");
+			ret.append("index\tcount\n");
 			int index = 1;
-			for (Entry<Date, BigDecimal> entry : data.entrySet()) {
+			for (Entry<Date, Integer> entry : data.entrySet()) {
 				ret.append(index++);
 				ret.append("\t");
-				ret.append(entry.getValue().toPlainString());
+				ret.append(entry.getValue());
 				ret.append("\n");
 			}
 			return ret.toString();

@@ -1,7 +1,10 @@
 package com.arcblaze.arctime.db.dao;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.db.DatabaseUniqueConstraintException;
@@ -22,6 +25,19 @@ public interface UserDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public int count(boolean includeInactive) throws DatabaseException;
+
+	/**
+	 * @param includeInactive
+	 *            whether inactive user accounts should be included
+	 * 
+	 * @return a map specifying the total number of user accounts in the system
+	 *         per company
+	 * 
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public Map<Integer, Integer> countPerCompany(boolean includeInactive)
+			throws DatabaseException;
 
 	/**
 	 * @param login
@@ -104,6 +120,65 @@ public interface UserDao {
 	 *             if there is a problem communicating with the database
 	 */
 	public Set<User> getAll(Integer companyId, Set<Enrichment> enrichments)
+			throws DatabaseException;
+
+	/**
+	 * @param companyId
+	 *            the unique id of the company for which active user counts will
+	 *            be retrieved
+	 * @param begin
+	 *            the beginning of the date range for which active user
+	 *            information should be calculated per month (inclusive)
+	 * @param end
+	 *            the ending of the date range for which active user information
+	 *            should be calculated per month (exclusive)
+	 * 
+	 * @return a map containing the first day of each month along with the max
+	 *         active user count during that month, for every month between the
+	 *         begin and end dates, whether data is available for that month or
+	 *         not
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided company id, begin or end dates are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public SortedMap<Date, Integer> getActiveByMonth(Integer companyId,
+			Date begin, Date end) throws DatabaseException;
+
+	/**
+	 * @param begin
+	 *            the beginning of the date range for which active user
+	 *            information should be calculated per month (inclusive)
+	 * @param end
+	 *            the ending of the date range for which active user information
+	 *            should be calculated per month (exclusive)
+	 * 
+	 * @return a map containing the first day of each month along with the max
+	 *         active user count during that month, for every month between the
+	 *         begin and end dates, whether data is available for that month or
+	 *         not
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided begin or end dates are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public SortedMap<Date, Integer> getActiveByMonth(Date begin, Date end)
+			throws DatabaseException;
+
+	/**
+	 * @param day
+	 *            the day for which the active company count applies
+	 * @param counts
+	 *            a map of company ids to counts tracking the active user counts
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided day or count values are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public void setActiveUsers(Date day, Map<Integer, Integer> counts)
 			throws DatabaseException;
 
 	/**

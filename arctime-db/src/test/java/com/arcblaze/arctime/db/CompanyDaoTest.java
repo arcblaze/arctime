@@ -4,8 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -76,5 +82,40 @@ public class CompanyDaoTest {
 		companies = dao.getAll();
 		assertNotNull(companies);
 		assertEquals(0, companies.size());
+
+		Date begin = DateUtils.addMonths(
+				DateUtils.truncate(new Date(), Calendar.MONTH), -3);
+		Date end = DateUtils.addDays(new Date(), 1);
+		SortedMap<Date, Integer> map = dao.getActiveByMonth(begin, end);
+		assertEquals(4, map.size());
+		for (Integer value : map.values())
+			assertEquals(new Integer(0), value);
+
+		dao.setActiveCompanies(begin, 5);
+		dao.setActiveCompanies(DateUtils.addDays(begin, 3), 6);
+		dao.setActiveCompanies(DateUtils.addDays(begin, 32), 8);
+		dao.setActiveCompanies(DateUtils.addDays(begin, 33), 9);
+		dao.setActiveCompanies(DateUtils.addDays(begin, 66), 7);
+		dao.setActiveCompanies(DateUtils.addDays(begin, 67), 6);
+
+		map = dao.getActiveByMonth(begin, end);
+		assertEquals(4, map.size());
+
+		Iterator<Entry<Date, Integer>> iter = map.entrySet().iterator();
+		Entry<Date, Integer> entry = iter.next();
+		assertEquals(begin, entry.getKey());
+		assertEquals(new Integer(6), entry.getValue());
+
+		entry = iter.next();
+		assertEquals(DateUtils.addMonths(begin, 1), entry.getKey());
+		assertEquals(new Integer(9), entry.getValue());
+
+		entry = iter.next();
+		assertEquals(DateUtils.addMonths(begin, 2), entry.getKey());
+		assertEquals(new Integer(7), entry.getValue());
+
+		entry = iter.next();
+		assertEquals(DateUtils.addMonths(begin, 3), entry.getKey());
+		assertEquals(new Integer(0), entry.getValue());
 	}
 }

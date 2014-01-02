@@ -9,7 +9,9 @@ DROP TABLE assignments IF EXISTS;
 DROP TABLE tasks IF EXISTS;
 DROP TABLE supervisors IF EXISTS;
 DROP TABLE roles IF EXISTS;
+DROP TABLE active_user_counts IF EXISTS;
 DROP TABLE users IF EXISTS;
+DROP TABLE active_company_counts IF EXISTS;
 DROP TABLE companies IF EXISTS;
 
 CREATE TABLE companies (
@@ -19,6 +21,11 @@ CREATE TABLE companies (
     active         BOOLEAN      DEFAULT TRUE NOT NULL,
 
     CONSTRAINT unique_company_name UNIQUE (name)
+);
+
+CREATE TABLE active_company_counts (
+    day            DATE         NOT NULL,
+    active         INTEGER      NOT NULL
 );
 
 CREATE TABLE users (
@@ -38,6 +45,15 @@ CREATE TABLE users (
 
     CONSTRAINT unique_user_login UNIQUE (login),
     CONSTRAINT unique_user_email UNIQUE (email)
+);
+
+CREATE TABLE active_user_counts (
+    day            DATE         NOT NULL,
+    company_id     INTEGER      NOT NULL,
+    active         INTEGER      NOT NULL,
+
+    CONSTRAINT fk_active_user_counts_company_id FOREIGN KEY (company_id)
+        REFERENCES companies(id) ON DELETE CASCADE
 );
 
 CREATE TABLE roles (

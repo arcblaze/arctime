@@ -39,6 +39,7 @@ import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.model.Role;
 import com.arcblaze.arctime.rest.ArctimeApplication;
 import com.arcblaze.arctime.security.SecurityRealm;
+import com.arcblaze.arctime.tasks.ActiveCompanyCounterTask;
 import com.arcblaze.arctime.tasks.ActiveUserCounterTask;
 import com.arcblaze.arctime.tasks.BackgroundTask;
 import com.arcblaze.arctime.tasks.MemoryUsageLoggingTask;
@@ -376,11 +377,13 @@ public class Server {
 				this.metricRegistry, this.healthCheckRegistry);
 		BackgroundTask activeUserCounter = new ActiveUserCounterTask(
 				this.metricRegistry, this.healthCheckRegistry);
+		BackgroundTask activeCompanyCounter = new ActiveCompanyCounterTask(
+				this.metricRegistry, this.healthCheckRegistry);
 		BackgroundTask memoryUsage = new MemoryUsageLoggingTask(
 				this.metricRegistry, this.healthCheckRegistry);
 
 		List<BackgroundTask> tasks = Arrays.asList(systemHealth,
-				activeUserCounter, memoryUsage);
+				activeUserCounter, activeCompanyCounter, memoryUsage);
 
 		for (BackgroundTask task : tasks)
 			task.schedule(backgroundTaskRunner);

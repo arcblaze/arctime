@@ -5,7 +5,7 @@ ui.panel.login.LoginPanel = Ext.extend(Ext.form.FormPanel, {
 	constructor: function(c) {
 		var form = this;
 
-		this.redirectUri = new Ext.form.HiddenField({
+		this.redirectUri = new Ext.form.Hidden({
 			name:  'redirectUri',
 			value: c ? c.redirectUri : undefined
 		});

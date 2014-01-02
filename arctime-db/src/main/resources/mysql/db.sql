@@ -9,7 +9,9 @@ DROP TABLE IF EXISTS assignments;
 DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS supervisors;
 DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS active_user_counts;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS active_company_counts;
 DROP TABLE IF EXISTS companies;
 
 CREATE TABLE IF NOT EXISTS companies (
@@ -18,6 +20,13 @@ CREATE TABLE IF NOT EXISTS companies (
     `active`         BOOLEAN      NOT NULL DEFAULT TRUE,
 
     CONSTRAINT unique_company_name UNIQUE (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE IF NOT EXISTS active_company_counts (
+    `day`            DATE         NOT NULL,
+    `active`         INTEGER      NOT NULL,
+
+    INDEX idx_active_company_counts_day USING HASH (`day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -37,6 +46,17 @@ CREATE TABLE IF NOT EXISTS users (
 
     CONSTRAINT unique_user_login UNIQUE (`login`),
     CONSTRAINT unique_user_email UNIQUE (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE IF NOT EXISTS active_user_counts (
+    `day`            DATE         NOT NULL,
+    `company_id`     INTEGER      NOT NULL,
+    `active`         INTEGER      NOT NULL,
+
+    CONSTRAINT fk_active_user_counts_company_id FOREIGN KEY (`company_id`)
+        REFERENCES companies(`id`) ON DELETE CASCADE,
+
+    INDEX idx_active_company_counts_day USING HASH (`day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS roles (

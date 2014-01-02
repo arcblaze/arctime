@@ -46,7 +46,7 @@ public class SystemStatsResource extends BaseResource {
 
 	@XmlRootElement
 	static class Stats {
-		@XmlElement(name = "stat")
+		@XmlElement(name = "stats")
 		public List<SystemStat> statList;
 	}
 
