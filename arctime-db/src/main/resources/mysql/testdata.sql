@@ -74,6 +74,6 @@ INSERT INTO `holidays` (`id`, `company_id`, `description`, `config`) VALUES
 (10, 1, 'Martin Luther King Junior Day', '3rd Monday in January'),
 (11, 1, 'Friday After Thanksgiving', '4th Thursday in November + 1');
 
-INSERT INTO transactions (`day`, `type`, `company_id`, `description`, `amount`, `notes`) VALUES
-('2013-12-24', 'PAYMENT', 1, 'Purchased 40 user months.', '20.00', NULL);
+INSERT INTO transactions (`company_id`, `user_id`, `timestamp`, `type`, `description`, `amount`, `notes`) VALUES
+(1, 1, '2013-12-24 01:02:03', 'PAYMENT', 'Purchased 40 user months.', '20.00', NULL);
 

@@ -66,7 +66,7 @@ public class JdbcTransactionDao implements TransactionDao {
 			ps.setTimestamp(3, new Timestamp(end.getTime()));
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					sum.add(new BigDecimal(rs.getString(1)).setScale(2));
+					sum = sum.add(new BigDecimal(rs.getString(1)).setScale(2));
 			}
 
 			return sum;
@@ -93,7 +93,7 @@ public class JdbcTransactionDao implements TransactionDao {
 			ps.setTimestamp(2, new Timestamp(end.getTime()));
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
-					sum.add(new BigDecimal(rs.getString(1)).setScale(2));
+					sum = sum.add(new BigDecimal(rs.getString(1)).setScale(2));
 			}
 
 			return sum;

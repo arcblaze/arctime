@@ -210,8 +210,8 @@ CREATE TABLE IF NOT EXISTS holidays (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS transactions (
-    `id`             BIGINT       NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `company_id`     BIGINT       NOT NULL,
+    `id`             INTEGER      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `company_id`     INTEGER      NOT NULL,
     `user_id`        INTEGER      NOT NULL,
     `timestamp`      TIMESTAMP    NOT NULL DEFAULT NOW(),
     `type`           VARCHAR(80)  NOT NULL,
