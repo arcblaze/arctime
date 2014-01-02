@@ -5,9 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
+import java.util.SortedMap;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -91,6 +95,18 @@ public class TransactionDaoTest {
 		assertEquals(2, transactions.size());
 		assertTrue(transactions.contains(t1));
 		assertTrue(transactions.contains(t2));
+
+		Date beginOfMonth = DateUtils.truncate(new Date(), Calendar.MONTH);
+		Date tomorrow = DateUtils.addDays(new Date(), 1);
+		BigDecimal amount = dao.amountBetween(beginOfMonth, tomorrow);
+		assertEquals("20.00", amount.toPlainString());
+		amount = dao.amountBetween(company.getId(), beginOfMonth, tomorrow);
+		assertEquals("20.00", amount.toPlainString());
+		SortedMap<Date, BigDecimal> map = dao.getSumByMonth(beginOfMonth,
+				tomorrow);
+		assertEquals(1, map.size());
+		BigDecimal sum = map.get(beginOfMonth);
+		assertEquals("20.00", sum.toPlainString());
 
 		Transaction getTransaction = dao.get(t1.getId());
 		assertEquals(t1, getTransaction);

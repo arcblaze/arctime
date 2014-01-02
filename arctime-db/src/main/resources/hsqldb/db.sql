@@ -192,7 +192,7 @@ CREATE TABLE transactions (
     timestamp      TIMESTAMP    DEFAULT NOW() NOT NULL,
     type           VARCHAR(80)  NOT NULL,
     description    VARCHAR(200) NOT NULL,
-    amount         VARCHAR(10)  NOT NULL,
+    amount         FLOAT        NOT NULL,
     notes          LONGVARCHAR,
 
     CONSTRAINT fk_transactions_company_id FOREIGN KEY (company_id)

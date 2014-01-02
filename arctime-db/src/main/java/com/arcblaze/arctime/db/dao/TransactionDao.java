@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
+import java.util.SortedMap;
 
 import com.arcblaze.arctime.db.DatabaseException;
 import com.arcblaze.arctime.model.Transaction;
@@ -28,7 +29,7 @@ public interface TransactionDao {
 	 *         that time period
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the provided id is invalid
+	 *             if the provided begin or end dates are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
@@ -48,11 +49,30 @@ public interface TransactionDao {
 	 *         that time period
 	 * 
 	 * @throws IllegalArgumentException
-	 *             if the provided id is invalid
+	 *             if the provided begin or end dates are invalid
 	 * @throws DatabaseException
 	 *             if there is a problem communicating with the database
 	 */
 	public BigDecimal amountBetween(Date begin, Date end)
+			throws DatabaseException;
+
+	/**
+	 * @param begin
+	 *            the beginning boundary of the time frame where transactions
+	 *            should be retrieved (inclusive)
+	 * @param end
+	 *            the ending boundary of the time frame where transactions
+	 *            should be retrieved (exclusive)
+	 * 
+	 * @return a map containing the first day in the month along with the sum of
+	 *         transaction amounts during that month
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided begin or end dates are invalid
+	 * @throws DatabaseException
+	 *             if there is a problem communicating with the database
+	 */
+	public SortedMap<Date, BigDecimal> getSumByMonth(Date begin, Date end)
 			throws DatabaseException;
 
 	/**

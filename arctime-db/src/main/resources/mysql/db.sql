@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     `timestamp`      TIMESTAMP    NOT NULL DEFAULT NOW(),
     `type`           VARCHAR(80)  NOT NULL,
     `description`    VARCHAR(200) NOT NULL,
-    `amount`         VARCHAR(10)  NOT NULL,
+    `amount`         FLOAT        NOT NULL,
     `notes`          LONGTEXT,
 
     CONSTRAINT fk_transactions_company_id FOREIGN KEY (`company_id`)
