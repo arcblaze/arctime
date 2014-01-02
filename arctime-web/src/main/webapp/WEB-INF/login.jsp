@@ -1,3 +1,5 @@
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<% String redirUri = String.valueOf(request.getAttribute("javax.servlet.forward.request_uri")); %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -25,7 +27,9 @@
       <script>
         Ext.onReady(function() {
             // Create the login panel.
-            var loginPanel = new ui.panel.login.LoginPanel();
+            var loginPanel = new ui.panel.login.LoginPanel({
+                redirectUri: '<%= StringEscapeUtils.escapeJavaScript(redirUri) %>'
+            });
             loginPanel.render('login-form');
             loginPanel.setInitialFocus();
         });

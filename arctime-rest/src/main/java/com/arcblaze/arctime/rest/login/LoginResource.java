@@ -41,6 +41,9 @@ public class LoginResource extends BaseResource {
 	 *            the user login name to use when logging in
 	 * @param password
 	 *            the password to use when logging in
+	 * @param redirectUri
+	 *            the location to which we should redirect after a successful
+	 *            login
 	 * 
 	 * @return a redirection to the user timesheet page
 	 * 
@@ -50,7 +53,9 @@ public class LoginResource extends BaseResource {
 	@POST
 	public Response login(@Context HttpServletRequest request,
 			@Context UriInfo uriInfo, @FormParam("login") String login,
-			@FormParam("password") String password) throws URISyntaxException {
+			@FormParam("password") String password,
+			@FormParam("redirectUri") String redirectUri)
+			throws URISyntaxException {
 		log.debug("User login request");
 		try (Timer.Context timer = getTimer(this.servletContext, "/login")) {
 			String remoteUser = request.getRemoteUser();
@@ -65,7 +70,7 @@ public class LoginResource extends BaseResource {
 
 			String baseUri = uriInfo.getBaseUri().toString();
 			baseUri = baseUri.substring(0, baseUri.indexOf("/rest"));
-			return Response.seeOther(new URI(baseUri + "/user/")).build();
+			return Response.seeOther(new URI(baseUri + redirectUri)).build();
 		} catch (ServletException loginFailed) {
 			log.error("User login failed.", loginFailed);
 			throw new NotAuthorizedException("Login failed.", loginFailed);

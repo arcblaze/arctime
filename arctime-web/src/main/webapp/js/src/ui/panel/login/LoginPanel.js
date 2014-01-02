@@ -5,6 +5,11 @@ ui.panel.login.LoginPanel = Ext.extend(Ext.form.FormPanel, {
 	constructor: function(c) {
 		var form = this;
 
+		this.redirectUri = new Ext.form.HiddenField({
+			name:  'redirectUri',
+			value: c ? c.redirectUri : undefined
+		});
+
 		this.login = new Ext.form.TextField({
 			fieldLabel: 'Login or Email',
 			name:       'login',
@@ -75,6 +80,7 @@ ui.panel.login.LoginPanel = Ext.extend(Ext.form.FormPanel, {
 			labelWidth:     140,
 			standardSubmit: true,
 			items: [
+				form.redirectUri,
 				form.login,
 				form.passwd
 			],
