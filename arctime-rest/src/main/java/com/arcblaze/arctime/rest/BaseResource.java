@@ -17,12 +17,15 @@ import com.arcblaze.arctime.model.User;
 import com.arcblaze.arctime.model.util.HolidayConfigurationException;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.codahale.metrics.health.HealthCheck;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 
 /**
  * The base class for all resources.
  */
-public class BaseResource {
+public class BaseResource extends HealthCheck {
 	private final static Logger log = LoggerFactory
 			.getLogger(BaseResource.class);
 
@@ -62,6 +65,10 @@ public class BaseResource {
 	 *         error message
 	 */
 	protected ForbiddenException forbidden(User user, String message) {
+		// This will cause the health check to fail.
+		this.failure = new Exception("User " + user
+				+ " attempted to perform an unauthorized action: " + message);
+
 		log.error("User attempted to perform an unauthorized action: " + user);
 		log.error(message);
 		return new ForbiddenException(Response.status(Status.FORBIDDEN)
@@ -76,6 +83,9 @@ public class BaseResource {
 	 *         code and error message
 	 */
 	protected InternalServerErrorException dbError(DatabaseException exception) {
+		// This will cause the health check to fail.
+		this.failure = exception;
+
 		log.error("Database error", exception);
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
@@ -90,6 +100,9 @@ public class BaseResource {
 	 *         code and error message
 	 */
 	protected InternalServerErrorException serverError(Exception exception) {
+		// This will cause the health check to fail.
+		this.failure = exception;
+
 		log.error("Server error", exception);
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
@@ -105,6 +118,9 @@ public class BaseResource {
 	 */
 	protected InternalServerErrorException holidayError(
 			HolidayConfigurationException exception) {
+		// This will cause the health check to fail.
+		this.failure = exception;
+
 		log.error("Holiday error", exception);
 		return new InternalServerErrorException(Response
 				.status(Status.INTERNAL_SERVER_ERROR)
@@ -120,6 +136,9 @@ public class BaseResource {
 	 */
 	protected InternalServerErrorException mailError(
 			MessagingException exception) {
+		// This will cause the health check to fail.
+		this.failure = exception;
+
 		log.error("Mail error", exception);
 		String message = exception.getMessage();
 		if (message == null)
@@ -146,6 +165,21 @@ public class BaseResource {
 
 	/**
 	 * @param context
+	 *            the servlet context from which the health check registry
+	 *            should be retrieved
+	 * 
+	 * @return an instance of the application health check registry
+	 */
+	protected HealthCheckRegistry getHealthCheckRegistry(ServletContext context) {
+		if (context == null)
+			return null;
+
+		return (HealthCheckRegistry) context
+				.getAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY);
+	}
+
+	/**
+	 * @param context
 	 *            the servlet context from which the metric timer should be
 	 *            retrieved
 	 * @param name
@@ -160,6 +194,23 @@ public class BaseResource {
 		if (metricRegistry == null)
 			return null;
 
+		HealthCheckRegistry healthCheckRegistry = getHealthCheckRegistry(context);
+		if (healthCheckRegistry != null)
+			healthCheckRegistry.register(name, this);
+
 		return metricRegistry.timer(name).time();
+	}
+
+	/** A system error resulting in failed health checks. */
+	private Throwable failure = null;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Result check() throws Exception {
+		if (this.failure != null)
+			return Result.unhealthy(this.failure);
+		return Result.healthy();
 	}
 }

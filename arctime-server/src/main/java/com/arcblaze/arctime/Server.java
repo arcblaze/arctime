@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -37,6 +39,10 @@ import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.model.Role;
 import com.arcblaze.arctime.rest.ArctimeApplication;
 import com.arcblaze.arctime.security.SecurityRealm;
+import com.arcblaze.arctime.tasks.ActiveUserCounterTask;
+import com.arcblaze.arctime.tasks.BackgroundTask;
+import com.arcblaze.arctime.tasks.MemoryUsageLoggingTask;
+import com.arcblaze.arctime.tasks.SystemHealthCheckTask;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlet.InstrumentedFilter;
@@ -148,6 +154,8 @@ public class Server {
 
 		context.addMimeMapping("css", "text/css");
 		context.addMimeMapping("js", "application/javascript");
+
+		launchBackgroundTasks();
 
 		try {
 			tomcat.start();
@@ -355,6 +363,27 @@ public class Server {
 		}
 
 		return constraints;
+	}
+
+	/**
+	 * Launches background tasks that do work for this system.
+	 */
+	protected void launchBackgroundTasks() {
+		ScheduledExecutorService backgroundTaskRunner = Executors
+				.newScheduledThreadPool(3);
+
+		BackgroundTask systemHealth = new SystemHealthCheckTask(
+				this.metricRegistry, this.healthCheckRegistry);
+		BackgroundTask activeUserCounter = new ActiveUserCounterTask(
+				this.metricRegistry, this.healthCheckRegistry);
+		BackgroundTask memoryUsage = new MemoryUsageLoggingTask(
+				this.metricRegistry, this.healthCheckRegistry);
+
+		List<BackgroundTask> tasks = Arrays.asList(systemHealth,
+				activeUserCounter, memoryUsage);
+
+		for (BackgroundTask task : tasks)
+			task.schedule(backgroundTaskRunner);
 	}
 
 	/**
