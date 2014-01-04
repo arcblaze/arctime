@@ -6,7 +6,6 @@ ui.panel.admin.stats.SystemStatsPanel = Ext.extend(Ext.Panel, {
 		var panel = this;
 
 		this.store = new data.store.admin.SystemStatsStore();
-		console.log(this.store);
 
 		var config = Ext.applyIf(c || {}, {
 			id:             'ui.panel.admin.stats.systemstatspanel',

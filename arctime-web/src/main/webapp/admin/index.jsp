@@ -14,12 +14,14 @@
       <div id="system-stats"></div>
 
       <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+      <script src="/js/guage.js"></script>
 
       <script src="/js/src/data/model/Stat.js"></script>
       <script src="/js/src/data/store/admin/SystemStatsStore.js"></script>
       <script src="/js/src/util/io/ServerIO.js"></script>
       <script src="/js/src/ui/panel/admin/stats/ActiveCompanyChartPanel.js"></script>
       <script src="/js/src/ui/panel/admin/stats/ActiveUserChartPanel.js"></script>
+      <script src="/js/src/ui/panel/admin/stats/MemoryUsagePanel.js"></script>
       <script src="/js/src/ui/panel/admin/stats/MonthlyRevenueChartPanel.js"></script>
       <script src="/js/src/ui/panel/admin/stats/StatsPanel.js"></script>
       <script src="/js/src/ui/panel/admin/stats/SystemStatsPanel.js"></script>

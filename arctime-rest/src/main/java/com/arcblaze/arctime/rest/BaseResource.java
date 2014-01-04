@@ -190,6 +190,19 @@ public class BaseResource extends HealthCheck {
 	protected Timer.Context getTimer(ServletContext context, String name) {
 		log.info(name);
 
+		return getTimerNoLog(context, name);
+	}
+
+	/**
+	 * @param context
+	 *            the servlet context from which the metric timer should be
+	 *            retrieved
+	 * @param name
+	 *            the name of the timer to retrieve
+	 * 
+	 * @return an instance of the requested timer
+	 */
+	protected Timer.Context getTimerNoLog(ServletContext context, String name) {
 		MetricRegistry metricRegistry = getMetricRegistry(context);
 		if (metricRegistry == null)
 			return null;

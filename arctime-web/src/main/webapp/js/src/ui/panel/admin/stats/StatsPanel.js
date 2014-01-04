@@ -6,6 +6,7 @@ ui.panel.admin.stats.StatsPanel = Ext.extend(Ext.Panel, {
 		var panel = this;
 
 		this.system = new ui.panel.admin.stats.SystemStatsPanel();
+		this.memoryUsage = new ui.panel.admin.stats.MemoryUsagePanel();
 		this.monthlyRevenue = new ui.panel.admin.stats.MonthlyRevenueChartPanel();
 		this.activeUsers = new ui.panel.admin.stats.ActiveUserChartPanel();
 		this.activeCompanies = new ui.panel.admin.stats.ActiveCompanyChartPanel();
@@ -21,7 +22,18 @@ ui.panel.admin.stats.StatsPanel = Ext.extend(Ext.Panel, {
 					border:      false,
 					autoHeight:  true,
 					columnWidth: 0.40,
-					items:       panel.system
+					items: [
+						new Ext.Panel({
+							border:      false,
+							bodyStyle:   'padding-bottom:15px;',
+							items:       panel.system
+						}),
+						new Ext.Panel({
+							border:      false,
+							bodyStyle:   'padding-bottom:15px;',
+							items:       panel.memoryUsage
+						}),
+					]
 				}),
 				new Ext.Panel({
 					border:      false,

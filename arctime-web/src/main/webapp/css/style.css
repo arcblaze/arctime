@@ -218,3 +218,52 @@ html, body {
  stroke-width:1.5px;
 }
 
+/* The memory usage guage styles */
+
+#heap-memory-usage {
+ float:left;
+ margin:0px auto;
+ padding:10px;
+ text-align:center;
+ width:175px;
+}
+#nonheap-memory-usage {
+ float:right;
+ margin:0px auto;
+ padding:10px;
+ text-align:center;
+ width:175px;
+}
+#memory-details {
+ width:350px;
+}
+#memory-details #memory-details-table {
+ width:350px;
+}
+#memory-details #memory-details-table #heap-details {
+ width:175px;
+}
+#memory-details #memory-details-table #heap-details #heap-details-table {
+ width:175px;
+}
+#memory-details #memory-details-table #heap-details #heap-details-table .label {
+ text-align:right;
+ width:50%;
+}
+#memory-details #memory-details-table #heap-details #heap-details-table .value {
+ width:50%;
+}
+#memory-details #memory-details-table #nonheap-details {
+ width:175px;
+}
+#memory-details #memory-details-table #nonheap-details #nonheap-details-table {
+ width:175px;
+}
+#memory-details #memory-details-table #nonheap-details #nonheap-details-table .label {
+ text-align:right;
+ width:50%;
+}
+#memory-details #memory-details-table #nonheap-details #nonheap-details-table .value {
+ width:50%;
+}
+
