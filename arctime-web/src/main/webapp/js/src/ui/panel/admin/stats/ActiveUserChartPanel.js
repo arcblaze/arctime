@@ -9,8 +9,8 @@ ui.panel.admin.stats.ActiveUserChartPanel = Ext.extend(Ext.Panel, {
 		this.chartHeight = 180;
 
 		var config = Ext.applyIf(c || {}, {
-			id:         'ui.panel.admin.stats.activeuserchartpanel',
-			title:      'Active Users',
+			id:     'ui.panel.admin.stats.activeuserchartpanel',
+			title:  'Active Users',
 			width:  panel.chartWidth + 20,
 			height: panel.chartHeight + 30,
 			items: [

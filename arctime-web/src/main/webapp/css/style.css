@@ -344,3 +344,17 @@ html, body {
  width:50%;
 }
 
+/* The status code chart */
+
+#status-code-chart {
+}
+#status-code-chart .status-code-chart .bar {
+ fill:#709e6b;
+}
+#status-code-chart .status-code-chart .bar:hover {
+ fill:#90be8b;
+}
+#status-code-chart .status-code-chart .bar-text {
+ color:cyan;
+}
+

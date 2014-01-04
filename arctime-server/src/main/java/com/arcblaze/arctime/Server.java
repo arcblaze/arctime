@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.arcblaze.arctime.config.Property;
 import com.arcblaze.arctime.model.Role;
 import com.arcblaze.arctime.rest.ArctimeApplication;
+import com.arcblaze.arctime.rest.ResponseCodeStatusFilter;
 import com.arcblaze.arctime.security.SecurityRealm;
 import com.arcblaze.arctime.tasks.ActiveCompanyCounterTask;
 import com.arcblaze.arctime.tasks.ActiveUserCounterTask;
@@ -125,7 +126,7 @@ public class Server {
 
 		FilterDef metricsFilter = new FilterDef();
 		metricsFilter.setFilterName("metricsFilter");
-		metricsFilter.setFilterClass(InstrumentedFilter.class.getName());
+		metricsFilter.setFilterClass(ResponseCodeStatusFilter.class.getName());
 		context.addFilterDef(metricsFilter);
 		FilterMap metricsFilterMap = new FilterMap();
 		metricsFilterMap.setFilterName(metricsFilter.getFilterName());

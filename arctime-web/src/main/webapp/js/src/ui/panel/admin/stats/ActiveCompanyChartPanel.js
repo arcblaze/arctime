@@ -9,8 +9,8 @@ ui.panel.admin.stats.ActiveCompanyChartPanel = Ext.extend(Ext.Panel, {
 		this.chartHeight = 180;
 
 		var config = Ext.applyIf(c || {}, {
-			id:         'ui.panel.admin.stats.activecompanychartpanel',
-			title:      'Active Companies',
+			id:     'ui.panel.admin.stats.activecompanychartpanel',
+			title:  'Active Companies',
 			width:  panel.chartWidth + 20,
 			height: panel.chartHeight + 30,
 			items: [

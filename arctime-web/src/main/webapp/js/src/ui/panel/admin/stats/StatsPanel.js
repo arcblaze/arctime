@@ -7,6 +7,7 @@ ui.panel.admin.stats.StatsPanel = Ext.extend(Ext.Panel, {
 
 		this.system = new ui.panel.admin.stats.SystemStatsPanel();
 		this.memoryUsage = new ui.panel.admin.stats.MemoryUsagePanel();
+		this.statusCodes = new ui.panel.admin.stats.StatusCodeChartPanel();
 		this.monthlyRevenue = new ui.panel.admin.stats.MonthlyRevenueChartPanel();
 		this.activeUsers = new ui.panel.admin.stats.ActiveUserChartPanel();
 		this.activeCompanies = new ui.panel.admin.stats.ActiveCompanyChartPanel();
@@ -24,15 +25,20 @@ ui.panel.admin.stats.StatsPanel = Ext.extend(Ext.Panel, {
 					columnWidth: 0.40,
 					items: [
 						new Ext.Panel({
-							border:      false,
-							bodyStyle:   'padding-bottom:15px;',
-							items:       panel.system
+							border:    false,
+							bodyStyle: 'padding-bottom:15px;',
+							items:     panel.system
 						}),
 						new Ext.Panel({
-							border:      false,
-							bodyStyle:   'padding-bottom:15px;',
-							items:       panel.memoryUsage
+							border:    false,
+							bodyStyle: 'padding-bottom:15px;',
+							items:     panel.memoryUsage
 						}),
+						new Ext.Panel({
+							border:    false,
+							bodyStyle: 'padding-bottom:15px;',
+							items:     panel.statusCodes
+						})
 					]
 				}),
 				new Ext.Panel({

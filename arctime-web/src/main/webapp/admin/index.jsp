@@ -25,6 +25,7 @@
       <script src="/js/src/ui/panel/admin/stats/MemoryUsagePanel.js"></script>
       <script src="/js/src/ui/panel/admin/stats/MonthlyRevenueChartPanel.js"></script>
       <script src="/js/src/ui/panel/admin/stats/StatsPanel.js"></script>
+      <script src="/js/src/ui/panel/admin/stats/StatusCodeChartPanel.js"></script>
       <script src="/js/src/ui/panel/admin/stats/SystemStatsPanel.js"></script>
       <script>
         Ext.onReady(function() {

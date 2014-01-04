@@ -62,6 +62,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.codahale.metrics</groupId>
+			<artifactId>metrics-servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.codahale.metrics</groupId>
 			<artifactId>metrics-servlets</artifactId>
 		</dependency>
 
