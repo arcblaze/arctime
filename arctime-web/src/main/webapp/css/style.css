@@ -157,20 +157,45 @@ html, body {
  shape-rendering:crispEdges;
 }
 
-#monthly-revenue-chart .x {
- font-size:8pt;
+#monthly-revenue-chart .bar {
+ fill:#709e6b;
 }
 
-#monthly-revenue-chart .y {
- font-size:8pt;
+#monthly-revenue-chart .bar:hover {
+ fill:#90be8b;
 }
 
-#monthly-revenue-chart .line {
- fill:none;
- stroke:steelblue;
- stroke-width:1.5px;
+.d3-tip-revenue-chart {
+ line-height:1;
+ font-weight:bold;
+ padding:12px;
+ background:rgba(0, 0, 0, 0.8);
+ color:#fff;
+ border-radius:2px;
+ z-index:1000;
 }
 
+/* Creates a small triangle extender for the tooltip */
+.d3-tip-revenue-chart:after {
+ box-sizing:border-box;
+ display:inline;
+ font-size:10px;
+ width:100%;
+ line-height:1;
+ color:rgba(0, 0, 0, 0.8);
+ content:"\25BC";
+ position:absolute;
+ text-align:center;
+ z-index:1000;
+}
+
+/* Style northward tooltips differently */
+.d3-tip-revenue-chart.n:after {
+ margin:-1px 0 0 0;
+ top:100%;
+ left:0;
+ z-index:1000;
+}
 
 /* Active user chart */
 
@@ -181,18 +206,44 @@ html, body {
  shape-rendering:crispEdges;
 }
 
-#active-user-chart .x {
- font-size:8pt;
+#active-user-chart .bar {
+ fill:#709e6b;
 }
 
-#active-user-chart .y {
- font-size:8pt;
+#active-user-chart .bar:hover {
+ fill:#90be8b;
 }
 
-#active-user-chart .line {
- fill:none;
- stroke:steelblue;
- stroke-width:1.5px;
+.d3-tip-active-user-chart {
+ line-height:1;
+ font-weight:bold;
+ padding:12px;
+ background:rgba(0, 0, 0, 0.8);
+ color:#fff;
+ border-radius:2px;
+ z-index:1000;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip-active-user-chart:after {
+ box-sizing:border-box;
+ display:inline;
+ font-size:10px;
+ width:100%;
+ line-height:1;
+ color:rgba(0, 0, 0, 0.8);
+ content:"\25BC";
+ position:absolute;
+ text-align:center;
+ z-index:1000;
+}
+
+/* Style northward tooltips differently */
+.d3-tip-active-user-chart.n:after {
+ margin:-1px 0 0 0;
+ top:100%;
+ left:0;
+ z-index:1000;
 }
 
 /* Active company chart */
@@ -204,18 +255,44 @@ html, body {
  shape-rendering:crispEdges;
 }
 
-#active-company-chart .x {
- font-size:8pt;
+#active-company-chart .bar {
+ fill:#709e6b;
 }
 
-#active-company-chart .y {
- font-size:8pt;
+#active-company-chart .bar:hover {
+ fill:#90be8b;
 }
 
-#active-company-chart .line {
- fill:none;
- stroke:steelblue;
- stroke-width:1.5px;
+.d3-tip-active-company-chart {
+ line-height:1;
+ font-weight:bold;
+ padding:12px;
+ background:rgba(0, 0, 0, 0.8);
+ color:#fff;
+ border-radius:2px;
+ z-index:1000;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip-active-company-chart:after {
+ box-sizing:border-box;
+ display:inline;
+ font-size:10px;
+ width:100%;
+ line-height:1;
+ color:rgba(0, 0, 0, 0.8);
+ content:"\25BC";
+ position:absolute;
+ text-align:center;
+ z-index:1000;
+}
+
+/* Style northward tooltips differently */
+.d3-tip-active-company-chart.n:after {
+ margin:-1px 0 0 0;
+ top:100%;
+ left:0;
+ z-index:1000;
 }
 
 /* The memory usage guage styles */

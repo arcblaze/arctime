@@ -14,6 +14,7 @@
       <div id="system-stats"></div>
 
       <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+      <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.min.js"></script>
       <script src="/js/guage.js"></script>
 
       <script src="/js/src/data/model/Stat.js"></script>
