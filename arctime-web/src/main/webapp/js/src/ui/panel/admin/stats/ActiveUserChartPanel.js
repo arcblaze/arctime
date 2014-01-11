@@ -13,6 +13,14 @@ ui.panel.admin.stats.ActiveUserChartPanel = Ext.extend(Ext.Panel, {
 			title:  'Active Users',
 			width:  panel.chartWidth + 20,
 			height: panel.chartHeight + 30,
+			tools: [
+				{
+					type:   'help',
+					handler: function() {
+						document.location = '/admin/users/';
+					}
+				}
+			],
 			items: [
 				new Ext.Panel({
 					html:   '<div id="active-user-chart"></div>',

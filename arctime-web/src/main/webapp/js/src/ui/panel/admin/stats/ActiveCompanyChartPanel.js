@@ -13,6 +13,14 @@ ui.panel.admin.stats.ActiveCompanyChartPanel = Ext.extend(Ext.Panel, {
 			title:  'Active Companies',
 			width:  panel.chartWidth + 20,
 			height: panel.chartHeight + 30,
+			tools: [
+				{
+					type:   'help',
+					handler: function() {
+						document.location = '/admin/companies/';
+					}
+				}
+			],
 			items: [
 				new Ext.Panel({
 					html:   '<div id="active-company-chart"></div>',

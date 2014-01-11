@@ -13,6 +13,14 @@ ui.panel.admin.stats.MonthlyRevenueChartPanel = Ext.extend(Ext.Panel, {
 			title:      'Monthly Revenue',
 			width:  panel.chartWidth + 20,
 			height: panel.chartHeight + 30,
+			tools: [
+				{
+					type:   'help',
+					handler: function() {
+						document.location = '/admin/transactions/';
+					}
+				}
+			],
 			items: [
 				new Ext.Panel({
 					html:   '<div id="monthly-revenue-chart"></div>',

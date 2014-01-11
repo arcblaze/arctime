@@ -137,3 +137,35 @@
 	background-image:		url(/img/holiday_go.png) !important;
 }
 
+.icon-companies {
+	background-image:		url(/img/companies.png) !important;
+}
+.icon-company-add {
+	background-image:		url(/img/company_add.png) !important;
+}
+.icon-company-delete {
+	background-image:		url(/img/company_delete.png) !important;
+}
+.icon-company-edit {
+	background-image:		url(/img/company_edit.png) !important;
+}
+.icon-company-go {
+	background-image:		url(/img/company_go.png) !important;
+}
+
+.icon-transactions {
+	background-image:		url(/img/transactions.png) !important;
+}
+.icon-transaction-add {
+	background-image:		url(/img/transaction_add.png) !important;
+}
+.icon-transaction-delete {
+	background-image:		url(/img/transaction_delete.png) !important;
+}
+.icon-transaction-edit {
+	background-image:		url(/img/transaction_edit.png) !important;
+}
+.icon-transaction-go {
+	background-image:		url(/img/transaction_go.png) !important;
+}
+

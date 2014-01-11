@@ -16,13 +16,13 @@ ui.grid.SupervisorGrid = Ext.extend(Ext.grid.GridPanel, {
 		var supervisor = new data.model.Supervisor();
 
 		var config = Ext.applyIf(c || {}, {
-			title:            'Supervisors',
-			id:               'ui.grid.supervisorgrid',
-			stripeRows:       true,
-			width:            520,
-			height:           300,
-			loadMask:         true,
-			columns:          supervisor.getColumnModel(),
+			title:      'Supervisors',
+			id:         'ui.grid.supervisorgrid',
+			stripeRows: true,
+			width:      520,
+			height:     300,
+			loadMask:   true,
+			columns:    supervisor.getColumnModel(),
 			store: new data.store.SupervisorStore({
 				user: c.user
 			})
